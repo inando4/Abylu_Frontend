@@ -1,0 +1,7 @@
+/*
+  Respetar el safe-area del notch en el header.
+  En celulares con notch, el header debe empezar DEBAJO del notch.
+*/
+header {
+  padding-top: env(safe-area-inset-top);
+}

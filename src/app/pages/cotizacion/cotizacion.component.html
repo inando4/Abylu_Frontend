@@ -1,0 +1,322 @@
+<app-header />
+
+<main class="max-w-2xl mx-auto px-4 py-6">
+  <!--
+    [formGroup]="cotizacionForm" conecta este <form> HTML con el FormGroup de TypeScript.
+    Es como @ModelAttribute en Spring MVC — vincula el form a un objeto.
+    (ngSubmit) se ejecuta al hacer submit (en lugar de action="POST /api/...")
+  -->
+  <form [formGroup]="cotizacionForm" (ngSubmit)="generarPdf()">
+
+    <!-- ═══════════════════════════════════════════════
+         SECCIÓN 1: Datos del cliente y evento
+         ═══════════════════════════════════════════════ -->
+    <section class="bg-white rounded-2xl shadow-sm p-5 mb-4">
+      <h2 class="text-sm font-semibold text-rosa-500 uppercase tracking-wide mb-4">
+        Datos del evento
+      </h2>
+
+      <div class="space-y-4">
+        <!-- Teléfono del cliente -->
+        <div>
+          <label for="telefono" class="block text-sm font-medium text-gray-600 mb-1">
+            Teléfono del cliente *
+          </label>
+          <!--
+            formControlName conecta este input al FormControl "clienteTelefono".
+            Cualquier cosa que el usuario escriba aquí se refleja automáticamente
+            en cotizacionForm.get('clienteTelefono').value
+          -->
+          <input
+            id="telefono"
+            type="tel"
+            formControlName="clienteTelefono"
+            placeholder="999 888 777"
+            class="w-full rounded-xl border-gray-200 bg-rosa-50/50 px-4 py-3
+                   focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2
+                   transition-colors"
+          />
+        </div>
+
+        <!-- Lugar del evento -->
+        <div>
+          <label for="lugar" class="block text-sm font-medium text-gray-600 mb-1">
+            Lugar del evento *
+          </label>
+          <input
+            id="lugar"
+            type="text"
+            formControlName="lugarEvento"
+            placeholder="Ej: Salón de eventos Los Jardines"
+            class="w-full rounded-xl border-gray-200 bg-rosa-50/50 px-4 py-3
+                   focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2
+                   transition-colors"
+          />
+        </div>
+
+        <!-- Tipo de evento -->
+        <div>
+          <label for="tipo" class="block text-sm font-medium text-gray-600 mb-1">
+            Tipo de evento
+          </label>
+          <input
+            id="tipo"
+            type="text"
+            formControlName="tipoEvento"
+            placeholder="Ej: Cumpleaños, Boda, Corporativo"
+            class="w-full rounded-xl border-gray-200 bg-rosa-50/50 px-4 py-3
+                   focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2
+                   transition-colors"
+          />
+        </div>
+
+        <!-- Fecha del evento -->
+        <div>
+          <label for="fecha" class="block text-sm font-medium text-gray-600 mb-1">
+            Fecha del evento *
+          </label>
+          <input
+            id="fecha"
+            type="date"
+            formControlName="fechaEvento"
+            class="w-full rounded-xl border-gray-200 bg-rosa-50/50 px-4 py-3
+                   focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2
+                   transition-colors"
+          />
+        </div>
+
+        <!-- Notas -->
+        <div>
+          <label for="notas" class="block text-sm font-medium text-gray-600 mb-1">
+            Notas adicionales
+          </label>
+          <textarea
+            id="notas"
+            formControlName="notas"
+            rows="2"
+            placeholder="Instrucciones especiales..."
+            class="w-full rounded-xl border-gray-200 bg-rosa-50/50 px-4 py-3
+                   focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2
+                   transition-colors resize-none"
+          ></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         SECCIÓN 2: Items / Productos (Fase 6)
+         ═══════════════════════════════════════════════ -->
+    <section class="bg-white rounded-2xl shadow-sm p-5 mb-4">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-sm font-semibold text-rosa-500 uppercase tracking-wide">
+          Productos
+        </h2>
+        <button
+          type="button"
+          (click)="agregarItem()"
+          class="flex items-center gap-1 text-sm font-medium text-rosa-500
+                 bg-rosa-50 hover:bg-rosa-100 px-3 py-1.5 rounded-full
+                 transition-colors"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Agregar
+        </button>
+      </div>
+
+      <!--
+        formArrayName="items" conecta esta sección al FormArray.
+        *ngFor itera sobre cada item (como un v-for en Vue o un th:each en Thymeleaf).
+      -->
+      <div formArrayName="items" class="space-y-3">
+        @for (item of items.controls; track $index) {
+          <div [formGroupName]="$index"
+               class="bg-rosa-50/50 rounded-xl p-4 border border-rosa-100 relative">
+
+            <!-- Botón eliminar (esquina superior derecha) -->
+            <button
+              type="button"
+              (click)="eliminarItem($index)"
+              class="absolute top-2 right-2 text-gray-300 hover:text-red-400 transition-colors"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+
+            <!-- Selector de producto -->
+            <div class="mb-3">
+              <label class="block text-xs font-medium text-gray-500 mb-1">Producto</label>
+              <select
+                formControlName="productoId"
+                (change)="onProductoSeleccionado($index)"
+                class="w-full rounded-lg border-gray-200 bg-white px-3 py-2.5 text-sm
+                       focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2"
+              >
+                <option [ngValue]="null" disabled>Seleccionar producto...</option>
+                @for (producto of productos; track producto.id) {
+                  <option [value]="producto.id">
+                    {{ producto.nombre }}
+                    @if (producto.categoria === 'ilimitado') { (Ilimitado) }
+                  </option>
+                }
+              </select>
+            </div>
+
+            <!-- Campos según tipo de producto -->
+            @if (!item.get('esIlimitado')?.value) {
+              <!-- Producto tipo SNACK: cantidad + precio manual -->
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-gray-500 mb-1">Cantidad</label>
+                  <input
+                    type="number"
+                    formControlName="cantidad"
+                    (input)="onCantidadCambiada($index)"
+                    placeholder="50"
+                    min="1"
+                    class="w-full rounded-lg border-gray-200 bg-white px-3 py-2.5 text-sm
+                           focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-500 mb-1">Precio Unit.</label>
+                  <input
+                    type="number"
+                    formControlName="precioUnitarioManual"
+                    (input)="onPrecioManualCambiado($index)"
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0"
+                    class="w-full rounded-lg border-gray-200 bg-white px-3 py-2.5 text-sm
+                           focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2"
+                  />
+                </div>
+              </div>
+            } @else {
+              <!-- Producto ILIMITADO: solo muestra el precio fijo -->
+              <p class="text-xs text-gray-400 mt-1">
+                Ilimitado — Precio fijo: S/ {{ item.get('precioUnitarioVista')?.value | number:'1.2-2' }}
+              </p>
+            }
+
+            <!-- Subtotal del item -->
+            <div class="mt-3 text-right">
+              <span class="text-xs text-gray-400">Subtotal:</span>
+              <span class="ml-1 text-sm font-semibold text-gray-700">
+                S/ {{ item.get('subtotalItem')?.value | number:'1.2-2' }}
+              </span>
+            </div>
+          </div>
+        }
+
+        <!-- Estado vacío -->
+        @if (items.length === 0) {
+          <div class="text-center py-8 text-gray-300">
+            <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
+            </svg>
+            <p class="text-sm">No hay productos agregados</p>
+            <p class="text-xs mt-1">Toca "Agregar" para comenzar</p>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         SECCIÓN 3: Movilidad, Descuento y Resumen (Fase 7)
+         ═══════════════════════════════════════════════ -->
+    <section class="bg-white rounded-2xl shadow-sm p-5 mb-4">
+      <h2 class="text-sm font-semibold text-rosa-500 uppercase tracking-wide mb-4">
+        Resumen
+      </h2>
+
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Movilidad (S/)</label>
+          <input
+            type="number"
+            formControlName="movilidad"
+            min="0"
+            step="0.01"
+            class="w-full rounded-lg border-gray-200 bg-rosa-50/50 px-3 py-2.5 text-sm
+                   focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2"
+          />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Descuento (S/)</label>
+          <input
+            type="number"
+            formControlName="descuento"
+            min="0"
+            class="w-full rounded-lg border-gray-200 bg-rosa-50/50 px-3 py-2.5 text-sm
+                   focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2"
+          />
+        </div>
+      </div>
+
+      <!-- Desglose -->
+      <div class="border-t border-rosa-100 pt-3 space-y-2">
+        <div class="flex justify-between text-sm text-gray-500">
+          <span>Subtotal</span>
+          <span>S/ {{ subtotal | number:'1.2-2' }}</span>
+        </div>
+        @if ((cotizacionForm.get('movilidad')?.value || 0) > 0) {
+          <div class="flex justify-between text-sm text-gray-500">
+            <span>Movilidad</span>
+            <span>+ S/ {{ cotizacionForm.get('movilidad')?.value | number:'1.2-2' }}</span>
+          </div>
+        }
+        @if ((cotizacionForm.get('descuento')?.value || 0) > 0) {
+          <div class="flex justify-between text-sm text-gray-500">
+            <span>Descuento</span>
+            <span class="text-green-500">- S/ {{ cotizacionForm.get('descuento')?.value | number:'1.2-2' }}</span>
+          </div>
+        }
+        <div class="flex justify-between text-lg font-bold text-gray-800 pt-2 border-t border-rosa-100">
+          <span>Total</span>
+          <span class="text-rosa-600">S/ {{ total | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         SECCIÓN 4: Mensajes de error + Botón Generar PDF
+         ═══════════════════════════════════════════════ -->
+
+    <!-- Error -->
+    @if (error) {
+      <div class="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3 mb-4">
+        {{ error }}
+      </div>
+    }
+
+    <!-- Botón Generar PDF -->
+    <button
+      type="submit"
+      [disabled]="cargando"
+      class="w-full py-4 rounded-2xl font-semibold text-white text-base
+             bg-rosa-500 hover:bg-rosa-600 active:bg-rosa-700
+             disabled:bg-gray-300 disabled:cursor-not-allowed
+             shadow-lg shadow-rosa-200 transition-all duration-200"
+    >
+      @if (cargando) {
+        <span class="flex items-center justify-center gap-2">
+          <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+          </svg>
+          Generando PDF...
+        </span>
+      } @else {
+        Generar PDF
+      }
+    </button>
+
+    <!-- Espaciado inferior para que el botón no quede pegado al borde en móvil -->
+    <div class="h-8"></div>
+  </form>
+</main>

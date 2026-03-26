@@ -1,11 +1,38 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>AbyluFrontend</title>
+  <title>Abylu — Cotizaciones</title>
   <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!--
+    viewport: controla cómo el navegador móvil escala la página.
+    - width=device-width: usa el ancho real del celular
+    - initial-scale=1: no hacer zoom al cargar
+    - viewport-fit=cover: usa TODA la pantalla incluyendo el notch
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!--
+    theme-color: cambia el color de la barra de estado de Android/Chrome.
+    Cuando el usuario abra tu app, la barra de arriba será rosa pastel.
+  -->
+  <meta name="theme-color" content="#fdf2f8">
+
+  <!-- Descripción para cuando comparten el link -->
+  <meta name="description" content="Generador de cotizaciones Abylu">
+
+  <!-- Indicar a Chrome que esta web puede funcionar como app -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Google Fonts: Inter (la fuente que definimos en Tailwind) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <app-root></app-root>

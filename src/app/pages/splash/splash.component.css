@@ -1,0 +1,57 @@
+/*
+  Estilos del Splash — usamos CSS puro aquí (no Tailwind)
+  porque las animaciones con keyframes son más limpias en CSS directo.
+*/
+
+.splash-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%);
+  transition: opacity 0.5s ease;
+}
+
+.splash-container.fade-out {
+  opacity: 0;
+}
+
+.logo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Cuando logoVisible = true, Angular agrega esta clase */
+.logo-wrapper.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.logo-icon svg {
+  width: 100px;
+  height: 100px;
+  filter: drop-shadow(0 4px 12px rgba(236, 72, 153, 0.3));
+}
+
+.logo-text {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #db2777;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.logo-subtitle {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 1rem;
+  color: #f472b6;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0;
+}

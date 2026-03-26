@@ -1,1 +1,110 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================
+   ABYLU FRONTEND — Estilos Globales
+   Tailwind CSS v4 (configuración via @theme)
+   ============================================ */
+
+/* 1. Importar Tailwind CSS (v4 usa un solo import) */
+@import "tailwindcss";
+
+/* 2. Decirle a Tailwind dónde buscar clases usadas en nuestros templates */
+@source "../";
+
+/* 3. Plugin de formularios — mejora el estilo base de inputs, selects, etc. */
+@plugin "@tailwindcss/forms";
+
+/* 3. Definir la paleta de colores custom del proyecto
+   ─────────────────────────────────────────────────
+   @theme es la forma de Tailwind v4 para extender el diseño.
+   Cada variable aquí se convierte en una clase utilizable:
+     --color-rosa-50  →  bg-rosa-50, text-rosa-50, border-rosa-50, etc.
+*/
+@theme {
+  /* Paleta Rosa Pastel — colores principales de Abylu */
+  --color-rosa-50: #fdf2f8;
+  --color-rosa-100: #fce7f3;
+  --color-rosa-200: #fbcfe8;
+  --color-rosa-300: #f9a8d4;
+  --color-rosa-400: #f472b6;
+  --color-rosa-500: #ec4899;
+  --color-rosa-600: #db2777;
+  --color-rosa-700: #be185d;
+
+  /* Colores complementarios pastel */
+  --color-crema: #fef7f0;
+  --color-lavanda: #f3e8ff;
+  --color-melon: #fef3e2;
+
+  /* Fuente principal */
+  --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* 4. Estilos base globales */
+body {
+  @apply bg-rosa-50 text-gray-800 font-sans antialiased;
+  min-height: 100dvh;
+
+  /*
+    safe-area-inset: respeta el "notch" y la barra de navegación de Android.
+    env() lee valores que el sistema operativo le pasa al navegador
+    indicando cuántos píxeles ocupa el notch/barra.
+  */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Asegurar que inputs no hagan zoom en iOS/Android (min 16px) */
+input, select, textarea {
+  font-size: 16px;
+}
+
+/*
+  5. Mejoras táctiles para móvil
+  ─────────────────────────────
+*/
+
+/* Eliminar el highlight azul/gris que Android pone al tocar elementos */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth scroll nativo — el scroll se siente "natural" como app nativa */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Evitar el "overscroll bounce" de Chrome Android en el body */
+body {
+  overscroll-behavior-y: none;
+}
+
+/*
+  Todos los botones e inputs con altura mínima de 44px.
+  44px es el estándar de Apple/Google para touch targets.
+  Un dedo humano cubre ~48px, así que 44px es el mínimo.
+*/
+button, [type="submit"] {
+  min-height: 44px;
+}
+
+/*
+  6. Transiciones de página
+  ─────────────────────────
+  Cuando Angular cambia de componente (splash → cotización),
+  aplicamos un fade-in suave al nuevo contenente.
+*/
+router-outlet + * {
+  animation: pageEnter 0.4s ease-out;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

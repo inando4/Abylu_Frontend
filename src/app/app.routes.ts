@@ -1,3 +1,23 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [];
+/**
+ * Rutas de la aplicación — equivalente a @RequestMapping en Spring.
+ *
+ * En Spring:  GET /api/productos → ProductoController
+ * En Angular: URL /cotizacion    → CotizacionComponent
+ *
+ * loadComponent usa "lazy loading": el componente solo se descarga cuando
+ * el usuario navega a esa ruta. Optimiza el tamaño inicial de la app.
+ */
+export const routes: Routes = [
+  {
+    path: '',                    // URL raíz: localhost:4200/
+    loadComponent: () => import('./pages/splash/splash.component')
+      .then(m => m.SplashComponent),
+  },
+  {
+    path: 'cotizacion',          // localhost:4200/cotizacion
+    loadComponent: () => import('./pages/cotizacion/cotizacion.component')
+      .then(m => m.CotizacionComponent),
+  },
+];

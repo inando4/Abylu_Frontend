@@ -1,0 +1,23 @@
+<!--
+  Splash Screen — pantalla de carga inicial.
+
+  [class.visible]:  Binding condicional de Angular.
+  Cuando logoVisible = true, agrega la clase "visible" al elemento.
+  Es como un th:classappend en Thymeleaf, pero reactivo.
+-->
+<div class="splash-container" [class.fade-out]="fadeOut">
+
+  <div class="logo-wrapper" [class.visible]="logoVisible">
+    <!-- Reemplaza este SVG con <img src="assets/logo.png"> cuando tengas el logo real -->
+    <div class="logo-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="45" stroke="#ec4899" stroke-width="3" fill="#fdf2f8"/>
+        <text x="50" y="58" text-anchor="middle" font-size="28" font-weight="bold" fill="#db2777"
+              font-family="Inter, system-ui, sans-serif">A</text>
+      </svg>
+    </div>
+    <h1 class="logo-text">Abylu</h1>
+    <p class="logo-subtitle">Cotizaciones</p>
+  </div>
+
+</div>

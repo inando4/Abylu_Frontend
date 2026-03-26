@@ -1,0 +1,30 @@
+<!--
+  Header fijo — siempre visible arriba en la página de cotización.
+
+  Clases Tailwind usadas:
+    sticky top-0 z-50  → se pega arriba al hacer scroll (como position:fixed pero mejor)
+    bg-white/80         → fondo blanco con 80% opacidad
+    backdrop-blur-md    → efecto "vidrio esmerilado" (glassmorphism)
+    shadow-sm           → sombra sutil abajo
+    px-4 py-3           → padding horizontal 1rem, vertical 0.75rem
+-->
+<header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
+  <div class="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+
+    <!-- Logo pequeño (mismo SVG del splash, reemplazar con img después) -->
+    <div class="w-9 h-9 flex-shrink-0">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="45" stroke="#ec4899" stroke-width="3" fill="#fdf2f8"/>
+        <text x="50" y="58" text-anchor="middle" font-size="28" font-weight="bold" fill="#db2777"
+              font-family="Inter, system-ui, sans-serif">A</text>
+      </svg>
+    </div>
+
+    <!-- Nombre y descripción -->
+    <div>
+      <h1 class="text-lg font-bold text-rosa-600 leading-tight">Abylu</h1>
+      <p class="text-xs text-gray-400 leading-tight">Nueva Cotización</p>
+    </div>
+
+  </div>
+</header>
