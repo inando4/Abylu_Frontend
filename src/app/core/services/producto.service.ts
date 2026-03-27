@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Producto } from '../../shared/models';
+import { Producto, ProductoPrecioEscala } from '../../shared/models';
 import { API_BASE_URL } from '../api.config';
 
 /**
@@ -30,5 +30,10 @@ export class ProductoService {
    */
   listarActivos(): Observable<Producto[]> {
     return this.http.get<Producto[]>(this.url);
+  }
+
+  /** GET /api/productos/escalas → Escalas de precio (50 uds, 100 uds, etc.) */
+  listarEscalas(): Observable<ProductoPrecioEscala[]> {
+    return this.http.get<ProductoPrecioEscala[]>(`${this.url}/escalas`);
   }
 }

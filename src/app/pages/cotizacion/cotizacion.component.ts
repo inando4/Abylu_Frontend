@@ -3,27 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { HeaderComponent } from '../../components/header/header.component';
 import { ProductoService, CotizacionService } from '../../core/services';
-import { Producto, CrearCotizacionRequest } from '../../shared/models';
+import { Producto, ProductoPrecioEscala, CrearCotizacionRequest } from '../../shared/models';
 
-/**
- * Página principal — formulario de cotización.
- *
- * Concepto: Reactive Forms
- * ─────────────────────────
- * En Spring, los datos llegan como un DTO (@RequestBody CrearCotizacionRequest).
- * En Angular, construimos un FormGroup que ESPEJA ese DTO:
- *
- *   FormGroup (cotizacionForm)         ↔  CrearCotizacionRequest.java
- *     ├── FormControl (clienteTelefono) ↔  private String clienteTelefono
- *     ├── FormControl (lugarEvento)     ↔  private String lugarEvento
- *     ├── FormControl (fechaEvento)     ↔  private LocalDate fechaEvento
- *     ├── FormControl (descuento)       ↔  private Integer descuento
- *     ├── FormControl (movilidad)       ↔  private Double movilidad
- *     └── FormArray   (items)           ↔  private List<ItemCotizacionRequest> items
- *
- * Cuando el usuario llena el form, Angular mantiene los valores sincronizados.
- * Al enviar, form.value nos da un objeto JS idéntico al DTO de Java.
- */
 @Component({
   selector: 'app-cotizacion',
   imports: [CommonModule, ReactiveFormsModule, HeaderComponent],
@@ -32,42 +13,24 @@ import { Producto, CrearCotizacionRequest } from '../../shared/models';
 })
 export class CotizacionComponent implements OnInit {
 
-  /**
-   * inject() es la forma moderna de inyectar dependencias en Angular.
-   * Es equivalente a @Autowired o inyección por constructor en Spring.
-   */
   private fb = inject(FormBuilder);
   private productoService = inject(ProductoService);
   private cotizacionService = inject(CotizacionService);
 
-  /** Lista de productos cargados del backend */
   productos: Producto[] = [];
 
-  /** Estado de la UI */
+  /** Escalas de precio cargadas del backend (ej: Hamburguesa x50 = S/380) */
+  escalas: ProductoPrecioEscala[] = [];
+
   cargando = false;
   error = '';
 
-  /**
-   * FormGroup principal — espeja CrearCotizacionRequest.java
-   *
-   * FormBuilder.group() es un helper que crea FormControls de forma limpia.
-   * Cada entrada es [valorInicial, validadores].
-   *
-   * Validators son como @Valid + @NotNull en Spring:
-   *   Validators.required  = @NotNull
-   *   Validators.min(0)    = @Min(0)
-   */
   cotizacionForm!: FormGroup;
 
-  /**
-   * Getter para acceder al FormArray de items fácilmente desde el template.
-   * FormArray = List<ItemCotizacionRequest> en Java.
-   */
   get items(): FormArray {
     return this.cotizacionForm.get('items') as FormArray;
   }
 
-  /** Calcula el subtotal sumando todos los items */
   get subtotal(): number {
     return this.items.controls.reduce((sum, item) => {
       const subtotalItem = item.get('subtotalItem')?.value || 0;
@@ -75,7 +38,6 @@ export class CotizacionComponent implements OnInit {
     }, 0);
   }
 
-  /** Calcula el total aplicando movilidad y descuento (misma lógica del backend) */
   get total(): number {
     const descuento = this.cotizacionForm.get('descuento')?.value || 0;
     const movilidad = this.cotizacionForm.get('movilidad')?.value || 0;
@@ -86,13 +48,10 @@ export class CotizacionComponent implements OnInit {
     return this.subtotal + movilidad - descuento;
   }
 
-  /**
-   * ngOnInit — se ejecuta al inicializar el componente.
-   * Equivalente a @PostConstruct en Spring.
-   */
   ngOnInit(): void {
     this.initForm();
     this.cargarProductos();
+    this.cargarEscalas();
   }
 
   private initForm(): void {
@@ -104,28 +63,38 @@ export class CotizacionComponent implements OnInit {
       notas:           [''],
       descuento:       [0, [Validators.required, Validators.min(0)]],
       movilidad:       [0, [Validators.required, Validators.min(0)]],
-      items:           this.fb.array([])  // FormArray vacío, se llena al agregar items
+      items:           this.fb.array([])
     });
   }
 
   private cargarProductos(): void {
     this.productoService.listarActivos().subscribe({
       next: (data) => this.productos = data,
-      error: (err) => this.error = 'No se pudieron cargar los productos. ¿Está corriendo el backend?'
+      error: () => this.error = 'No se pudieron cargar los productos. ¿Está corriendo el backend?'
+    });
+  }
+
+  private cargarEscalas(): void {
+    this.productoService.listarEscalas().subscribe({
+      next: (data) => this.escalas = data,
+      error: () => console.warn('No se pudieron cargar las escalas de precio')
     });
   }
 
   /**
-   * Agrega un item al FormArray.
-   * Cada item es un FormGroup que espeja ItemCotizacionRequest.java.
+   * Busca si existe una escala de precio para un producto+cantidad dados.
+   * Ej: productoId=3 (Hamburguesa), cantidad=50 → retorna { precioTotal: 380 }
    */
+  private buscarEscala(productoId: number, cantidad: number): ProductoPrecioEscala | undefined {
+    return this.escalas.find(e => e.productoId === productoId && e.cantidad === cantidad);
+  }
+
   agregarItem(): void {
     const itemGroup = this.fb.group({
       productoId:          [null, Validators.required],
       cantidad:            [null],
       esIlimitado:         [false],
       precioUnitarioManual:[null],
-      // Campos auxiliares solo para la UI (no se envían al backend)
       nombreProducto:      [''],
       precioUnitarioVista: [0],
       subtotalItem:        [0],
@@ -133,15 +102,10 @@ export class CotizacionComponent implements OnInit {
     this.items.push(itemGroup);
   }
 
-  /** Elimina un item del FormArray por índice */
   eliminarItem(index: number): void {
     this.items.removeAt(index);
   }
 
-  /**
-   * Se ejecuta cuando el usuario selecciona un producto del dropdown.
-   * Actualiza los campos del item según la categoría del producto.
-   */
   onProductoSeleccionado(index: number): void {
     const itemGroup = this.items.at(index) as FormGroup;
     const productoId = itemGroup.get('productoId')?.value;
@@ -171,37 +135,74 @@ export class CotizacionComponent implements OnInit {
   }
 
   /**
-   * Se ejecuta cuando el usuario cambia la cantidad de un item tipo "snack".
-   * Recalcula precio unitario y subtotal.
+   * Se ejecuta cuando el usuario cambia la CANTIDAD.
+   * Primero busca si hay una escala de precio en la BD (50, 100).
+   * Si la encuentra, auto-llena subtotal y precio unitario.
+   * Si no, recalcula con el subtotal existente.
    */
   onCantidadCambiada(index: number): void {
     const itemGroup = this.items.at(index) as FormGroup;
     const cantidad = itemGroup.get('cantidad')?.value;
-    const precioManual = itemGroup.get('precioUnitarioManual')?.value;
+    const productoId = itemGroup.get('productoId')?.value;
 
     if (!cantidad || cantidad <= 0) {
-      itemGroup.patchValue({ precioUnitarioVista: 0, subtotalItem: 0 });
+      itemGroup.patchValue({ precioUnitarioVista: 0, subtotalItem: 0, precioUnitarioManual: null });
       return;
     }
 
-    // Si hay precio manual, usarlo para calcular subtotal
-    if (precioManual && precioManual > 0) {
+    // Buscar escala de precio en la BD (ej: 50 uds → S/380)
+    if (productoId) {
+      const escala = this.buscarEscala(+productoId, +cantidad);
+      if (escala) {
+        const precioCalculado = escala.precioTotal / cantidad;
+        itemGroup.patchValue({
+          subtotalItem: escala.precioTotal,
+          precioUnitarioVista: precioCalculado,
+          precioUnitarioManual: precioCalculado,
+        });
+        return;
+      }
+    }
+
+    // Si no hay escala, recalcular con el subtotal existente
+    const subtotalActual = itemGroup.get('subtotalItem')?.value || 0;
+    if (subtotalActual > 0) {
+      const precioCalculado = subtotalActual / cantidad;
       itemGroup.patchValue({
-        precioUnitarioVista: precioManual,
-        subtotalItem: cantidad * precioManual,
+        precioUnitarioVista: precioCalculado,
+        precioUnitarioManual: precioCalculado,
       });
     }
   }
 
   /**
-   * Se ejecuta cuando el usuario escribe un precio manual.
+   * Se ejecuta cuando el usuario edita el SUBTOTAL directamente.
+   * Calcula: precioUnitario = subtotal / cantidad.
+   */
+  onSubtotalCambiado(index: number): void {
+    const itemGroup = this.items.at(index) as FormGroup;
+    const cantidad = itemGroup.get('cantidad')?.value;
+    const subtotal = itemGroup.get('subtotalItem')?.value;
+
+    if (cantidad && cantidad > 0 && subtotal != null && subtotal >= 0) {
+      const precioCalculado = subtotal / cantidad;
+      itemGroup.patchValue({
+        precioUnitarioVista: precioCalculado,
+        precioUnitarioManual: precioCalculado,
+      });
+    }
+  }
+
+  /**
+   * Se ejecuta cuando el usuario edita el PRECIO UNITARIO.
+   * Calcula: subtotal = cantidad * precioUnitario.
    */
   onPrecioManualCambiado(index: number): void {
     const itemGroup = this.items.at(index) as FormGroup;
     const cantidad = itemGroup.get('cantidad')?.value;
     const precioManual = itemGroup.get('precioUnitarioManual')?.value;
 
-    if (cantidad && precioManual && precioManual > 0) {
+    if (cantidad && cantidad > 0 && precioManual != null && precioManual >= 0) {
       itemGroup.patchValue({
         precioUnitarioVista: precioManual,
         subtotalItem: cantidad * precioManual,
@@ -209,13 +210,6 @@ export class CotizacionComponent implements OnInit {
     }
   }
 
-  /**
-   * Envía la cotización al backend y descarga el PDF.
-   *
-   * 1. Arma el request mapeando el FormGroup → CrearCotizacionRequest
-   * 2. Llama a crearYDescargarPdf() del service
-   * 3. Crea un link temporal para descargar el PDF
-   */
   generarPdf(): void {
     if (this.cotizacionForm.invalid) {
       this.cotizacionForm.markAllAsTouched();
@@ -233,7 +227,6 @@ export class CotizacionComponent implements OnInit {
 
     const formValue = this.cotizacionForm.value;
 
-    // Mapear FormGroup → CrearCotizacionRequest (el DTO del backend)
     const request: CrearCotizacionRequest = {
       clienteTelefono: formValue.clienteTelefono,
       fechaEvento: formValue.fechaEvento,
@@ -252,11 +245,17 @@ export class CotizacionComponent implements OnInit {
 
     this.cotizacionService.crearYDescargarPdf(request).subscribe({
       next: (pdfBlob) => {
-        // Crear un link temporal para descargar el PDF
         const url = window.URL.createObjectURL(pdfBlob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `cotizacion-${formValue.clienteTelefono}.pdf`;
+        // Armar nombre: "Cotizacion ABYLU - 50 Hamburguesa, Ilimitado Popcorn.pdf"
+        const itemsDesc = formValue.items
+          .map((item: any) => {
+            const nombre = item.nombreProducto || 'Producto';
+            return item.esIlimitado ? `Ilimitado ${nombre}` : `${item.cantidad} ${nombre}`;
+          })
+          .join(', ');
+        a.download = `Cotizacion ABYLU - ${itemsDesc}.pdf`;
         a.click();
         window.URL.revokeObjectURL(url);
         this.cargando = false;
