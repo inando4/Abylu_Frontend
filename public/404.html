@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Redirigiendo...</title>
+  <script>
+    // Truco para SPA en GitHub Pages:
+    // Cuando GitHub Pages no encuentra una ruta (ej: /cotizacion),
+    // sirve este 404.html. Este script toma la ruta original,
+    // la codifica como query parameter y redirige a index.html.
+    // Luego, un script en index.html restaura la ruta original.
+    var pathSegmentsToKeep = 1; // 1 porque es project page (usuario.github.io/REPO/)
+    var l = window.location;
+    l.replace(
+      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+      l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+      l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+      (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+      l.hash
+    );
+  </script>
+</head>
+<body>
+</body>
+</html>
