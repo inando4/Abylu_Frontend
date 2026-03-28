@@ -1,26 +1,25 @@
-<!--
-  Header fijo — siempre visible arriba en la página de cotización.
-
-  Clases Tailwind usadas:
-    sticky top-0 z-50  → se pega arriba al hacer scroll (como position:fixed pero mejor)
-    bg-white/80         → fondo blanco con 80% opacidad
-    backdrop-blur-md    → efecto "vidrio esmerilado" (glassmorphism)
-    shadow-sm           → sombra sutil abajo
-    px-4 py-3           → padding horizontal 1rem, vertical 0.75rem
--->
-<header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
+<header class="sticky top-0 z-50">
   <div class="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
 
-    <!-- Logo pequeño (mismo SVG del splash, reemplazar con img después) -->
-    <div class="w-9 h-9 flex-shrink-0 rounded-full overflow-hidden bg-white">
+    <!-- Logo con anillo decorativo -->
+    <div class="w-10 h-10 flex-shrink-0 rounded-full overflow-hidden ring-2 ring-rosa-200 shadow-md shadow-rosa-200/30 bg-white">
       <img src="ABYLU.png" alt="Logo de Abylu" class="w-full h-full object-contain">
     </div>
 
-    <!-- Nombre y descripción -->
+    <!-- Nombre con gradiente y descripción -->
     <div>
-      <h1 class="text-lg font-bold text-rosa-600 leading-tight">Abylu</h1>
-      <p class="text-xs text-gray-400 leading-tight">Nueva Cotización</p>
+      <h1 class="text-lg font-bold leading-tight bg-gradient-to-r from-rosa-600 via-rosa-500 to-rosa-400 bg-clip-text text-transparent">
+        Abylu
+      </h1>
+      <div class="flex items-center gap-1.5">
+        <p class="text-xs text-gray-400 leading-tight">Nueva Cotización</p>
+        <svg class="w-3 h-3 text-rosa-300" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/>
+        </svg>
+      </div>
     </div>
 
   </div>
+  <!-- Línea gradiente inferior -->
+  <div class="h-0.5 bg-gradient-to-r from-rosa-200 via-rosa-500 to-rosa-200"></div>
 </header>

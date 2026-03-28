@@ -1,46 +1,57 @@
 <app-header />
 
-<main class="max-w-2xl mx-auto px-4 py-6">
-  <!--
-    [formGroup]="cotizacionForm" conecta este <form> HTML con el FormGroup de TypeScript.
-    Es como @ModelAttribute en Spring MVC — vincula el form a un objeto.
-    (ngSubmit) se ejecuta al hacer submit (en lugar de action="POST /api/...")
-  -->
+<main class="max-w-2xl mx-auto px-4 py-6 relative">
+
+  <!-- Formas decorativas flotantes del fondo -->
+  <div class="pointer-events-none fixed inset-0 overflow-hidden -z-10" aria-hidden="true">
+    <div class="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-rosa-200/30 blur-3xl"
+         style="animation: float 6s ease-in-out infinite;"></div>
+    <div class="absolute top-1/3 -left-32 w-72 h-72 rounded-full bg-lavanda/40 blur-3xl"
+         style="animation: float 8s ease-in-out infinite 2s;"></div>
+    <div class="absolute bottom-20 right-10 w-48 h-48 rounded-full bg-melon/30 blur-3xl"
+         style="animation: float 7s ease-in-out infinite 4s;"></div>
+  </div>
+
   <form [formGroup]="cotizacionForm" (ngSubmit)="generarPdf()">
 
     <!-- ═══════════════════════════════════════════════
          SECCIÓN 1: Datos del cliente y evento
          ═══════════════════════════════════════════════ -->
-    <section class="bg-white rounded-2xl shadow-sm p-5 mb-4">
-      <h2 class="text-sm font-semibold text-rosa-500 uppercase tracking-wide mb-4">
-        Datos del evento
-      </h2>
+    <section class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-md shadow-rosa-100/50 p-5 mb-4 border border-white/60 decorated-section"
+             style="animation: fadeSlideUp 0.5s ease-out 0.1s both;">
+
+      <!-- Header con icono -->
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rosa-400 to-rosa-600 flex items-center justify-center shadow-sm shadow-rosa-200">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-sm font-bold text-gray-700">Datos del evento</h2>
+          <div class="h-0.5 w-12 bg-gradient-to-r from-rosa-400 to-rosa-200 rounded-full mt-0.5"></div>
+        </div>
+      </div>
 
       <div class="space-y-4">
         <!-- Teléfono del cliente -->
         <div>
-          <label for="telefono" class="block text-sm font-medium text-gray-600 mb-1">
+          <label for="telefono" class="block text-sm font-medium text-gray-500 tracking-wide mb-1">
             Teléfono del cliente *
           </label>
-          <!--
-            formControlName conecta este input al FormControl "clienteTelefono".
-            Cualquier cosa que el usuario escriba aquí se refleja automáticamente
-            en cotizacionForm.get('clienteTelefono').value
-          -->
           <input
             id="telefono"
             type="tel"
             formControlName="clienteTelefono"
             placeholder="999 888 777"
-            class="w-full rounded-xl border-gray-200 bg-rosa-50/50 px-4 py-3
-                   focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2
-                   transition-colors"
+            class="w-full rounded-xl border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 px-4 py-3
+                   focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
           />
         </div>
 
         <!-- Lugar del evento -->
         <div>
-          <label for="lugar" class="block text-sm font-medium text-gray-600 mb-1">
+          <label for="lugar" class="block text-sm font-medium text-gray-500 tracking-wide mb-1">
             Lugar del evento *
           </label>
           <input
@@ -48,15 +59,14 @@
             type="text"
             formControlName="lugarEvento"
             placeholder="Ej: Salón de eventos Los Jardines"
-            class="w-full rounded-xl border-gray-200 bg-rosa-50/50 px-4 py-3
-                   focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2
-                   transition-colors"
+            class="w-full rounded-xl border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 px-4 py-3
+                   focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
           />
         </div>
 
         <!-- Tipo de evento -->
         <div>
-          <label for="tipo" class="block text-sm font-medium text-gray-600 mb-1">
+          <label for="tipo" class="block text-sm font-medium text-gray-500 tracking-wide mb-1">
             Tipo de evento
           </label>
           <input
@@ -64,30 +74,28 @@
             type="text"
             formControlName="tipoEvento"
             placeholder="Ej: Cumpleaños, Boda, Corporativo"
-            class="w-full rounded-xl border-gray-200 bg-rosa-50/50 px-4 py-3
-                   focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2
-                   transition-colors"
+            class="w-full rounded-xl border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 px-4 py-3
+                   focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
           />
         </div>
 
         <!-- Fecha del evento -->
         <div>
-          <label for="fecha" class="block text-sm font-medium text-gray-600 mb-1">
+          <label for="fecha" class="block text-sm font-medium text-gray-500 tracking-wide mb-1">
             Fecha del evento *
           </label>
           <input
             id="fecha"
             type="date"
             formControlName="fechaEvento"
-            class="w-full rounded-xl border-gray-200 bg-rosa-50/50 px-4 py-3
-                   focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2
-                   transition-colors"
+            class="w-full rounded-xl border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 px-4 py-3
+                   focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
           />
         </div>
 
         <!-- Notas -->
         <div>
-          <label for="notas" class="block text-sm font-medium text-gray-600 mb-1">
+          <label for="notas" class="block text-sm font-medium text-gray-500 tracking-wide mb-1">
             Notas adicionales
           </label>
           <textarea
@@ -95,28 +103,41 @@
             formControlName="notas"
             rows="2"
             placeholder="Instrucciones especiales..."
-            class="w-full rounded-xl border-gray-200 bg-rosa-50/50 px-4 py-3
-                   focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2
-                   transition-colors resize-none"
+            class="w-full rounded-xl border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 px-4 py-3
+                   focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300 resize-none"
           ></textarea>
         </div>
       </div>
     </section>
 
     <!-- ═══════════════════════════════════════════════
-         SECCIÓN 2: Items / Productos (Fase 6)
+         SECCIÓN 2: Items / Productos
          ═══════════════════════════════════════════════ -->
-    <section class="bg-white rounded-2xl shadow-sm p-5 mb-4">
+    <section class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-md shadow-rosa-100/50 p-5 mb-4 border border-white/60 decorated-section"
+             style="animation: fadeSlideUp 0.5s ease-out 0.25s both;">
+
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-sm font-semibold text-rosa-500 uppercase tracking-wide">
-          Productos
-        </h2>
+        <!-- Header con icono -->
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rosa-400 to-rosa-600 flex items-center justify-center shadow-sm shadow-rosa-200">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-sm font-bold text-gray-700">Productos</h2>
+            <div class="h-0.5 w-12 bg-gradient-to-r from-rosa-400 to-rosa-200 rounded-full mt-0.5"></div>
+          </div>
+        </div>
+
+        <!-- Botón Agregar mejorado -->
         <button
           type="button"
           (click)="agregarItem()"
-          class="flex items-center gap-1 text-sm font-medium text-rosa-500
-                 bg-rosa-50 hover:bg-rosa-100 px-3 py-1.5 rounded-full
-                 transition-colors"
+          class="flex items-center gap-1.5 text-sm font-semibold text-white
+                 bg-gradient-to-r from-rosa-500 to-rosa-400 hover:from-rosa-600 hover:to-rosa-500
+                 px-4 py-2.5 rounded-full shadow-md shadow-rosa-200/50
+                 active:scale-95 transition-all duration-200"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -125,20 +146,20 @@
         </button>
       </div>
 
-      <!--
-        formArrayName="items" conecta esta sección al FormArray.
-        *ngFor itera sobre cada item (como un v-for en Vue o un th:each en Thymeleaf).
-      -->
       <div formArrayName="items" class="space-y-3">
         @for (item of items.controls; track $index) {
           <div [formGroupName]="$index"
-               class="bg-rosa-50/50 rounded-xl p-4 border border-rosa-100 relative">
+               class="bg-gradient-to-br from-white to-rosa-50/30 rounded-xl p-4 border border-rosa-100/80 relative
+                      shadow-sm hover:shadow-md transition-all duration-300"
+               [style]="'animation: fadeSlideUp 0.4s ease-out ' + ($index * 0.1) + 's both'">
 
-            <!-- Botón eliminar (esquina superior derecha) -->
+            <!-- Botón eliminar mejorado -->
             <button
               type="button"
               (click)="eliminarItem($index)"
-              class="absolute top-2 right-2 text-gray-300 hover:text-red-400 transition-colors"
+              class="absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full
+                     text-gray-300 hover:text-red-500 hover:bg-red-50
+                     active:scale-90 transition-all duration-200"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -151,8 +172,8 @@
               <select
                 formControlName="productoId"
                 (change)="onProductoSeleccionado($index)"
-                class="w-full rounded-lg border-gray-200 bg-white px-3 py-2.5 text-sm
-                       focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2"
+                class="w-full rounded-lg border-rosa-100 bg-gradient-to-br from-white to-rosa-50/30 px-3 py-2.5 text-sm
+                       focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
               >
                 <option [ngValue]="null" disabled>Seleccionar producto...</option>
                 @for (producto of productos; track producto.id) {
@@ -166,12 +187,6 @@
 
             <!-- Campos según tipo de producto -->
             @if (!item.get('esIlimitado')?.value) {
-              <!--
-                Producto tipo SNACK — 3 campos editables en grid:
-                El usuario puede llenar desde DOS direcciones:
-                  Opción A: pone Cantidad + Subtotal → Precio Unit se calcula solo
-                  Opción B: pone Cantidad + Precio Unit → Subtotal se calcula solo
-              -->
               <div class="grid grid-cols-3 gap-2">
                 <div>
                   <label class="block text-xs font-medium text-gray-500 mb-1">Cantidad</label>
@@ -181,8 +196,8 @@
                     (input)="onCantidadCambiada($index)"
                     placeholder="50"
                     min="1"
-                    class="w-full rounded-lg border-gray-200 bg-white px-3 py-2.5 text-sm
-                           focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2"
+                    class="w-full rounded-lg border-rosa-100 bg-gradient-to-br from-white to-rosa-50/30 px-3 py-2.5 text-sm
+                           focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
                   />
                 </div>
                 <div>
@@ -194,8 +209,8 @@
                     placeholder="0.00"
                     step="0.01"
                     min="0"
-                    class="w-full rounded-lg border-gray-200 bg-white px-3 py-2.5 text-sm
-                           focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2"
+                    class="w-full rounded-lg border-rosa-100 bg-gradient-to-br from-white to-rosa-50/30 px-3 py-2.5 text-sm
+                           focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
                   />
                 </div>
                 <div>
@@ -207,8 +222,8 @@
                     placeholder="0.00"
                     step="0.01"
                     min="0"
-                    class="w-full rounded-lg border-gray-200 bg-white px-3 py-2.5 text-sm
-                           focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2"
+                    class="w-full rounded-lg border-rosa-100 bg-gradient-to-br from-white to-rosa-50/30 px-3 py-2.5 text-sm
+                           focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
                   />
                 </div>
               </div>
@@ -219,37 +234,52 @@
               </p>
             }
 
-            <!-- Subtotal del item (solo lectura, muestra el valor actual) -->
-            <div class="mt-3 text-right">
+            <!-- Subtotal del item con texto gradiente -->
+            <div class="mt-3 pt-2 border-t border-rosa-100/50 text-right">
               <span class="text-xs text-gray-400">Subtotal item:</span>
-              <span class="ml-1 text-sm font-semibold text-gray-700">
+              <span class="ml-1 text-sm font-bold bg-gradient-to-r from-rosa-600 to-rosa-500 bg-clip-text text-transparent">
                 S/ {{ item.get('subtotalItem')?.value | number:'1.2-2' }}
               </span>
             </div>
           </div>
         }
 
-        <!-- Estado vacío -->
+        <!-- Estado vacío mejorado -->
         @if (items.length === 0) {
-          <div class="text-center py-8 text-gray-300">
-            <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
-            </svg>
-            <p class="text-sm">No hay productos agregados</p>
-            <p class="text-xs mt-1">Toca "Agregar" para comenzar</p>
+          <div class="text-center py-10">
+            <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-rosa-100 to-lavanda/50
+                        flex items-center justify-center shadow-sm"
+                 style="animation: cartBounce 2s ease-in-out infinite;">
+              <svg class="w-10 h-10 text-rosa-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
+              </svg>
+            </div>
+            <p class="text-sm font-medium text-gray-400">No hay productos agregados</p>
+            <p class="text-xs text-gray-300 mt-1">Toca <span class="font-semibold text-rosa-400">"Agregar"</span> para comenzar</p>
           </div>
         }
       </div>
     </section>
 
     <!-- ═══════════════════════════════════════════════
-         SECCIÓN 3: Movilidad, Descuento y Resumen (Fase 7)
+         SECCIÓN 3: Movilidad, Descuento y Resumen
          ═══════════════════════════════════════════════ -->
-    <section class="bg-white rounded-2xl shadow-sm p-5 mb-4">
-      <h2 class="text-sm font-semibold text-rosa-500 uppercase tracking-wide mb-4">
-        Resumen
-      </h2>
+    <section class="bg-gradient-to-br from-white via-white to-rosa-50/50 rounded-2xl shadow-lg shadow-rosa-100/50 p-5 mb-4 border border-rosa-100/50 ring-1 ring-rosa-100/30"
+             style="animation: fadeSlideUp 0.5s ease-out 0.4s both;">
+
+      <!-- Header con icono (gradiente más intenso para resumen) -->
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rosa-500 to-rosa-700 flex items-center justify-center shadow-sm shadow-rosa-300">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-sm font-bold text-gray-700">Resumen</h2>
+          <div class="h-0.5 w-12 bg-gradient-to-r from-rosa-500 to-rosa-300 rounded-full mt-0.5"></div>
+        </div>
+      </div>
 
       <div class="grid grid-cols-2 gap-3 mb-4">
         <div>
@@ -259,8 +289,8 @@
             formControlName="movilidad"
             min="0"
             step="0.01"
-            class="w-full rounded-lg border-gray-200 bg-rosa-50/50 px-3 py-2.5 text-sm
-                   focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2"
+            class="w-full rounded-lg border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 px-3 py-2.5 text-sm
+                   focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
           />
         </div>
         <div>
@@ -269,8 +299,8 @@
             type="number"
             formControlName="descuento"
             min="0"
-            class="w-full rounded-lg border-gray-200 bg-rosa-50/50 px-3 py-2.5 text-sm
-                   focus:border-rosa-300 focus:ring-rosa-200 focus:ring-2"
+            class="w-full rounded-lg border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 px-3 py-2.5 text-sm
+                   focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
           />
         </div>
       </div>
@@ -293,9 +323,14 @@
             <span class="text-green-500">- S/ {{ cotizacionForm.get('descuento')?.value | number:'1.2-2' }}</span>
           </div>
         }
-        <div class="flex justify-between text-lg font-bold text-gray-800 pt-2 border-t border-rosa-100">
-          <span>Total</span>
-          <span class="text-rosa-600">S/ {{ total | number:'1.2-2' }}</span>
+        <!-- Fila Total destacada -->
+        <div class="flex justify-between items-center text-lg font-bold pt-3 mt-1
+                    bg-gradient-to-r from-rosa-50 to-lavanda/30 -mx-5 px-5 py-3 rounded-b-2xl
+                    border-t-2 border-rosa-200">
+          <span class="text-gray-700">Total</span>
+          <span class="text-xl font-extrabold bg-gradient-to-r from-rosa-600 to-rosa-500 bg-clip-text text-transparent">
+            S/ {{ total | number:'1.2-2' }}
+          </span>
         </div>
       </div>
     </section>
@@ -306,33 +341,40 @@
 
     <!-- Error -->
     @if (error) {
-      <div class="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3 mb-4">
+      <div class="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3 mb-4
+                  shadow-sm shadow-red-100/50"
+           style="animation: fadeSlideUp 0.3s ease-out;">
         {{ error }}
       </div>
     }
 
-    <!-- Botón Generar PDF -->
-    <button
-      type="submit"
-      [disabled]="cargando"
-      class="w-full py-4 rounded-2xl font-semibold text-white text-base
-             bg-rosa-500 hover:bg-rosa-600 active:bg-rosa-700
-             disabled:bg-gray-300 disabled:cursor-not-allowed
-             shadow-lg shadow-rosa-200 transition-all duration-200"
-    >
-      @if (cargando) {
-        <span class="flex items-center justify-center gap-2">
-          <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-            <path class="opacity-75" fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
-          </svg>
-          Generando PDF...
-        </span>
-      } @else {
-        Generar PDF
-      }
-    </button>
+    <!-- Botón Generar PDF con shimmer y glow -->
+    <div style="animation: fadeSlideUp 0.5s ease-out 0.55s both;">
+      <button
+        type="submit"
+        [disabled]="cargando"
+        class="w-full py-4 rounded-2xl font-bold text-white text-base relative overflow-hidden
+               bg-gradient-to-r from-rosa-500 via-rosa-400 to-rosa-500 bg-[length:200%_100%]
+               hover:shadow-xl hover:shadow-rosa-300/40
+               active:scale-[0.98]
+               disabled:from-gray-300 disabled:via-gray-300 disabled:to-gray-300 disabled:shadow-none disabled:cursor-not-allowed
+               shadow-lg shadow-rosa-300/30 transition-all duration-300"
+        [style]="cargando ? '' : 'animation: shimmer 3s linear infinite, pulseGlow 2s ease-out infinite;'"
+      >
+        @if (cargando) {
+          <span class="flex items-center justify-center gap-2">
+            <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+            </svg>
+            Generando PDF...
+          </span>
+        } @else {
+          Generar PDF
+        }
+      </button>
+    </div>
 
     <!-- Espaciado inferior para que el botón no quede pegado al borde en móvil -->
     <div class="h-8"></div>

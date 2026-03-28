@@ -28,6 +28,7 @@
   --color-rosa-500: #ec4899;
   --color-rosa-600: #db2777;
   --color-rosa-700: #be185d;
+  --color-rosa-800: #9d174d;
 
   /* Colores complementarios pastel */
   --color-crema: #fef7f0;
@@ -40,8 +41,11 @@
 
 /* 4. Estilos base globales */
 body {
-  @apply bg-rosa-50 text-gray-800 font-sans antialiased;
+  @apply text-gray-800 font-sans antialiased;
   min-height: 100dvh;
+  background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 25%, #f3e8ff 50%, #fef7f0 75%, #fdf2f8 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease infinite;
 
   /*
     safe-area-inset: respeta el "notch" y la barra de navegación de Android.
@@ -57,6 +61,28 @@ body {
 /* Asegurar que inputs no hagan zoom en iOS/Android (min 16px) */
 input, select, textarea {
   font-size: 16px;
+}
+
+/* Focus mejorado con glow rosa */
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15), 0 0 12px rgba(236, 72, 153, 0.08);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* Barra gradiente decorativa en la parte superior de secciones */
+.decorated-section {
+  position: relative;
+  overflow: hidden;
+}
+.decorated-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f9a8d4, #ec4899, #db2777, #ec4899, #f9a8d4);
+  border-radius: 1rem 1rem 0 0;
 }
 
 /*
@@ -106,5 +132,59 @@ router-outlet + * {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Oscilación vertical suave para formas decorativas del fondo */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* Luz viajera para el botón submit */
+@keyframes shimmer {
+  0% { background-position: 200% 50%; }
+  100% { background-position: -200% 50%; }
+}
+
+/* Resplandor rosa pulsante */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(236, 72, 153, 0); }
+}
+
+/* Entrada escalonada de secciones */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Rebote suave del icono de carrito vacío */
+@keyframes cartBounce {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.12); }
+  50% { transform: scale(0.95); }
+  75% { transform: scale(1.05); }
+}
+
+/* Fondo animado que alterna colores */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Accesibilidad: respetar preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

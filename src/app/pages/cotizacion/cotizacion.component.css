@@ -6,3 +6,8 @@
 main {
   padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
 }
+
+/* Deshabilitar animaciones en botón disabled (estado cargando) */
+button[disabled] {
+  animation: none !important;
+}

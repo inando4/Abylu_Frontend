@@ -4,4 +4,7 @@
 */
 header {
   padding-top: env(safe-area-inset-top);
+  background: linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(253,242,248,0.85) 100%);
+  backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
 }
