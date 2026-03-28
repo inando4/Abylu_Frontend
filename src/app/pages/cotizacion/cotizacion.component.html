@@ -2,14 +2,16 @@
 
 <main class="max-w-2xl mx-auto px-4 py-6 relative">
 
-  <!-- Formas decorativas flotantes del fondo -->
+  <!-- Mejora #2: Formas decorativas más visibles y más grandes -->
   <div class="pointer-events-none fixed inset-0 overflow-hidden -z-10" aria-hidden="true">
-    <div class="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-rosa-200/30 blur-3xl"
+    <div class="absolute -top-10 -right-10 w-80 h-80 rounded-full bg-rosa-200/40 blur-3xl"
          style="animation: float 6s ease-in-out infinite;"></div>
-    <div class="absolute top-1/3 -left-32 w-72 h-72 rounded-full bg-lavanda/40 blur-3xl"
+    <div class="absolute top-1/3 -left-24 w-96 h-96 rounded-full bg-lavanda/50 blur-3xl"
          style="animation: float 8s ease-in-out infinite 2s;"></div>
-    <div class="absolute bottom-20 right-10 w-48 h-48 rounded-full bg-melon/30 blur-3xl"
+    <div class="absolute bottom-32 right-0 w-72 h-72 rounded-full bg-melon/40 blur-3xl"
          style="animation: float 7s ease-in-out infinite 4s;"></div>
+    <div class="absolute top-2/3 left-1/4 w-56 h-56 rounded-full bg-rosa-300/20 blur-3xl"
+         style="animation: float 9s ease-in-out infinite 1s;"></div>
   </div>
 
   <form [formGroup]="cotizacionForm" (ngSubmit)="generarPdf()">
@@ -17,95 +19,131 @@
     <!-- ═══════════════════════════════════════════════
          SECCIÓN 1: Datos del cliente y evento
          ═══════════════════════════════════════════════ -->
-    <section class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-md shadow-rosa-100/50 p-5 mb-4 border border-white/60 decorated-section"
+    <section class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-md shadow-rosa-100/50 p-5 mb-5 border border-white/60 decorated-section confetti-bg"
              style="animation: fadeSlideUp 0.5s ease-out 0.1s both;">
 
       <!-- Header con icono -->
-      <div class="flex items-center gap-2 mb-4">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rosa-400 to-rosa-600 flex items-center justify-center shadow-sm shadow-rosa-200">
-          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <div class="flex items-center gap-2.5 mb-5">
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-rosa-400 to-rosa-600 flex items-center justify-center shadow-md shadow-rosa-200/50">
+          <svg class="w-4.5 h-4.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
           </svg>
         </div>
         <div>
-          <h2 class="text-sm font-bold text-gray-700">Datos del evento</h2>
-          <div class="h-0.5 w-12 bg-gradient-to-r from-rosa-400 to-rosa-200 rounded-full mt-0.5"></div>
+          <h2 class="text-base font-bold text-gray-700">Datos del evento</h2>
+          <div class="h-0.5 w-14 bg-gradient-to-r from-rosa-400 to-rosa-200 rounded-full mt-0.5"></div>
         </div>
       </div>
 
       <div class="space-y-4">
-        <!-- Teléfono del cliente -->
+        <!-- Mejora #4: Teléfono con icono inline -->
         <div>
           <label for="telefono" class="block text-sm font-medium text-gray-500 tracking-wide mb-1">
             Teléfono del cliente *
           </label>
-          <input
-            id="telefono"
-            type="tel"
-            formControlName="clienteTelefono"
-            placeholder="999 888 777"
-            class="w-full rounded-xl border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 px-4 py-3
-                   focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
-          />
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none" aria-hidden="true">
+              <svg class="w-4.5 h-4.5 text-rosa-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+              </svg>
+            </div>
+            <input
+              id="telefono"
+              type="tel"
+              formControlName="clienteTelefono"
+              placeholder="999 888 777"
+              class="w-full rounded-xl border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 pl-11 pr-4 py-3
+                     focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
+            />
+          </div>
         </div>
 
-        <!-- Lugar del evento -->
+        <!-- Mejora #4: Lugar con icono inline -->
         <div>
           <label for="lugar" class="block text-sm font-medium text-gray-500 tracking-wide mb-1">
             Lugar del evento *
           </label>
-          <input
-            id="lugar"
-            type="text"
-            formControlName="lugarEvento"
-            placeholder="Ej: Salón de eventos Los Jardines"
-            class="w-full rounded-xl border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 px-4 py-3
-                   focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
-          />
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none" aria-hidden="true">
+              <svg class="w-4.5 h-4.5 text-rosa-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <input
+              id="lugar"
+              type="text"
+              formControlName="lugarEvento"
+              placeholder="Ej: Salón de eventos Los Jardines"
+              class="w-full rounded-xl border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 pl-11 pr-4 py-3
+                     focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
+            />
+          </div>
         </div>
 
-        <!-- Tipo de evento -->
+        <!-- Mejora #4: Tipo de evento con icono inline -->
         <div>
           <label for="tipo" class="block text-sm font-medium text-gray-500 tracking-wide mb-1">
             Tipo de evento
           </label>
-          <input
-            id="tipo"
-            type="text"
-            formControlName="tipoEvento"
-            placeholder="Ej: Cumpleaños, Boda, Corporativo"
-            class="w-full rounded-xl border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 px-4 py-3
-                   focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
-          />
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none" aria-hidden="true">
+              <svg class="w-4.5 h-4.5 text-rosa-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+              </svg>
+            </div>
+            <input
+              id="tipo"
+              type="text"
+              formControlName="tipoEvento"
+              placeholder="Ej: Cumpleaños, Boda, Corporativo"
+              class="w-full rounded-xl border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 pl-11 pr-4 py-3
+                     focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
+            />
+          </div>
         </div>
 
-        <!-- Fecha del evento -->
+        <!-- Mejora #4: Fecha con icono inline -->
         <div>
           <label for="fecha" class="block text-sm font-medium text-gray-500 tracking-wide mb-1">
             Fecha del evento *
           </label>
-          <input
-            id="fecha"
-            type="date"
-            formControlName="fechaEvento"
-            class="w-full rounded-xl border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 px-4 py-3
-                   focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
-          />
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none" aria-hidden="true">
+              <svg class="w-4.5 h-4.5 text-rosa-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <input
+              id="fecha"
+              type="date"
+              formControlName="fechaEvento"
+              class="w-full rounded-xl border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 pl-11 pr-4 py-3
+                     focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
+            />
+          </div>
         </div>
 
-        <!-- Notas -->
+        <!-- Notas con icono -->
         <div>
           <label for="notas" class="block text-sm font-medium text-gray-500 tracking-wide mb-1">
             Notas adicionales
           </label>
-          <textarea
-            id="notas"
-            formControlName="notas"
-            rows="2"
-            placeholder="Instrucciones especiales..."
-            class="w-full rounded-xl border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 px-4 py-3
-                   focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300 resize-none"
-          ></textarea>
+          <div class="relative">
+            <div class="absolute top-3 left-0 pl-3.5 pointer-events-none" aria-hidden="true">
+              <svg class="w-4.5 h-4.5 text-rosa-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+              </svg>
+            </div>
+            <textarea
+              id="notas"
+              formControlName="notas"
+              rows="2"
+              placeholder="Instrucciones especiales..."
+              class="w-full rounded-xl border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 pl-11 pr-4 py-3
+                     focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300 resize-none"
+            ></textarea>
+          </div>
         </div>
       </div>
     </section>
@@ -113,24 +151,24 @@
     <!-- ═══════════════════════════════════════════════
          SECCIÓN 2: Items / Productos
          ═══════════════════════════════════════════════ -->
-    <section class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-md shadow-rosa-100/50 p-5 mb-4 border border-white/60 decorated-section"
+    <section class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-md shadow-rosa-100/50 p-5 mb-5 border border-white/60 decorated-section"
              style="animation: fadeSlideUp 0.5s ease-out 0.25s both;">
 
       <div class="flex items-center justify-between mb-4">
         <!-- Header con icono -->
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rosa-400 to-rosa-600 flex items-center justify-center shadow-sm shadow-rosa-200">
-            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-rosa-400 to-rosa-600 flex items-center justify-center shadow-md shadow-rosa-200/50">
+            <svg class="w-4.5 h-4.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
             </svg>
           </div>
           <div>
-            <h2 class="text-sm font-bold text-gray-700">Productos</h2>
-            <div class="h-0.5 w-12 bg-gradient-to-r from-rosa-400 to-rosa-200 rounded-full mt-0.5"></div>
+            <h2 class="text-base font-bold text-gray-700">Productos</h2>
+            <div class="h-0.5 w-14 bg-gradient-to-r from-rosa-400 to-rosa-200 rounded-full mt-0.5"></div>
           </div>
         </div>
 
-        <!-- Botón Agregar mejorado -->
+        <!-- Botón Agregar -->
         <button
           type="button"
           (click)="agregarItem()"
@@ -153,7 +191,7 @@
                       shadow-sm hover:shadow-md transition-all duration-300"
                [style]="'animation: fadeSlideUp 0.4s ease-out ' + ($index * 0.1) + 's both'">
 
-            <!-- Botón eliminar mejorado -->
+            <!-- Botón eliminar -->
             <button
               type="button"
               (click)="eliminarItem($index)"
@@ -264,20 +302,21 @@
 
     <!-- ═══════════════════════════════════════════════
          SECCIÓN 3: Movilidad, Descuento y Resumen
+         Mejora #1: Sección visualmente distinta con lavanda
          ═══════════════════════════════════════════════ -->
-    <section class="bg-gradient-to-br from-white via-white to-rosa-50/50 rounded-2xl shadow-lg shadow-rosa-100/50 p-5 mb-4 border border-rosa-100/50 ring-1 ring-rosa-100/30"
+    <section class="bg-gradient-to-br from-white via-rosa-50/30 to-lavanda/40 rounded-2xl shadow-lg shadow-rosa-200/40 p-5 mb-5 border border-rosa-200/60 ring-1 ring-rosa-100/40 confetti-bg"
              style="animation: fadeSlideUp 0.5s ease-out 0.4s both;">
 
       <!-- Header con icono (gradiente más intenso para resumen) -->
-      <div class="flex items-center gap-2 mb-4">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rosa-500 to-rosa-700 flex items-center justify-center shadow-sm shadow-rosa-300">
-          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <div class="flex items-center gap-2.5 mb-5">
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-rosa-500 to-rosa-700 flex items-center justify-center shadow-md shadow-rosa-300/50">
+          <svg class="w-4.5 h-4.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
           </svg>
         </div>
         <div>
-          <h2 class="text-sm font-bold text-gray-700">Resumen</h2>
-          <div class="h-0.5 w-12 bg-gradient-to-r from-rosa-500 to-rosa-300 rounded-full mt-0.5"></div>
+          <h2 class="text-base font-bold text-gray-700">Resumen</h2>
+          <div class="h-0.5 w-14 bg-gradient-to-r from-rosa-500 to-rosa-300 rounded-full mt-0.5"></div>
         </div>
       </div>
 
@@ -289,7 +328,7 @@
             formControlName="movilidad"
             min="0"
             step="0.01"
-            class="w-full rounded-lg border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 px-3 py-2.5 text-sm
+            class="w-full rounded-lg border-rosa-100 bg-white/70 px-3 py-2.5 text-sm
                    focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
           />
         </div>
@@ -299,14 +338,14 @@
             type="number"
             formControlName="descuento"
             min="0"
-            class="w-full rounded-lg border-rosa-100 bg-gradient-to-br from-white to-rosa-50/50 px-3 py-2.5 text-sm
+            class="w-full rounded-lg border-rosa-100 bg-white/70 px-3 py-2.5 text-sm
                    focus:border-rosa-400 focus:ring-0 shadow-sm transition-all duration-300"
           />
         </div>
       </div>
 
       <!-- Desglose -->
-      <div class="border-t border-rosa-100 pt-3 space-y-2">
+      <div class="border-t border-rosa-200/60 pt-3 space-y-2">
         <div class="flex justify-between text-sm text-gray-500">
           <span>Subtotal</span>
           <span>S/ {{ subtotal | number:'1.2-2' }}</span>
@@ -323,12 +362,17 @@
             <span class="text-green-500">- S/ {{ cotizacionForm.get('descuento')?.value | number:'1.2-2' }}</span>
           </div>
         }
-        <!-- Fila Total destacada -->
-        <div class="flex justify-between items-center text-lg font-bold pt-3 mt-1
-                    bg-gradient-to-r from-rosa-50 to-lavanda/30 -mx-5 px-5 py-3 rounded-b-2xl
-                    border-t-2 border-rosa-200">
-          <span class="text-gray-700">Total</span>
-          <span class="text-xl font-extrabold bg-gradient-to-r from-rosa-600 to-rosa-500 bg-clip-text text-transparent">
+        <!-- Mejora #5: Fila Total con mucho más peso visual -->
+        <div class="flex justify-between items-center text-lg font-bold pt-3 mt-2
+                    bg-gradient-to-r from-rosa-100/80 via-rosa-50 to-lavanda/40 -mx-5 px-5 py-4 rounded-b-2xl
+                    border-t-2 border-rosa-300/50">
+          <span class="text-gray-700 flex items-center gap-1.5">
+            <svg class="w-5 h-5 text-rosa-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Total
+          </span>
+          <span class="text-2xl font-extrabold bg-gradient-to-r from-rosa-700 to-rosa-500 bg-clip-text text-transparent drop-shadow-sm">
             S/ {{ total | number:'1.2-2' }}
           </span>
         </div>
@@ -348,7 +392,7 @@
       </div>
     }
 
-    <!-- Botón Generar PDF con shimmer y glow -->
+    <!-- Mejora #6: Botón Generar PDF con icono de descarga -->
     <div style="animation: fadeSlideUp 0.5s ease-out 0.55s both;">
       <button
         type="submit"
@@ -371,12 +415,17 @@
             Generando PDF...
           </span>
         } @else {
-          Generar PDF
+          <span class="flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Generar PDF
+          </span>
         }
       </button>
     </div>
 
-    <!-- Espaciado inferior para que el botón no quede pegado al borde en móvil -->
+    <!-- Espaciado inferior -->
     <div class="h-8"></div>
   </form>
 </main>

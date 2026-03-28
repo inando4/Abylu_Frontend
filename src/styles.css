@@ -180,6 +180,31 @@ router-outlet + * {
   100% { background-position: 0% 50%; }
 }
 
+/* Confeti decorativo sutil en las secciones */
+.confetti-bg {
+  position: relative;
+}
+.confetti-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image:
+    radial-gradient(circle 3px, #ec4899 100%, transparent 100%),
+    radial-gradient(circle 2px, #f472b6 100%, transparent 100%),
+    radial-gradient(circle 2.5px, #db2777 100%, transparent 100%),
+    radial-gradient(circle 1.5px, #f9a8d4 100%, transparent 100%),
+    radial-gradient(circle 2px, #be185d 100%, transparent 100%);
+  background-size: 180px 180px;
+  background-position:
+    10px 20px,
+    80px 90px,
+    150px 40px,
+    40px 140px,
+    120px 120px;
+}
+
 /* Accesibilidad: respetar preferencia de movimiento reducido */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
