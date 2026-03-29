@@ -43,3 +43,6 @@ Thumbs.db
 
 # Claude 
 CLAUDE.md
+
+# Archivo de conexion a API
+/src/app/core/api.config.ts
