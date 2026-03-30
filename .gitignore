@@ -45,5 +45,6 @@ Thumbs.db
 CLAUDE.md
 /.claude
 skills-lock.json
+/.agents
 # Archivo de conexion a API
 /src/app/core/api.config.ts
