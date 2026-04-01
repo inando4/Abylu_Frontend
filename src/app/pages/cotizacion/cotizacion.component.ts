@@ -63,6 +63,7 @@ export class CotizacionComponent implements OnInit {
       notas:           [''],
       descuento:       [0, [Validators.required, Validators.min(0)]],
       movilidad:       [0, [Validators.required, Validators.min(0)]],
+      horasServicio:   [''],
       items:           this.fb.array([])
     });
   }
@@ -235,6 +236,7 @@ export class CotizacionComponent implements OnInit {
       notas: formValue.notas || '',
       descuento: formValue.descuento || 0,
       movilidad: formValue.movilidad || 0,
+      horasServicio: formValue.horasServicio || '',
       items: formValue.items.map((item: any) => ({
         productoId: +item.productoId,
         cantidad: item.esIlimitado ? null : +item.cantidad,
