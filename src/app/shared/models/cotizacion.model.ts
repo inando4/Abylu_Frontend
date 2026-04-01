@@ -10,6 +10,7 @@ export interface CrearCotizacionRequest {
   notas: string;
   descuento: number;
   movilidad: number;
+  horasServicio: string;
   items: ItemCotizacionRequest[];
 }
 
