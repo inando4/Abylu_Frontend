@@ -1,13 +1,7 @@
-/*
-  Padding inferior extra para que el botón "Generar PDF"
-  no quede tapado por la barra de navegación de Android.
-  env(safe-area-inset-bottom) es 0 en desktop y ~34px en Android con barra gestual.
-*/
 main {
   padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
 }
 
-/* Deshabilitar animaciones en botón disabled (estado cargando) */
 button[disabled] {
   animation: none !important;
 }
