@@ -254,6 +254,9 @@ export class CotizacionComponent implements OnInit {
         const itemsDesc = formValue.items
           .map((item: any) => {
             const nombre = item.nombreProducto || 'Producto';
+            if (item.esIlimitado && nombre.toLowerCase() === 'dispensador de bebidas') {
+              return `16 Lt. ${nombre}`;
+            }
             return item.esIlimitado ? `Ilimitado ${nombre}` : `${item.cantidad} ${nombre}`;
           })
           .join(', ');
