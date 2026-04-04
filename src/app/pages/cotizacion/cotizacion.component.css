@@ -5,3 +5,12 @@ main {
 button[disabled] {
   animation: none !important;
 }
+
+/* Inputs dentro de glass-cards: sin estilos del plugin forms */
+.glass-card input,
+.glass-card select,
+.glass-card textarea {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}

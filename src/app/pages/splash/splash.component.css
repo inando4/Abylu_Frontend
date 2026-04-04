@@ -8,7 +8,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100dvh;
-  background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%);
+  background: linear-gradient(135deg, #fcfdfe 0%, #f3f4f5 50%, #e7e8e9 100%);
   transition: opacity 0.5s ease;
 }
 
@@ -35,23 +35,25 @@
 .logo-icon svg {
   width: 100px;
   height: 100px;
-  filter: drop-shadow(0 4px 12px rgba(236, 72, 153, 0.3));
+  filter: drop-shadow(0 4px 12px rgba(0, 78, 232, 0.25));
 }
 
 .logo-text {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 2.5rem;
   font-weight: 700;
-  color: #db2777;
+  color: #191c1d;
   letter-spacing: -0.02em;
   margin: 0;
+  margin-top: -100px;
 }
 
 .logo-subtitle {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 1rem;
-  color: #f472b6;
+  color: #94a3b8;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   margin: 0;
+  margin-top: -10px;
 }

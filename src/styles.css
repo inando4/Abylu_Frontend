@@ -1,6 +1,7 @@
 /* ═══════════════════════════════════════════════
    ABYLU FRONTEND — Estilos Globales
    Tailwind CSS v4 · @theme config
+   Diseño: Glass-card con gradiente Google
    ═══════════════════════════════════════════════ */
 
 @import "tailwindcss";
@@ -8,29 +9,34 @@
 @plugin "@tailwindcss/forms";
 
 @theme {
-  --color-rosa-50:  #fdf2f8;
-  --color-rosa-100: #fce7f3;
-  --color-rosa-200: #fbcfe8;
-  --color-rosa-300: #f9a8d4;
-  --color-rosa-400: #f472b6;
-  --color-rosa-500: #ec4899;
-  --color-rosa-600: #db2777;
-  --color-rosa-700: #be185d;
-  --color-rosa-800: #9d174d;
+  --color-primary:                  #004ee8;
+  --color-secondary:                #b9003b;
+  --color-tertiary:                 #006d35;
+  --color-surface:                  #fcfdfe;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low:    #f3f4f5;
+  --color-surface-container-high:   #e7e8e9;
+  --color-on-surface:               #191c1d;
+  --color-outline-variant:          #b9ccb2;
 
-  --color-crema:   #fef7f0;
-  --color-lavanda: #f3e8ff;
-  --color-melon:   #fef3e2;
+  --font-sans: 'Manrope', sans-serif;
+}
 
-  --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+/* ── @property para animación del trail ── */
+@property --trail-size {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 70%;
 }
 
 /* ── Base ── */
 body {
-  @apply text-gray-800 font-sans antialiased;
+  font-family: 'Manrope', sans-serif;
+  background-color: #fcfdfe;
+  color: #191c1d;
   min-height: 100dvh;
-  background-color: #fdf2f8;
-  background-image: radial-gradient(ellipse at top center, rgba(251, 207, 232, 0.5) 0%, transparent 50%);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   overscroll-behavior-y: none;
 }
@@ -40,22 +46,113 @@ input, select, textarea { font-size: 16px; }
 * { -webkit-tap-highlight-color: transparent; }
 button, [type="submit"] { min-height: 44px; }
 
+/* Material Symbols base */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
 input:focus, select:focus, textarea:focus {
-  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+  box-shadow: 0 0 0 3px rgba(0, 78, 232, 0.1);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 router-outlet + * { animation: abylu-pageIn 0.4s ease-out; }
 
 /* ═══════════════════════════════════════════════
-   Clases reutilizables — Cotización
+   Glass Card — Efecto gradiente cónico rotatorio
+   ═══════════════════════════════════════════════ */
+
+.glass-card {
+  position: relative;
+  background: white;
+  border-radius: 14px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    0 10px 25px -5px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  border: 1px solid transparent;
+  contain: layout style paint;
+}
+
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: -80%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(66, 133, 244, 0.4) 0%,
+    rgba(234, 67, 53, 0.4) 15%,
+    rgba(251, 188, 5, 0.4) 30%,
+    rgba(52, 168, 83, 0.4) 45%,
+    rgba(66, 133, 244, 0.4) var(--trail-size),
+    transparent var(--trail-size),
+    transparent 100%
+  );
+  animation:
+    rotate-gradient 6s linear infinite,
+    pulse-trail 5s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(6px);
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.glass-card::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background: white;
+  border-radius: 12px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.glass-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Móvil: borde gradiente estático (sin animación pesada) */
+@media (max-width: 768px) {
+  .glass-card {
+    border: 2px solid transparent;
+    background-image:
+      linear-gradient(white, white),
+      conic-gradient(
+        rgba(66, 133, 244, 0.35),
+        rgba(234, 67, 53, 0.35),
+        rgba(251, 188, 5, 0.35),
+        rgba(52, 168, 83, 0.35),
+        rgba(66, 133, 244, 0.35)
+      );
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    overflow: visible;
+  }
+  .glass-card::before,
+  .glass-card::after {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Clases reutilizables — Inputs dentro de glass-cards
    ═══════════════════════════════════════════════ */
 
 .abylu-input {
-  @apply w-full rounded-lg border-gray-200 bg-gray-50/80
-         px-4 py-3 text-sm placeholder-gray-300
-         focus:border-rosa-400 focus:ring-0 focus:bg-white
-         transition-all duration-200;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent;
+  width: 100%;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.abylu-input::placeholder {
+  color: #cbd5e1; /* slate-300 */
 }
 
 .abylu-label {
@@ -69,6 +166,16 @@ router-outlet + * { animation: abylu-pageIn 0.4s ease-out; }
 /* ═══════════════════════════════════════════════
    Keyframes
    ═══════════════════════════════════════════════ */
+
+@keyframes rotate-gradient {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse-trail {
+  0%, 100% { --trail-size: 65%; }
+  50%      { --trail-size: 85%; }
+}
 
 @keyframes abylu-pageIn {
   from { opacity: 0; transform: translateY(8px); }
@@ -91,8 +198,8 @@ router-outlet + * { animation: abylu-pageIn 0.4s ease-out; }
 }
 
 @keyframes abylu-glow {
-  0%, 100% { box-shadow: 0 8px 32px rgba(236, 72, 153, 0.25); }
-  50%      { box-shadow: 0 8px 48px rgba(236, 72, 153, 0.4); }
+  0%, 100% { box-shadow: 0 8px 32px rgba(0, 78, 232, 0.2); }
+  50%      { box-shadow: 0 8px 48px rgba(0, 78, 232, 0.35); }
 }
 
 @keyframes abylu-float {
