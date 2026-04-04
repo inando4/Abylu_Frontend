@@ -1,315 +1,262 @@
 <app-header />
 
-<main class="max-w-2xl mx-auto px-4 pt-4 pb-6">
-
-  <!-- ── Stepper horizontal ── -->
-  <nav class="flex items-center justify-between mb-8 px-4" aria-label="Progreso">
-    <div class="flex flex-col items-center gap-1">
-      <span class="w-8 h-8 rounded-full bg-rosa-500 text-white text-xs font-bold
-                   flex items-center justify-center shadow-sm shadow-rosa-200">1</span>
-      <span class="text-[10px] font-semibold text-rosa-600 tracking-wide uppercase">Evento</span>
-    </div>
-    <div class="flex-1 h-px bg-gradient-to-r from-rosa-300 to-rosa-200 mx-2"></div>
-    <div class="flex flex-col items-center gap-1">
-      <span class="w-8 h-8 rounded-full bg-rosa-500 text-white text-xs font-bold
-                   flex items-center justify-center shadow-sm shadow-rosa-200">2</span>
-      <span class="text-[10px] font-semibold text-rosa-600 tracking-wide uppercase">Productos</span>
-    </div>
-    <div class="flex-1 h-px bg-gradient-to-r from-rosa-200 to-rosa-300 mx-2"></div>
-    <div class="flex flex-col items-center gap-1">
-      <span class="w-8 h-8 rounded-full bg-rosa-500 text-white text-xs font-bold
-                   flex items-center justify-center shadow-sm shadow-rosa-200">3</span>
-      <span class="text-[10px] font-semibold text-rosa-600 tracking-wide uppercase">Resumen</span>
-    </div>
-  </nav>
+<main class="pt-24 px-6 max-w-2xl mx-auto space-y-8">
 
   <form [formGroup]="cotizacionForm" (ngSubmit)="generarPdf()">
 
+    <!-- ── Título ── -->
+    <div class="px-2 mb-8">
+      <h2 class="text-slate-900 font-black text-3xl tracking-tighter">Nueva Cotización</h2>
+    </div>
+
     <!-- ══════════════════════════════════════
-         SECCIÓN 1 · Datos del evento
+         SECCIÓN 1 · Detalles del Evento
          ══════════════════════════════════════ -->
-    <section class="relative bg-white rounded-2xl shadow-sm shadow-gray-200/60 mb-6
-                    overflow-hidden border border-gray-100"
-             style="animation: abylu-fadeIn 0.5s ease-out 0.1s both;">
+    <section class="space-y-4">
+      <h3 class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400 px-2">
+        Detalles del Evento
+      </h3>
 
-      <!-- Acento lateral izquierdo -->
-      <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-rosa-400 to-rosa-600"
-           aria-hidden="true"></div>
+      <div class="space-y-3">
+        <!-- Teléfono -->
+        <div class="glass-card px-5 py-3 flex items-center">
+          <span class="material-symbols-outlined text-slate-400 mr-3 text-xl">phone</span>
+          <input class="abylu-input" type="tel"
+                 formControlName="clienteTelefono"
+                 placeholder="Teléfono del cliente" />
+        </div>
 
-      <div class="pl-6 pr-5 py-5">
-        <h2 class="text-lg font-bold text-gray-900 mb-0.5">Datos del evento</h2>
-        <p class="text-xs text-gray-400 mb-5">Información del cliente y su evento</p>
+        <!-- Lugar del evento -->
+        <div class="glass-card px-5 py-3 flex items-center">
+          <span class="material-symbols-outlined text-slate-400 mr-3 text-xl">location_on</span>
+          <input class="abylu-input" type="text"
+                 formControlName="lugarEvento"
+                 placeholder="Lugar del evento" />
+        </div>
 
-        <div class="space-y-4">
-          <!-- Teléfono -->
-          <div>
-            <label for="telefono" class="abylu-label">Teléfono del cliente *</label>
-            <input id="telefono" type="tel" formControlName="clienteTelefono"
-                   placeholder="999 888 777"
-                   class="abylu-input" />
+        <!-- Tipo de evento & Fecha -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="glass-card px-5 py-3 flex items-center">
+            <span class="material-symbols-outlined text-slate-400 mr-2 text-lg">celebration</span>
+            <input class="abylu-input text-xs uppercase tracking-tighter" type="text"
+                   formControlName="tipoEvento"
+                   placeholder="Tipo de evento" />
           </div>
-
-          <!-- Lugar -->
-          <div>
-            <label for="lugar" class="abylu-label">Lugar del evento *</label>
-            <input id="lugar" type="text" formControlName="lugarEvento"
-                   placeholder="Ej: Salón Los Jardines"
-                   class="abylu-input" />
+          <div class="glass-card px-5 py-3 flex items-center">
+            <span class="material-symbols-outlined text-slate-400 mr-2 text-lg">calendar_today</span>
+            <input class="abylu-input text-xs font-bold" type="date"
+                   formControlName="fechaEvento" />
           </div>
+        </div>
 
-          <!-- Tipo de evento -->
-          <div>
-            <label for="tipo" class="abylu-label">Tipo de evento</label>
-            <input id="tipo" type="text" formControlName="tipoEvento"
-                   placeholder="Ej: Cumpleaños, Boda, Corporativo"
-                   class="abylu-input" />
-          </div>
-
-          <!-- Fecha -->
-          <div>
-            <label for="fecha" class="abylu-label">Fecha del evento *</label>
-            <input id="fecha" type="date" formControlName="fechaEvento"
-                   class="abylu-input" />
-          </div>
-
-          <!-- Notas -->
-          <div>
-            <label for="notas" class="abylu-label">Notas adicionales</label>
-            <textarea id="notas" formControlName="notas" rows="2"
-                      placeholder="Instrucciones especiales..."
-                      class="abylu-input resize-none"></textarea>
-          </div>
+        <!-- Notas adicionales -->
+        <div class="glass-card px-5 py-4">
+          <textarea class="abylu-input resize-none" rows="3"
+                    formControlName="notas"
+                    placeholder="Notas adicionales"></textarea>
         </div>
       </div>
     </section>
 
     <!-- ══════════════════════════════════════
-         SECCIÓN 2 · Productos
+         SECCIÓN 2 · Productos y Servicios
          ══════════════════════════════════════ -->
-    <section class="relative bg-white rounded-2xl shadow-sm shadow-gray-200/60 mb-6
-                    overflow-hidden border border-gray-100"
-             style="animation: abylu-fadeIn 0.5s ease-out 0.2s both;">
+    <section class="space-y-3">
+      <div class="flex items-center justify-between px-2 pt-4 pb-0">
+        <h3 class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400 m-0">
+          Productos y Servicios
+        </h3>
+        <button type="button" (click)="agregarItem()"
+                class="glass-card px-5 py-2 text-[10px] font-black flex items-center gap-2
+                       hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-sm">add</span>
+          <span>AGREGAR ITEM</span>
+        </button>
+      </div>
 
-      <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-rosa-400 to-rosa-600"
-           aria-hidden="true"></div>
+      <div formArrayName="items" class="space-y-3">
+        @for (item of items.controls; track $index) {
+          <div [formGroupName]="$index"
+               class="glass-card p-5"
+               [style]="'animation: abylu-scaleIn 0.35s ease-out ' + ($index * 0.08) + 's both'">
 
-      <div class="pl-6 pr-5 py-5">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h2 class="text-lg font-bold text-gray-900 mb-0.5">Productos</h2>
-            <p class="text-xs text-gray-400">Agrega los items de la cotización</p>
-          </div>
-
-          <button type="button" (click)="agregarItem()"
-                  class="flex items-center gap-1.5 text-sm font-semibold text-rosa-600
-                         bg-rosa-50 hover:bg-rosa-100
-                         px-4 py-2.5 rounded-full border border-rosa-200
-                         active:scale-95 transition-all duration-200">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
-            </svg>
-            Agregar
-          </button>
-        </div>
-
-        <div formArrayName="items" class="space-y-3">
-          @for (item of items.controls; track $index) {
-            <div [formGroupName]="$index"
-                 class="rounded-xl p-4 border border-gray-100 bg-gray-50/50 relative
-                        transition-colors duration-200 hover:bg-gray-50"
-                 [style]="'animation: abylu-scaleIn 0.35s ease-out ' + ($index * 0.08) + 's both'">
-
-              <!-- Eliminar -->
+            <!-- Cabecera: label + botón eliminar -->
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-[10px] font-extrabold uppercase tracking-[0.15em] text-slate-400">
+                Producto
+              </label>
               <button type="button" (click)="eliminarItem($index)"
-                      class="absolute top-3 right-3 w-7 h-7 flex items-center justify-center
-                             rounded-full text-gray-300 hover:text-white hover:bg-red-400
+                      class="w-7 h-7 flex items-center justify-center
+                             rounded-full text-slate-300 hover:text-white hover:bg-red-400
                              active:scale-90 transition-all duration-200">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
+                <span class="material-symbols-outlined text-lg">close</span>
               </button>
+            </div>
 
-              <!-- Selector producto -->
-              <div class="mb-3 pr-8">
-                <label class="abylu-label-sm">Producto</label>
-                <select formControlName="productoId"
-                        (change)="onProductoSeleccionado($index)"
-                        class="abylu-input text-sm">
-                  <option [ngValue]="null" disabled>Seleccionar producto...</option>
-                  @for (producto of productos; track producto.id) {
-                    <option [value]="producto.id">
-                      {{ producto.nombre }}
-                      @if (producto.categoria === 'ilimitado') { (Ilimitado) }
-                    </option>
-                  }
-                </select>
+            <!-- Selector de producto -->
+            <div class="mb-3">
+              <select formControlName="productoId"
+                      (change)="onProductoSeleccionado($index)"
+                      class="abylu-input text-sm appearance-none">
+                <option [ngValue]="null" disabled>Seleccionar producto...</option>
+                @for (producto of productos; track producto.id) {
+                  <option [value]="producto.id">
+                    {{ producto.nombre }}
+                    @if (producto.categoria === 'ilimitado') { (Ilimitado) }
+                  </option>
+                }
+              </select>
+            </div>
+
+            <!-- Campos según tipo -->
+            @if (!item.get('esIlimitado')?.value) {
+              <div class="grid grid-cols-3 gap-3">
+                <div>
+                  <label class="text-[10px] font-extrabold uppercase tracking-[0.15em] text-slate-400 mb-1 block">
+                    Cantidad
+                  </label>
+                  <input type="number" formControlName="cantidad"
+                         (input)="onCantidadCambiada($index)"
+                         placeholder="50" min="1"
+                         class="abylu-input text-sm bg-slate-50/80 rounded-lg px-3 py-2" />
+                </div>
+                <div>
+                  <label class="text-[10px] font-extrabold uppercase tracking-[0.15em] text-slate-400 mb-1 block">
+                    Subtotal
+                  </label>
+                  <input type="number" formControlName="subtotalItem"
+                         (input)="onSubtotalCambiado($index)"
+                         placeholder="0.00" step="0.01" min="0"
+                         class="abylu-input text-sm bg-slate-50/80 rounded-lg px-3 py-2" />
+                </div>
+                <div>
+                  <label class="text-[10px] font-extrabold uppercase tracking-[0.15em] text-slate-400 mb-1 block">
+                    P. Unit.
+                  </label>
+                  <input type="number" formControlName="precioUnitarioManual"
+                         (input)="onPrecioManualCambiado($index)"
+                         placeholder="0.00" step="0.01" min="0"
+                         class="abylu-input text-sm bg-slate-50/80 rounded-lg px-3 py-2" />
+                </div>
               </div>
-
-              <!-- Campos según tipo -->
-              @if (!item.get('esIlimitado')?.value) {
-                <div class="grid grid-cols-3 gap-2">
-                  <div>
-                    <label class="abylu-label-sm">Cantidad</label>
-                    <input type="number" formControlName="cantidad"
-                           (input)="onCantidadCambiada($index)"
-                           placeholder="50" min="1"
-                           class="abylu-input text-sm" />
-                  </div>
-                  <div>
-                    <label class="abylu-label-sm">Subtotal</label>
-                    <input type="number" formControlName="subtotalItem"
-                           (input)="onSubtotalCambiado($index)"
-                           placeholder="0.00" step="0.01" min="0"
-                           class="abylu-input text-sm" />
-                  </div>
-                  <div>
-                    <label class="abylu-label-sm">P. Unit.</label>
-                    <input type="number" formControlName="precioUnitarioManual"
-                           (input)="onPrecioManualCambiado($index)"
-                           placeholder="0.00" step="0.01" min="0"
-                           class="abylu-input text-sm" />
-                  </div>
-                </div>
-              } @else {
-                <div class="flex items-center gap-2 mt-1 px-3 py-2 rounded-lg bg-rosa-50 border border-rosa-100">
-                  <svg class="w-4 h-4 text-rosa-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                  </svg>
-                  <span class="text-xs text-rosa-600 font-medium">
-                    Ilimitado — S/ {{ item.get('precioUnitarioVista')?.value | number:'1.2-2' }}
-                  </span>
-                </div>
-              }
-
-              <!-- Subtotal del item -->
-              <div class="mt-3 pt-2 border-t border-gray-100 flex justify-between items-center">
-                <span class="text-xs text-gray-400">Subtotal</span>
-                <span class="text-sm font-bold text-gray-700">
-                  S/ {{ item.get('subtotalItem')?.value | number:'1.2-2' }}
+            } @else {
+              <div class="flex items-center gap-2 mt-1 px-3 py-2 rounded-lg bg-primary/5 border border-primary/10">
+                <span class="material-symbols-outlined text-primary/60 text-lg">bolt</span>
+                <span class="text-xs text-slate-600 font-medium">
+                  Ilimitado — S/ {{ item.get('precioUnitarioVista')?.value | number:'1.2-2' }}
                 </span>
               </div>
-            </div>
-          }
+            }
 
-          <!-- Estado vacío -->
-          @if (items.length === 0) {
-            <div class="text-center py-14">
-              <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-rosa-50 border-2 border-dashed border-rosa-200
-                          flex items-center justify-center"
-                   style="animation: abylu-float 3s ease-in-out infinite;">
-                <svg class="w-6 h-6 text-rosa-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                </svg>
-              </div>
-              <p class="text-sm font-medium text-gray-400">Sin productos aún</p>
-              <p class="text-xs text-gray-300 mt-1">
-                Presiona <span class="font-semibold text-rosa-500">Agregar</span> para comenzar
-              </p>
+            <!-- Subtotal del item -->
+            <div class="mt-3 pt-2 border-t border-slate-100 flex justify-between items-center">
+              <span class="text-xs text-slate-400">Subtotal</span>
+              <span class="text-sm font-extrabold text-slate-700">
+                S/ {{ item.get('subtotalItem')?.value | number:'1.2-2' }}
+              </span>
             </div>
-          }
-        </div>
+          </div>
+        }
+
+        <!-- Estado vacío -->
+        @if (items.length === 0) {
+          <div class="glass-card p-10 flex flex-col items-center justify-center text-center space-y-4">
+            <div class="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100"
+                 style="animation: abylu-float 3s ease-in-out infinite;">
+              <span class="material-symbols-outlined text-slate-300 text-3xl">inventory_2</span>
+            </div>
+            <div>
+              <p class="font-extrabold text-slate-900">Sin productos aún</p>
+              <p class="text-xs text-slate-400 font-medium">Agregue items para iniciar la cotización</p>
+            </div>
+          </div>
+        }
       </div>
     </section>
 
     <!-- ══════════════════════════════════════
          SECCIÓN 3 · Resumen
          ══════════════════════════════════════ -->
-    <section class="relative bg-white rounded-2xl shadow-sm shadow-gray-200/60 mb-6
-                    overflow-hidden border border-rosa-200/60"
-             style="animation: abylu-fadeIn 0.5s ease-out 0.3s both;">
+    <section class="space-y-4 pt-4">
+      <h3 class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400 px-2">Resumen</h3>
 
-      <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-rosa-500 to-rosa-700"
-           aria-hidden="true"></div>
+      <!-- Horas de servicio -->
+      <div class="glass-card px-5 py-3 flex items-center">
+        <span class="material-symbols-outlined text-slate-400 mr-3 text-xl">schedule</span>
+        <input class="abylu-input" type="text"
+               formControlName="horasServicio"
+               placeholder="Horas de servicio (ej: 4)" />
+      </div>
 
-      <div class="pl-6 pr-5 pt-5 pb-0">
-        <h2 class="text-lg font-bold text-gray-900 mb-0.5">Resumen</h2>
-        <p class="text-xs text-gray-400 mb-5">Costos adicionales y total final</p>
-
-        <!-- Horas de servicio -->
-        <div class="mb-3">
-          <label class="abylu-label-sm">Horas de servicio</label>
-          <input type="text" formControlName="horasServicio"
-                 placeholder="Ej: 4"
-                 class="abylu-input text-sm" />
+      <!-- Movilidad y Descuento -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="glass-card px-5 py-3 flex items-center">
+          <span class="material-symbols-outlined text-slate-400 mr-2 text-lg">local_shipping</span>
+          <input class="abylu-input text-sm" type="text" inputmode="decimal"
+                 formControlName="movilidad"
+                 placeholder="Movilidad" />
         </div>
-
-        <!-- Movilidad y Descuento -->
-        <div class="grid grid-cols-2 gap-3 mb-5">
-          <div>
-            <label class="abylu-label-sm">Movilidad (S/)</label>
-            <input type="number" formControlName="movilidad"
-                   min="0" step="0.01"
-                   class="abylu-input text-sm" />
-          </div>
-          <div>
-            <label class="abylu-label-sm">Descuento (S/)</label>
-            <input type="number" formControlName="descuento"
-                   min="0"
-                   class="abylu-input text-sm" />
-          </div>
-        </div>
-
-        <!-- Desglose -->
-        <div class="border-t border-gray-100 pt-4 space-y-2 mb-5">
-          <div class="flex justify-between text-sm">
-            <span class="text-gray-400">Subtotal</span>
-            <span class="text-gray-600 font-medium">S/ {{ subtotal | number:'1.2-2' }}</span>
-          </div>
-
-          @if ((cotizacionForm.get('movilidad')?.value || 0) > 0) {
-            <div class="flex justify-between text-sm">
-              <span class="text-gray-400">Movilidad</span>
-              <span class="text-gray-600 font-medium">+ S/ {{ cotizacionForm.get('movilidad')?.value | number:'1.2-2' }}</span>
-            </div>
-          }
-
-          @if ((cotizacionForm.get('descuento')?.value || 0) > 0) {
-            <div class="flex justify-between text-sm">
-              <span class="text-gray-400">Descuento</span>
-              <span class="text-emerald-500 font-medium">- S/ {{ cotizacionForm.get('descuento')?.value | number:'1.2-2' }}</span>
-            </div>
-          }
+        <div class="glass-card px-5 py-3 flex items-center">
+          <span class="material-symbols-outlined text-slate-400 mr-2 text-lg">sell</span>
+          <input class="abylu-input text-sm" type="text" inputmode="decimal"
+                 formControlName="descuento"
+                 placeholder="Descuento" />
         </div>
       </div>
 
-      <!-- Total — banner gradiente full-bleed -->
-      <div class="bg-gradient-to-r from-rosa-600 to-rosa-500 px-6 py-5
-                  flex justify-between items-center">
-        <span class="text-white/80 text-sm font-semibold uppercase tracking-wider">Total</span>
-        <span class="text-2xl font-extrabold text-white tracking-tight">
+      <!-- Desglose -->
+      <div class="space-y-3 px-2">
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-semibold text-slate-500">Subtotal</span>
+          <span class="text-sm font-extrabold">S/ {{ subtotal | number:'1.2-2' }}</span>
+        </div>
+
+        @if ((cotizacionForm.get('movilidad')?.value || 0) > 0) {
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-semibold text-slate-500">Movilidad</span>
+            <span class="text-sm font-extrabold">+ S/ {{ cotizacionForm.get('movilidad')?.value | number:'1.2-2' }}</span>
+          </div>
+        }
+
+        @if ((cotizacionForm.get('descuento')?.value || 0) > 0) {
+          <div class="flex justify-between items-center text-secondary">
+            <span class="text-sm font-semibold">Descuento</span>
+            <span class="text-sm font-extrabold">- S/ {{ cotizacionForm.get('descuento')?.value | number:'1.2-2' }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- ── Total Banner ── -->
+    <div class="glass-card p-6 flex justify-between items-center">
+      <div class="flex flex-col">
+        <span class="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">Total</span>
+        <span class="text-3xl font-black tracking-tighter text-slate-900">
           S/ {{ total | number:'1.2-2' }}
         </span>
       </div>
-    </section>
+      <div class="w-14 h-14 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10">
+        <span class="material-symbols-outlined text-primary text-3xl">payments</span>
+      </div>
+    </div>
 
     <!-- Error -->
     @if (error) {
       <div class="flex items-center gap-2.5 bg-red-50 border border-red-200 text-red-600
-                  text-sm rounded-xl px-4 py-3 mb-5"
+                  text-sm rounded-xl px-4 py-3"
            style="animation: abylu-scaleIn 0.3s ease-out;">
-        <svg class="w-5 h-5 shrink-0 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-        </svg>
+        <span class="material-symbols-outlined text-red-400 text-xl">warning</span>
         {{ error }}
       </div>
     }
 
-    <!-- Botón Generar PDF -->
-    <div style="animation: abylu-fadeIn 0.5s ease-out 0.45s both;">
+    <!-- ── Botón Generar PDF ── -->
+    <div class="pt-4 pb-8">
       <button type="submit" [disabled]="cargando"
-              class="w-full py-4 rounded-full font-bold text-white text-base
-                     bg-gradient-to-r from-rosa-600 via-rosa-500 to-rosa-600
-                     bg-[length:200%_100%]
-                     shadow-lg shadow-rosa-300/40
-                     hover:shadow-xl hover:shadow-rosa-400/40
-                     active:scale-[0.98]
-                     disabled:from-gray-300 disabled:via-gray-300 disabled:to-gray-300
-                     disabled:shadow-none disabled:cursor-not-allowed
-                     transition-all duration-300"
-              [style]="cargando ? '' : 'animation: abylu-shimmer 3s linear infinite, abylu-glow 2.5s ease-in-out infinite;'">
+              class="w-full py-5 rounded-2xl bg-slate-900 text-white font-black tracking-widest text-xs
+                     hover:scale-[1.01] active:scale-[0.99] transition-all
+                     disabled:bg-slate-300 disabled:cursor-not-allowed
+                     flex items-center justify-center gap-3 shadow-xl">
         @if (cargando) {
           <span class="flex items-center justify-center gap-2">
             <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
@@ -320,17 +267,13 @@
             Generando PDF...
           </span>
         } @else {
-          <span class="flex items-center justify-center gap-2">
-            Generar PDF
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-            </svg>
+          <span class="flex items-center justify-center gap-3">
+            <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+            GENERAR PDF
           </span>
         }
       </button>
     </div>
 
-    <div class="h-8"></div>
   </form>
 </main>

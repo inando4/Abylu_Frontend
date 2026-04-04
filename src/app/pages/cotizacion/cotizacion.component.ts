@@ -39,8 +39,8 @@ export class CotizacionComponent implements OnInit {
   }
 
   get total(): number {
-    const descuento = this.cotizacionForm.get('descuento')?.value || 0;
-    const movilidad = this.cotizacionForm.get('movilidad')?.value || 0;
+    const descuento = +this.cotizacionForm.get('descuento')?.value || 0;
+    const movilidad = +this.cotizacionForm.get('movilidad')?.value || 0;
 
     if (descuento > 0) {
       return (this.subtotal + movilidad) - descuento;
