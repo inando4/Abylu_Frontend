@@ -45,6 +45,7 @@
   color: #191c1d;
   letter-spacing: -0.02em;
   margin: 0;
+  margin-top: -100px;
 }
 
 .logo-subtitle {
@@ -54,4 +55,5 @@
   letter-spacing: 0.15em;
   text-transform: uppercase;
   margin: 0;
+  margin-top: -10px;
 }
