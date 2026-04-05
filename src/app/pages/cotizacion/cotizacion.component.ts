@@ -96,11 +96,41 @@ export class CotizacionComponent implements OnInit {
       cantidad:            [null],
       esIlimitado:         [false],
       precioUnitarioManual:[null],
+      descripcionManual:   [null],
+      esPersonalizado:     [false],
       nombreProducto:      [''],
       precioUnitarioVista: [0],
       subtotalItem:        [0],
     });
     this.items.push(itemGroup);
+  }
+
+  agregarItemPersonalizado(): void {
+    const itemGroup = this.fb.group({
+      productoId:          [null],
+      cantidad:            [null],
+      esIlimitado:         [false],
+      precioUnitarioManual:[null],
+      descripcionManual:   [''],
+      esPersonalizado:     [true],
+      nombreProducto:      [''],
+      precioUnitarioVista: [0],
+      subtotalItem:        [0],
+    });
+    this.items.push(itemGroup);
+  }
+
+  onPrecioPersonalizadoCambiado(index: number): void {
+    const itemGroup = this.items.at(index) as FormGroup;
+    const cantidad = itemGroup.get('cantidad')?.value;
+    const precio = itemGroup.get('precioUnitarioManual')?.value;
+
+    if (cantidad && cantidad > 0 && precio != null && precio >= 0) {
+      itemGroup.patchValue({
+        precioUnitarioVista: precio,
+        subtotalItem: cantidad * precio,
+      });
+    }
   }
 
   eliminarItem(index: number): void {
@@ -237,12 +267,24 @@ export class CotizacionComponent implements OnInit {
       descuento: formValue.descuento || 0,
       movilidad: formValue.movilidad || 0,
       horasServicio: formValue.horasServicio || '',
-      items: formValue.items.map((item: any) => ({
-        productoId: +item.productoId,
-        cantidad: item.esIlimitado ? null : +item.cantidad,
-        esIlimitado: item.esIlimitado,
-        precioUnitarioManual: item.precioUnitarioManual ? +item.precioUnitarioManual : null,
-      })),
+      items: formValue.items.map((item: any) => {
+        if (item.esPersonalizado) {
+          return {
+            productoId: null,
+            cantidad: +item.cantidad,
+            esIlimitado: false,
+            precioUnitarioManual: +item.precioUnitarioManual,
+            descripcionManual: item.descripcionManual,
+          };
+        }
+        return {
+          productoId: +item.productoId,
+          cantidad: item.esIlimitado ? null : +item.cantidad,
+          esIlimitado: item.esIlimitado,
+          precioUnitarioManual: item.precioUnitarioManual ? +item.precioUnitarioManual : null,
+          descripcionManual: null,
+        };
+      }),
     };
 
     this.cotizacionService.crearYDescargarPdf(request).subscribe({
@@ -253,6 +295,9 @@ export class CotizacionComponent implements OnInit {
         // Armar nombre: "Cotizacion ABYLU - 50 Hamburguesa, Ilimitado Popcorn.pdf"
         const itemsDesc = formValue.items
           .map((item: any) => {
+            if (item.esPersonalizado) {
+              return `${item.cantidad} ${item.descripcionManual || 'Personalizado'}`;
+            }
             const nombre = item.nombreProducto || 'Producto';
             if (item.esIlimitado && nombre.toLowerCase() === 'dispensador de bebidas') {
               return `16 Lt. ${nombre}`;

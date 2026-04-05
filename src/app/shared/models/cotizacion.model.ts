@@ -19,10 +19,11 @@ export interface CrearCotizacionRequest {
  * Mapea a ItemCotizacionRequest.java del backend.
  */
 export interface ItemCotizacionRequest {
-  productoId: number;
-  cantidad: number | null;       // null si es ilimitado
+  productoId: number | null;            // null si es item personalizado
+  cantidad: number | null;              // null si es ilimitado
   esIlimitado: boolean;
   precioUnitarioManual: number | null;  // null si usa precio de escala
+  descripcionManual: string | null;     // solo para items personalizados (productoId == null)
 }
 
 /**

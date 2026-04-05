@@ -9,7 +9,10 @@ button[disabled] {
 /* Inputs dentro de glass-cards: sin estilos del plugin forms */
 .glass-card input,
 .glass-card select,
-.glass-card textarea {
+.glass-card textarea,
+.glass-card-dark input,
+.glass-card-dark select,
+.glass-card-dark textarea {
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
