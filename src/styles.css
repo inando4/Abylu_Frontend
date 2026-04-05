@@ -80,11 +80,15 @@ router-outlet + * { animation: abylu-pageIn 0.4s ease-out; }
   inset: -80%;
   background: conic-gradient(
     from 0deg,
-    rgba(66, 133, 244, 0.4) 0%,
-    rgba(234, 67, 53, 0.4) 15%,
-    rgba(251, 188, 5, 0.4) 30%,
-    rgba(52, 168, 83, 0.4) 45%,
-    rgba(66, 133, 244, 0.4) var(--trail-size),
+    rgba(66, 133, 244, 0.18) 0%,
+    rgba(66, 133, 244, 0.3)  5%,
+    rgba(234, 67, 53, 0.3)   15%,
+    rgba(234, 67, 53, 0.18)  20%,
+    rgba(251, 188, 5, 0.18)  25%,
+    rgba(251, 188, 5, 0.3)   30%,
+    rgba(52, 168, 83, 0.3)   40%,
+    rgba(52, 168, 83, 0.18)  45%,
+    rgba(66, 133, 244, 0.3)  var(--trail-size),
     transparent var(--trail-size),
     transparent 100%
   );
@@ -93,7 +97,6 @@ router-outlet + * { animation: abylu-pageIn 0.4s ease-out; }
     pulse-trail 5s ease-in-out infinite;
   z-index: 0;
   pointer-events: none;
-  filter: blur(6px);
   will-change: transform;
   backface-visibility: hidden;
   transform: translateZ(0);
