@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
-import { CrearCotizacionRequest, CotizacionResponse } from '../../shared/models';
+import { CrearCotizacionRequest, CotizacionResponse, CotizacionSummaryResponse, PageResponse, EstadoCotizacion } from '../../shared/models';
 import { API_BASE_URL } from '../api.config';
 
 /**
@@ -16,6 +16,22 @@ export class CotizacionService {
 
   private http = inject(HttpClient);
   private url = `${API_BASE_URL}/cotizaciones`;
+
+  /**
+   * GET /api/cotizaciones — Lista cotizaciones paginadas.
+   *
+   * Soporta filtro por prefijo de teléfono y paginación.
+   * Equivale a CotizacionController.listar() del backend.
+   */
+  listar(telefono?: string, page = 0, size = 10): Observable<PageResponse<CotizacionSummaryResponse>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    if (telefono) {
+      params = params.set('telefono', telefono);
+    }
+    return this.http.get<PageResponse<CotizacionSummaryResponse>>(this.url, { params });
+  }
 
   /**
    * POST /api/cotizaciones — Crea una nueva cotización.
@@ -42,6 +58,13 @@ export class CotizacionService {
    */
   descargarPdf(id: number): Observable<Blob> {
     return this.http.get(`${this.url}/${id}/pdf`, { responseType: 'blob' });
+  }
+
+  /**
+   * PATCH /api/cotizaciones/{id}/estado — Cambia el estado de una cotización.
+   */
+  cambiarEstado(id: number, estado: EstadoCotizacion): Observable<CotizacionResponse> {
+    return this.http.patch<CotizacionResponse>(`${this.url}/${id}/estado`, { estado });
   }
 
   /**

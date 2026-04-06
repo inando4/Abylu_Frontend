@@ -67,3 +67,35 @@ export interface DetalleResponse {
  * En TS:  type literal union — mismo efecto, el compilador valida los valores.
  */
 export type EstadoCotizacion = 'BORRADOR' | 'ENVIADA' | 'ACEPTADA' | 'RECHAZADA';
+
+/**
+ * Respuesta paginada de Spring Data — estructura genérica de Page<T>.
+ */
+export interface PageResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
+}
+
+/**
+ * Resumen de cotización para el listado/historial.
+ * Mapea a CotizacionSummaryResponse.java (sin detalles ni notas).
+ */
+export interface CotizacionSummaryResponse {
+  id: number;
+  numeroCotizacion: string;
+  clienteTelefono: string;
+  fechaCreacion: string;
+  fechaEvento: string;
+  tipoEvento: string;
+  lugarEvento: string;
+  subtotal: number;
+  descuento: number;
+  movilidad: number;
+  total: number;
+  estado: EstadoCotizacion;
+}
