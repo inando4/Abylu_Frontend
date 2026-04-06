@@ -64,8 +64,9 @@
     @if (!cargando && pagina && pagina.content.length > 0) {
       <div class="space-y-3">
         @for (cotizacion of pagina.content; track cotizacion.id) {
-          <div class="glass-card p-5"
-               [style]="'animation: abylu-scaleIn 0.35s ease-out ' + ($index * 0.08) + 's both'">
+          <div class="glass-card p-5 cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-transform"
+               [style]="'animation: abylu-scaleIn 0.35s ease-out ' + ($index * 0.08) + 's both'"
+               (click)="verDetalle(cotizacion.id)">
 
             <!-- Fila 1: Número + Badge estado -->
             <div class="flex items-center justify-between mb-2">

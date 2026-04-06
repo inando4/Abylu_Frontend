@@ -25,4 +25,9 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/historial/historial.component')
       .then(m => m.HistorialComponent),
   },
+  {
+    path: 'historial/:id',       // localhost:4200/historial/42
+    loadComponent: () => import('./pages/detalle-cotizacion/detalle-cotizacion.component')
+      .then(m => m.DetalleCotizacionComponent),
+  },
 ];

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
-import { CrearCotizacionRequest, CotizacionResponse, CotizacionSummaryResponse, PageResponse } from '../../shared/models';
+import { CrearCotizacionRequest, CotizacionResponse, CotizacionSummaryResponse, PageResponse, EstadoCotizacion } from '../../shared/models';
 import { API_BASE_URL } from '../api.config';
 
 /**
@@ -58,6 +58,13 @@ export class CotizacionService {
    */
   descargarPdf(id: number): Observable<Blob> {
     return this.http.get(`${this.url}/${id}/pdf`, { responseType: 'blob' });
+  }
+
+  /**
+   * PATCH /api/cotizaciones/{id}/estado — Cambia el estado de una cotización.
+   */
+  cambiarEstado(id: number, estado: EstadoCotizacion): Observable<CotizacionResponse> {
+    return this.http.patch<CotizacionResponse>(`${this.url}/${id}/estado`, { estado });
   }
 
   /**

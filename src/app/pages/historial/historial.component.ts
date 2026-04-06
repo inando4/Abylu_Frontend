@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 import { CotizacionService } from '../../core/services';
 import { CotizacionSummaryResponse, PageResponse, EstadoCotizacion } from '../../shared/models';
@@ -15,6 +16,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 export class HistorialComponent implements OnInit, OnDestroy {
 
   private cotizacionService = inject(CotizacionService);
+  private router = inject(Router);
 
   pagina: PageResponse<CotizacionSummaryResponse> | null = null;
   telefonoBusqueda = '';
@@ -73,6 +75,10 @@ export class HistorialComponent implements OnInit, OnDestroy {
     if (this.pagina && !this.pagina.last) {
       this.cargarCotizaciones(this.pagina.number + 1);
     }
+  }
+
+  verDetalle(id: number): void {
+    this.router.navigate(['/historial', id]);
   }
 
   badgeClase(estado: EstadoCotizacion): string {
