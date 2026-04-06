@@ -41,6 +41,10 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# Gemini CLI
+.gemini/
+*.skill
+
 # Claude 
 CLAUDE.md
 /.claude

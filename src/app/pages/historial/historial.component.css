@@ -1,0 +1,9 @@
+main {
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+}
+
+.glass-card input {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}

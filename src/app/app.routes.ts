@@ -20,4 +20,9 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/cotizacion/cotizacion.component')
       .then(m => m.CotizacionComponent),
   },
+  {
+    path: 'historial',           // localhost:4200/historial
+    loadComponent: () => import('./pages/historial/historial.component')
+      .then(m => m.HistorialComponent),
+  },
 ];
