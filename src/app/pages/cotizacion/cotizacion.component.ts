@@ -5,6 +5,12 @@ import { HeaderComponent } from '../../components/header/header.component';
 import { ProductoService, CotizacionService } from '../../core/services';
 import { Producto, ProductoPrecioEscala, CrearCotizacionRequest } from '../../shared/models';
 
+interface TipoEvento {
+  id: string;
+  name: string;
+  emoji: string;
+}
+
 @Component({
   selector: 'app-cotizacion',
   imports: [CommonModule, ReactiveFormsModule, HeaderComponent],
@@ -18,12 +24,22 @@ export class CotizacionComponent implements OnInit {
   private cotizacionService = inject(CotizacionService);
 
   productos: Producto[] = [];
-
-  /** Escalas de precio cargadas del backend (ej: Hamburguesa x50 = S/380) */
   escalas: ProductoPrecioEscala[] = [];
 
   cargando = false;
   error = '';
+
+  pickerOpen = false;
+  pickerTab: string = 'Todos';
+
+  readonly tiposEvento: TipoEvento[] = [
+    { id: 'cumple',      name: 'Cumpleaños',  emoji: '🎂' },
+    { id: 'boda',        name: 'Matrimonio',  emoji: '💍' },
+    { id: 'corporativo', name: 'Corporativo', emoji: '🏢' },
+    { id: 'baby',        name: 'Baby shower', emoji: '🍼' },
+    { id: 'quince',      name: 'Quinceañero', emoji: '👑' },
+    { id: 'otros',       name: 'Otros',       emoji: '✨' },
+  ];
 
   cotizacionForm!: FormGroup;
 
@@ -41,11 +57,27 @@ export class CotizacionComponent implements OnInit {
   get total(): number {
     const descuento = +this.cotizacionForm.get('descuento')?.value || 0;
     const movilidad = +this.cotizacionForm.get('movilidad')?.value || 0;
+    const total = this.subtotal + movilidad - descuento;
+    return total > 0 ? total : 0;
+  }
 
-    if (descuento > 0) {
-      return (this.subtotal + movilidad) - descuento;
-    }
-    return this.subtotal + movilidad - descuento;
+  /** IDs de productos del catálogo ya en el carrito (para deshabilitar tiles). */
+  get idsEnCarrito(): number[] {
+    return this.items.controls
+      .map(c => c.get('productoId')?.value)
+      .filter((v): v is number => v != null)
+      .map(v => +v);
+  }
+
+  /** Categorías que aparecen en las tabs del picker. */
+  get categoriasPicker(): string[] {
+    const cats = new Set<string>(this.productos.map(p => this.formatCategoria(p.categoria)));
+    return ['Todos', ...Array.from(cats)];
+  }
+
+  get productosVisibles(): Producto[] {
+    if (this.pickerTab === 'Todos') return this.productos;
+    return this.productos.filter(p => this.formatCategoria(p.categoria) === this.pickerTab);
   }
 
   ngOnInit(): void {
@@ -82,106 +114,132 @@ export class CotizacionComponent implements OnInit {
     });
   }
 
-  /**
-   * Busca si existe una escala de precio para un producto+cantidad dados.
-   * Ej: productoId=3 (Hamburguesa), cantidad=50 → retorna { precioTotal: 380 }
-   */
   private buscarEscala(productoId: number, cantidad: number): ProductoPrecioEscala | undefined {
     return this.escalas.find(e => e.productoId === productoId && e.cantidad === cantidad);
   }
 
-  agregarItem(): void {
-    const itemGroup = this.fb.group({
-      productoId:          [null, Validators.required],
-      cantidad:            [null],
-      esIlimitado:         [false],
-      precioUnitarioManual:[null],
-      descripcionManual:   [null],
-      esPersonalizado:     [false],
-      nombreProducto:      [''],
-      precioUnitarioVista: [0],
-      subtotalItem:        [0],
-    });
-    this.items.push(itemGroup);
+  /** Mapa de emojis por palabra clave del nombre del producto. */
+  emojiPara(producto: Producto): string {
+    const n = producto.nombre.toLowerCase();
+    if (n.includes('hot dog') || n.includes('hotdog')) return '🌭';
+    if (n.includes('hamburg')) return '🍔';
+    if (n.includes('anticucho')) return '🍢';
+    if (n.includes('canchita') || n.includes('popcorn') || n.includes('pop corn')) return '🍿';
+    if (n.includes('algod')) return '🍭';
+    if (n.includes('postre') || n.includes('waffle') || n.includes('helado')) return '🧇';
+    if (n.includes('café') || n.includes('cafe')) return '☕';
+    if (n.includes('cóctel') || n.includes('coctel') || n.includes('barra')) return '🍹';
+    if (n.includes('piqueo') || n.includes('queso')) return '🧀';
+    if (n.includes('bebida') || n.includes('jugo') || n.includes('refresco') || n.includes('dispens')) return '🥤';
+    if (n.includes('pizza')) return '🍕';
+    if (producto.categoria === 'ilimitado') return '⚡';
+    return '🍽️';
+  }
+
+  formatCategoria(categoria: string): string {
+    if (categoria === 'ilimitado') return 'Ilimitado';
+    if (categoria === 'snack') return 'Snack';
+    return categoria.charAt(0).toUpperCase() + categoria.slice(1);
+  }
+
+  /** Nombre limpio para el tile del picker. */
+  nombreCorto(nombre: string): string {
+    return nombre
+      .replace(/^Carrito de /i, '')
+      .replace(/^Estación de /i, '')
+      .replace(/^Barra de /i, '')
+      .replace(/^Dispensador de /i, '');
+  }
+
+  /** Selección de chip de tipo de evento — guarda el nombre legible (lo que recibe el backend). */
+  seleccionarTipo(tipo: TipoEvento): void {
+    this.cotizacionForm.patchValue({ tipoEvento: tipo.name });
+  }
+
+  esTipoActivo(tipo: TipoEvento): boolean {
+    const v = this.cotizacionForm.get('tipoEvento')?.value;
+    return v === tipo.name || v === tipo.id;
+  }
+
+  /* ── Picker ── */
+  abrirPicker(): void {
+    this.pickerTab = 'Todos';
+    this.pickerOpen = true;
+  }
+  cerrarPicker(): void { this.pickerOpen = false; }
+
+  seleccionarProducto(producto: Producto): void {
+    if (this.idsEnCarrito.includes(producto.id)) return;
+
+    if (producto.categoria === 'ilimitado') {
+      this.items.push(this.fb.group({
+        productoId:           [producto.id, Validators.required],
+        cantidad:             [null],
+        esIlimitado:          [true],
+        precioUnitarioManual: [null],
+        descripcionManual:    [null],
+        esPersonalizado:      [false],
+        nombreProducto:       [producto.nombre],
+        precioUnitarioVista:  [producto.precioUnitario],
+        subtotalItem:         [producto.precioUnitario],
+      }));
+    } else {
+      const cantidadDefault = 50;
+      const escala = this.buscarEscala(producto.id, cantidadDefault);
+      const subtotal = escala ? escala.precioTotal : cantidadDefault * producto.precioUnitario;
+      const precioUnit = escala ? escala.precioTotal / cantidadDefault : producto.precioUnitario;
+
+      this.items.push(this.fb.group({
+        productoId:           [producto.id, Validators.required],
+        cantidad:             [cantidadDefault],
+        esIlimitado:          [false],
+        precioUnitarioManual: [precioUnit],
+        descripcionManual:    [null],
+        esPersonalizado:      [false],
+        nombreProducto:       [producto.nombre],
+        precioUnitarioVista:  [precioUnit],
+        subtotalItem:         [subtotal],
+      }));
+    }
+
+    this.cerrarPicker();
   }
 
   agregarItemPersonalizado(): void {
-    const itemGroup = this.fb.group({
-      productoId:          [null],
-      cantidad:            [null],
-      esIlimitado:         [false],
-      precioUnitarioManual:[null],
-      descripcionManual:   [''],
-      esPersonalizado:     [true],
-      nombreProducto:      [''],
-      precioUnitarioVista: [0],
-      subtotalItem:        [0],
-    });
-    this.items.push(itemGroup);
-  }
-
-  onPrecioPersonalizadoCambiado(index: number): void {
-    const itemGroup = this.items.at(index) as FormGroup;
-    const cantidad = itemGroup.get('cantidad')?.value;
-    const precio = itemGroup.get('precioUnitarioManual')?.value;
-
-    if (cantidad && cantidad > 0 && precio != null && precio >= 0) {
-      itemGroup.patchValue({
-        precioUnitarioVista: precio,
-        subtotalItem: cantidad * precio,
-      });
-    }
+    this.items.push(this.fb.group({
+      productoId:           [null],
+      cantidad:             [1],
+      esIlimitado:          [false],
+      precioUnitarioManual: [0],
+      descripcionManual:    [''],
+      esPersonalizado:      [true],
+      nombreProducto:       [''],
+      precioUnitarioVista:  [0],
+      subtotalItem:         [0],
+    }));
   }
 
   eliminarItem(index: number): void {
     this.items.removeAt(index);
   }
 
-  onProductoSeleccionado(index: number): void {
-    const itemGroup = this.items.at(index) as FormGroup;
-    const productoId = itemGroup.get('productoId')?.value;
-    const producto = this.productos.find(p => p.id === +productoId);
-
-    if (!producto) return;
-
-    itemGroup.patchValue({ nombreProducto: producto.nombre });
-
-    if (producto.categoria === 'ilimitado') {
-      itemGroup.patchValue({
-        esIlimitado: true,
-        cantidad: null,
-        precioUnitarioManual: null,
-        precioUnitarioVista: producto.precioUnitario,
-        subtotalItem: producto.precioUnitario,
-      });
-    } else {
-      itemGroup.patchValue({
-        esIlimitado: false,
-        cantidad: null,
-        precioUnitarioManual: null,
-        precioUnitarioVista: 0,
-        subtotalItem: 0,
-      });
-    }
+  productoDeItem(index: number): Producto | undefined {
+    const id = this.items.at(index).get('productoId')?.value;
+    if (id == null) return undefined;
+    return this.productos.find(p => p.id === +id);
   }
 
-  /**
-   * Se ejecuta cuando el usuario cambia la CANTIDAD.
-   * Primero busca si hay una escala de precio en la BD (50, 100).
-   * Si la encuentra, auto-llena subtotal y precio unitario.
-   * Si no, recalcula con el subtotal existente.
-   */
+  /** Cuando cambia la cantidad: si hay escala usarla, si no, recalcula subtotal con precio actual. */
   onCantidadCambiada(index: number): void {
     const itemGroup = this.items.at(index) as FormGroup;
     const cantidad = itemGroup.get('cantidad')?.value;
     const productoId = itemGroup.get('productoId')?.value;
 
     if (!cantidad || cantidad <= 0) {
-      itemGroup.patchValue({ precioUnitarioVista: 0, subtotalItem: 0, precioUnitarioManual: null });
+      itemGroup.patchValue({ subtotalItem: 0 });
       return;
     }
 
-    // Buscar escala de precio en la BD (ej: 50 uds → S/380)
     if (productoId) {
       const escala = this.buscarEscala(+productoId, +cantidad);
       if (escala) {
@@ -195,27 +253,19 @@ export class CotizacionComponent implements OnInit {
       }
     }
 
-    // Si no hay escala, recalcular con el subtotal existente
-    const subtotalActual = itemGroup.get('subtotalItem')?.value || 0;
-    if (subtotalActual > 0) {
-      const precioCalculado = subtotalActual / cantidad;
-      itemGroup.patchValue({
-        precioUnitarioVista: precioCalculado,
-        precioUnitarioManual: precioCalculado,
-      });
+    const precio = +itemGroup.get('precioUnitarioManual')?.value || 0;
+    if (precio > 0) {
+      itemGroup.patchValue({ subtotalItem: cantidad * precio });
     }
   }
 
-  /**
-   * Se ejecuta cuando el usuario edita el SUBTOTAL directamente.
-   * Calcula: precioUnitario = subtotal / cantidad.
-   */
+  /** Subtotal editado → recalcular precio unitario. */
   onSubtotalCambiado(index: number): void {
     const itemGroup = this.items.at(index) as FormGroup;
-    const cantidad = itemGroup.get('cantidad')?.value;
-    const subtotal = itemGroup.get('subtotalItem')?.value;
+    const cantidad = +itemGroup.get('cantidad')?.value || 0;
+    const subtotal = +itemGroup.get('subtotalItem')?.value || 0;
 
-    if (cantidad && cantidad > 0 && subtotal != null && subtotal >= 0) {
+    if (cantidad > 0 && subtotal >= 0) {
       const precioCalculado = subtotal / cantidad;
       itemGroup.patchValue({
         precioUnitarioVista: precioCalculado,
@@ -224,19 +274,16 @@ export class CotizacionComponent implements OnInit {
     }
   }
 
-  /**
-   * Se ejecuta cuando el usuario edita el PRECIO UNITARIO.
-   * Calcula: subtotal = cantidad * precioUnitario.
-   */
+  /** Precio unitario editado → recalcular subtotal. */
   onPrecioManualCambiado(index: number): void {
     const itemGroup = this.items.at(index) as FormGroup;
-    const cantidad = itemGroup.get('cantidad')?.value;
-    const precioManual = itemGroup.get('precioUnitarioManual')?.value;
+    const cantidad = +itemGroup.get('cantidad')?.value || 0;
+    const precio = +itemGroup.get('precioUnitarioManual')?.value || 0;
 
-    if (cantidad && cantidad > 0 && precioManual != null && precioManual >= 0) {
+    if (cantidad > 0 && precio >= 0) {
       itemGroup.patchValue({
-        precioUnitarioVista: precioManual,
-        subtotalItem: cantidad * precioManual,
+        precioUnitarioVista: precio,
+        subtotalItem: cantidad * precio,
       });
     }
   }
@@ -249,7 +296,7 @@ export class CotizacionComponent implements OnInit {
     }
 
     if (this.items.length === 0) {
-      this.error = 'Agrega al menos un item';
+      this.error = 'Agrega al menos un producto al carrito';
       return;
     }
 
@@ -264,9 +311,9 @@ export class CotizacionComponent implements OnInit {
       tipoEvento: formValue.tipoEvento || '',
       lugarEvento: formValue.lugarEvento,
       notas: formValue.notas || '',
-      descuento: formValue.descuento || 0,
-      movilidad: formValue.movilidad || 0,
-      horasServicio: formValue.horasServicio || '',
+      descuento: +formValue.descuento || 0,
+      movilidad: +formValue.movilidad || 0,
+      horasServicio: formValue.horasServicio?.toString() || '',
       items: formValue.items.map((item: any) => {
         if (item.esPersonalizado) {
           return {
@@ -281,7 +328,7 @@ export class CotizacionComponent implements OnInit {
           productoId: +item.productoId,
           cantidad: item.esIlimitado ? null : +item.cantidad,
           esIlimitado: item.esIlimitado,
-          precioUnitarioManual: item.precioUnitarioManual ? +item.precioUnitarioManual : null,
+          precioUnitarioManual: item.precioUnitarioManual != null ? +item.precioUnitarioManual : null,
           descripcionManual: null,
         };
       }),
@@ -292,7 +339,6 @@ export class CotizacionComponent implements OnInit {
         const url = window.URL.createObjectURL(pdfBlob);
         const a = document.createElement('a');
         a.href = url;
-        // Armar nombre: "Cotizacion ABYLU - 50 Hamburguesa, Ilimitado Popcorn.pdf"
         const itemsDesc = formValue.items
           .map((item: any) => {
             if (item.esPersonalizado) {

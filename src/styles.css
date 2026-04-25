@@ -19,6 +19,18 @@
   --color-on-surface:               #191c1d;
   --color-outline-variant:          #b9ccb2;
 
+  --color-cream:           #FBF5EC;
+  --color-cream-2:         #F5EADA;
+  --color-cream-3:         #EFE0C9;
+  --color-terracotta:      #8E2B3A;
+  --color-terracotta-dark: #681E29;
+  --color-terracotta-soft: #EBCFD3;
+  --color-ink:             #2B1D14;
+  --color-ink-2:           #5C4A3E;
+  --color-ink-3:           #8A7868;
+  --color-line:            #E5D8C4;
+  --color-line-2:          #EFE3D2;
+
   --font-sans: 'Manrope', sans-serif;
 }
 
