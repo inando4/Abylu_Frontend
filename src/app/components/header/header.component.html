@@ -1,21 +1,41 @@
 <header class="abylu-topbar">
   <div class="topbar-inner">
-    <a routerLink="/cotizacion" class="topbar-link" aria-label="Nueva cotización">
-      <span class="material-symbols-outlined">add_circle</span>
-      <span>Nueva</span>
+
+    <a routerLink="/cotizacion" class="brand" (click)="cerrarMenu()">
+      <img src="Abylu-Logo.png" alt="Abylu" class="brand-logo" />
     </a>
 
-    <div class="brand">
-      <div class="brand-logo">A</div>
-      <div class="brand-text">
-        <div class="brand-name">Abylu</div>
-        <div class="brand-sub">Cotizaciones</div>
-      </div>
-    </div>
+    <nav class="nav-desktop">
+      <a routerLink="/cotizacion"
+         routerLinkActive="active"
+         class="nav-link">Nueva</a>
+      <a routerLink="/historial"
+         routerLinkActive="active"
+         class="nav-link">Historial</a>
+    </nav>
 
-    <a routerLink="/historial" class="topbar-link topbar-link--right" aria-label="Historial">
-      <span>Historial</span>
-      <span class="material-symbols-outlined">history</span>
-    </a>
+    <button type="button"
+            class="menu-toggle"
+            [class.open]="menuAbierto"
+            (click)="toggleMenu()"
+            aria-label="Abrir menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </div>
+
+  @if (menuAbierto) {
+    <div class="menu-backdrop" (click)="cerrarMenu()"></div>
+    <nav class="nav-mobile">
+      <a routerLink="/cotizacion"
+         routerLinkActive="active"
+         class="nav-link"
+         (click)="cerrarMenu()">Nueva</a>
+      <a routerLink="/historial"
+         routerLinkActive="active"
+         class="nav-link"
+         (click)="cerrarMenu()">Historial</a>
+    </nav>
+  }
 </header>

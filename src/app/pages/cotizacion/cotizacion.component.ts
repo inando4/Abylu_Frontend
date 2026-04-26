@@ -151,9 +151,11 @@ export class CotizacionComponent implements OnInit {
       .replace(/^Dispensador de /i, '');
   }
 
-  /** Selección de chip de tipo de evento — guarda el nombre legible (lo que recibe el backend). */
+  /** Toggle del chip de tipo de evento — re-tocarlo des-selecciona. */
   seleccionarTipo(tipo: TipoEvento): void {
-    this.cotizacionForm.patchValue({ tipoEvento: tipo.name });
+    const actual = this.cotizacionForm.get('tipoEvento')?.value;
+    const yaActivo = actual === tipo.name || actual === tipo.id;
+    this.cotizacionForm.patchValue({ tipoEvento: yaActivo ? '' : tipo.name });
   }
 
   esTipoActivo(tipo: TipoEvento): boolean {

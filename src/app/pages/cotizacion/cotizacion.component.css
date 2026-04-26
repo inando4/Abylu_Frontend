@@ -39,7 +39,7 @@
   font-weight: 700;
   letter-spacing: 1.2px;
   text-transform: uppercase;
-  color: var(--color-terracotta);
+  color: #E9648A;
   margin-bottom: 4px;
 }
 .page-title h1 {
@@ -88,11 +88,11 @@
   height: 22px;
   border-radius: 50%;
   background: var(--color-terracotta-soft);
-  color: var(--color-terracotta-dark);
+  color: var(--color-ink);
   display: grid;
   place-items: center;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
 }
 .section-title .meta {
   margin-left: auto;
@@ -131,9 +131,9 @@
   font-variant-numeric: tabular-nums;
 }
 .input:focus {
-  border-color: var(--color-terracotta);
+  border-color: var(--color-ink);
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(142, 43, 58, 0.12);
+  box-shadow: 0 0 0 3px rgba(51, 39, 42, 0.12);
 }
 textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
 
@@ -178,10 +178,10 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
 }
 .chip:hover { background: var(--color-cream-2); }
 .chip.active {
-  background: var(--color-terracotta-soft);
-  border-color: var(--color-terracotta);
-  color: var(--color-terracotta-dark);
-  font-weight: 600;
+  background: var(--color-ink);
+  border-color: var(--color-ink);
+  color: #FFFFFF;
+  font-weight: 700;
 }
 .chip .emoji { font-size: 14px; }
 
@@ -242,9 +242,9 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
   transition: all .15s;
 }
 .product-remove:hover {
-  background: var(--color-terracotta);
-  color: #fff;
-  border-color: var(--color-terracotta);
+  background: var(--color-ink);
+  color: var(--color-cream);
+  border-color: var(--color-ink);
 }
 
 .product-fields {
@@ -294,14 +294,14 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
   min-width: 0;
 }
 .pf-input:focus {
-  border-color: var(--color-terracotta);
-  box-shadow: 0 0 0 3px rgba(142, 43, 58, 0.12);
+  border-color: var(--color-ink);
+  box-shadow: 0 0 0 3px rgba(51, 39, 42, 0.12);
 }
 .pf-input--padded { padding-left: 32px; }
 .pf-input--subtotal {
   font-size: 17px;
   font-weight: 700;
-  background: var(--color-terracotta-soft);
+  background: rgba(51, 39, 42, 0.08);
   border-color: transparent;
 }
 .pf-input--subtotal:focus { background: #fff; }
@@ -330,10 +330,13 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
   background: #fff;
   border: 1.5px solid var(--color-line);
   font-size: 13px;
-  color: var(--color-ink-2);
-  font-weight: 600;
+  color: var(--color-ink);
+  font-weight: 700;
 }
-.ilimitado-tag .bolt { color: var(--color-terracotta); }
+.ilimitado-tag .bolt {
+  color: var(--color-terracotta-dark);
+  font-size: 16px;
+}
 
 /* ── Add product buttons ── */
 .add-actions {
@@ -346,12 +349,12 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
   width: 100%;
   padding: 12px;
   background: transparent;
-  border: 1.5px dashed var(--color-line);
+  border: 1.5px dashed var(--color-ink);
   border-radius: var(--r-md);
-  color: var(--color-terracotta-dark);
+  color: var(--color-ink);
   font-family: inherit;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -360,8 +363,9 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
   transition: all .15s;
 }
 .add-product:hover {
-  border-color: var(--color-terracotta);
-  background: var(--color-terracotta-soft);
+  border-color: var(--color-ink);
+  background: var(--color-cream-2);
+  color: var(--color-ink);
 }
 .add-custom {
   width: 46px;
@@ -386,7 +390,7 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
 
 /* ── Totals card (dark) ── */
 .totals-card {
-  background: linear-gradient(160deg, var(--color-ink) 0%, #3a2618 100%);
+  background: linear-gradient(160deg, var(--color-ink) 0%, #1F1618 100%);
   color: var(--color-cream);
   border-radius: var(--r-lg);
   padding: 20px;
@@ -409,7 +413,7 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
   font-variant-numeric: tabular-nums;
   color: var(--color-cream);
 }
-.totals-card .t-row.discount .val { color: #FFC46B; }
+.totals-card .t-row.discount .val { color: var(--color-mint); }
 .totals-card hr {
   border: none;
   border-top: 1px solid rgba(251, 245, 236, 0.15);
@@ -454,24 +458,25 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
 .btn-primary {
   flex: 1;
   height: 50px;
-  background: linear-gradient(180deg, var(--color-terracotta), var(--color-terracotta-dark));
-  color: #fff;
+  background: linear-gradient(180deg, #33272A 0%, #1F1618 100%);
+  color: var(--color-cream);
   border: none;
   border-radius: var(--r-md);
   font-family: inherit;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 6px 16px rgba(104, 30, 41, 0.32);
+  box-shadow: 0 6px 16px rgba(51, 39, 42, 0.32);
   transition: transform .12s, box-shadow .12s, opacity .12s;
 }
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(104, 30, 41, 0.38);
+  box-shadow: 0 8px 20px rgba(51, 39, 42, 0.42);
 }
 .btn-primary:active:not(:disabled) { transform: translateY(0); }
 .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
@@ -505,8 +510,8 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
 .spinner {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: #fff;
+  border: 2px solid rgba(250, 238, 231, 0.35);
+  border-top-color: var(--color-cream);
   border-radius: 50%;
   animation: spin .7s linear infinite;
 }
@@ -603,9 +608,13 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
   gap: 4px;
 }
 .b-tile:hover:not(:disabled) {
-  border-color: var(--color-terracotta);
-  background: var(--color-terracotta-soft);
+  border-color: var(--color-ink);
+  background: var(--color-ink);
   transform: translateY(-2px);
+}
+.b-tile:hover:not(:disabled) .b-tile-name,
+.b-tile:hover:not(:disabled) .b-tile-price {
+  color: #FFFFFF;
 }
 .b-tile:disabled {
   opacity: 0.35;

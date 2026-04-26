@@ -85,15 +85,6 @@ export class DetalleCotizacionComponent implements OnInit {
     this.router.navigate(['/historial']);
   }
 
-  badgeClase(estado: EstadoCotizacion): string {
-    switch (estado) {
-      case 'BORRADOR':  return 'bg-slate-100 text-slate-600';
-      case 'ENVIADA':   return 'bg-blue-50 text-primary';
-      case 'ACEPTADA':  return 'bg-emerald-50 text-emerald-600';
-      case 'RECHAZADA': return 'bg-red-50 text-secondary';
-    }
-  }
-
   formatearFecha(fechaIso: string): string {
     if (!fechaIso) return '';
     const fecha = new Date(fechaIso);

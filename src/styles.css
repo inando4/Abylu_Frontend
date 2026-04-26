@@ -19,17 +19,28 @@
   --color-on-surface:               #191c1d;
   --color-outline-variant:          #b9ccb2;
 
-  --color-cream:           #FBF5EC;
-  --color-cream-2:         #F5EADA;
-  --color-cream-3:         #EFE0C9;
-  --color-terracotta:      #8E2B3A;
-  --color-terracotta-dark: #681E29;
-  --color-terracotta-soft: #EBCFD3;
-  --color-ink:             #2B1D14;
-  --color-ink-2:           #5C4A3E;
-  --color-ink-3:           #8A7868;
-  --color-line:            #E5D8C4;
-  --color-line-2:          #EFE3D2;
+  /* Fondos */
+  --color-cream:           #FAEEE7;  /* Background principal del shell de la página */
+  --color-cream-2:         #F5E3DA;  /* Hover suave en chips */
+  --color-cream-3:         #EFD4CB;  /* Hover más intenso */
+
+  /* Acento (rosa) */
+  --color-terracotta:      #FF8BA7;  /* Rosa fuerte: borde dashed "Agregar carrito", bolt ⚡, hover de tiles */
+  --color-terracotta-dark: #E9648A;  /* Variante oscura del rosa: hover, sub-label header, bolt */
+  --color-terracotta-soft: #FFC6C7;  /* Rosa empolvado: chip activo, badge numerado, subtotal highlight */
+
+  /* Texto / oscuros */
+  --color-ink:             #33272A;  /* Cacao — títulos, texto principal, botón Generar, chips activos */
+  --color-ink-2:           #594A4E;  /* Texto secundario (labels, párrafos) */
+  --color-ink-3:           #8C7E82;  /* Texto sutil (hints, "en carrito") */
+
+  /* Bordes */
+  --color-line:            #E8D5CD;  /* Bordes con tinte rosado */
+  --color-line-2:          #F1E2DA;  /* Bordes más claros */
+
+  /* Especiales */
+  --color-mint:            #C3F0CA;  /* Verde menta — solo "Descuento" en tarjeta de totales */
+  --color-on-primary:      #33272A;  /* Texto sobre primary cuando éste es claro */
 
   --font-sans: 'Manrope', sans-serif;
 }
