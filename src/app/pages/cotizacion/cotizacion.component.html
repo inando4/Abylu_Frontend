@@ -21,6 +21,7 @@
           <label>Teléfono del cliente <span class="required-mark">*</span></label>
           <span class="prefix">+51</span>
           <input class="input" type="tel"
+                 data-testid="cliente-telefono"
                  formControlName="clienteTelefono"
                  placeholder="987 654 321" />
         </div>
@@ -28,6 +29,7 @@
         <div class="field">
           <label>Lugar del evento <span class="required-mark">*</span></label>
           <input class="input" type="text"
+                 data-testid="lugar-evento"
                  formControlName="lugarEvento"
                  placeholder="Av. / Urb. / Distrito" />
         </div>
@@ -48,11 +50,11 @@
         <div class="row-2">
           <div class="field">
             <label>Fecha del evento <span class="required-mark">*</span></label>
-            <input type="date" class="input" formControlName="fechaEvento" />
+            <input type="date" class="input" data-testid="fecha-evento" formControlName="fechaEvento" />
           </div>
           <div class="field">
             <label>Horas de servicio</label>
-            <input type="number" class="input" formControlName="horasServicio" min="1" placeholder="4" />
+            <input type="number" class="input" data-testid="horas-servicio" formControlName="horasServicio" min="1" placeholder="4" />
           </div>
         </div>
 
@@ -227,7 +229,7 @@
       </div>
 
       @if (error) {
-        <div class="error-banner">{{ error }}</div>
+        <div class="error-banner" data-testid="error-banner">{{ error }}</div>
       }
     </div>
 
@@ -271,6 +273,7 @@
       <div class="b-grid">
         @for (p of productosVisibles; track p.id) {
           <button type="button" class="b-tile"
+                  data-testid="product-tile"
                   [disabled]="idsEnCarrito.includes(p.id)"
                   (click)="seleccionarProducto(p)">
             <div class="b-tile-emoji">{{ emojiPara(p) }}</div>
@@ -300,6 +303,7 @@
 @if (confirmOpen) {
   <div class="backdrop confirm-backdrop" (click)="cerrarConfirmacion()">
     <section class="confirm-dialog"
+             data-testid="confirm-dialog"
              role="dialog"
              aria-modal="true"
              aria-labelledby="confirm-title"
@@ -371,6 +375,7 @@
         </button>
         <button type="button"
                 class="btn-primary confirm-primary"
+                data-testid="confirm-generate-pdf"
                 [disabled]="cargando"
                 (click)="confirmarGeneracion()">
           @if (cargando) {
