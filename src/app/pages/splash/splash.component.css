@@ -32,16 +32,6 @@
   transform: translateY(0) scale(1);
 }
 
-.logo-text {
-  font-family: 'Manrope', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #191c1d;
-  letter-spacing: -0.02em;
-  margin: 0;
-  margin-top: -20px;
-}
-
 .logo-subtitle {
   font-family: 'Manrope', sans-serif;
   font-size: 0.75rem;
@@ -50,5 +40,5 @@
   letter-spacing: 0.15em;
   text-transform: uppercase;
   margin: 0;
-  margin-top: -4px;
+  margin-top: 8px;
 }
