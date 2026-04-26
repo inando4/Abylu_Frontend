@@ -13,7 +13,6 @@ import { Router } from '@angular/router';
  */
 @Component({
   selector: 'app-splash',
-  imports: [],
   templateUrl: './splash.component.html',
   styleUrl: './splash.component.css'
 })

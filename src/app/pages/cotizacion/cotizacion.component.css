@@ -137,16 +137,24 @@
 }
 textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
 
+.field.with-prefix .input {
+  padding-left: 42px;
+  min-height: 48px;
+  line-height: 1.2;
+}
 .field.with-prefix .prefix {
   position: absolute;
   left: 14px;
-  top: 30px;
+  bottom: 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
   color: var(--color-ink-3);
   font-weight: 600;
   font-size: 14px;
+  line-height: 1;
   pointer-events: none;
 }
-.field.with-prefix .input { padding-left: 42px; }
 
 .row-2 {
   display: grid;
@@ -269,14 +277,6 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
   justify-content: space-between;
   align-items: baseline;
   gap: 8px;
-}
-.pf-hint {
-  font-size: 9px;
-  font-weight: 500;
-  color: var(--color-ink-3);
-  text-transform: none;
-  letter-spacing: 0.2px;
-  font-style: italic;
 }
 .pf-input {
   width: 100%;

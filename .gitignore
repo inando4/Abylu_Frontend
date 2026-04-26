@@ -53,6 +53,5 @@ skills-lock.json
 # Archivo de conexion a API
 /src/app/core/api.config.ts
 
-# Gemini CLI
-.gemini/
-*.skill
+# Codex
+.codex

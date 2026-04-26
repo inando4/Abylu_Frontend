@@ -1,7 +1,6 @@
 /* ═══════════════════════════════════════════════
    ABYLU FRONTEND — Estilos Globales
    Tailwind CSS v4 · @theme config
-   Diseño: Glass-card con gradiente Google
    ═══════════════════════════════════════════════ */
 
 @import "tailwindcss";
@@ -45,13 +44,6 @@
   --font-sans: 'Manrope', sans-serif;
 }
 
-/* ── @property para animación del trail ── */
-@property --trail-size {
-  syntax: '<percentage>';
-  inherits: false;
-  initial-value: 70%;
-}
-
 /* ── Base ── */
 body {
   font-family: 'Manrope', sans-serif;
@@ -69,11 +61,6 @@ input, select, textarea { font-size: 16px; }
 * { -webkit-tap-highlight-color: transparent; }
 button, [type="submit"] { min-height: 44px; }
 
-/* Material Symbols base */
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-
 input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px rgba(0, 78, 232, 0.1);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
@@ -82,228 +69,12 @@ input:focus, select:focus, textarea:focus {
 router-outlet + * { animation: abylu-pageIn 0.4s ease-out; }
 
 /* ═══════════════════════════════════════════════
-   Glass Card — Efecto gradiente cónico rotatorio
-   ═══════════════════════════════════════════════ */
-
-.glass-card {
-  position: relative;
-  background: white;
-  border-radius: 14px;
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.08),
-    0 10px 25px -5px rgba(0, 0, 0, 0.12);
-  overflow: hidden;
-  border: 1px solid transparent;
-  contain: layout style paint;
-}
-
-.glass-card::before {
-  content: "";
-  position: absolute;
-  inset: -80%;
-  background: conic-gradient(
-    from 0deg,
-    rgba(66, 133, 244, 0.18) 0%,
-    rgba(66, 133, 244, 0.3)  5%,
-    rgba(234, 67, 53, 0.3)   15%,
-    rgba(234, 67, 53, 0.18)  20%,
-    rgba(251, 188, 5, 0.18)  25%,
-    rgba(251, 188, 5, 0.3)   30%,
-    rgba(52, 168, 83, 0.3)   40%,
-    rgba(52, 168, 83, 0.18)  45%,
-    rgba(66, 133, 244, 0.3)  var(--trail-size),
-    transparent var(--trail-size),
-    transparent 100%
-  );
-  animation:
-    rotate-gradient 6s linear infinite,
-    pulse-trail 5s ease-in-out infinite;
-  z-index: 0;
-  pointer-events: none;
-  will-change: transform;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-}
-
-.glass-card::after {
-  content: "";
-  position: absolute;
-  inset: 2px;
-  background: white;
-  border-radius: 12px;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.glass-card > * {
-  position: relative;
-  z-index: 2;
-}
-
-/* ── Variante dark: mismos efectos, fondo oscuro ── */
-.glass-card-dark {
-  position: relative;
-  background: #0f172a;
-  border-radius: 14px;
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.08),
-    0 10px 25px -5px rgba(0, 0, 0, 0.12);
-  overflow: hidden;
-  border: 1px solid transparent;
-  contain: layout style paint;
-}
-
-.glass-card-dark::before {
-  content: "";
-  position: absolute;
-  inset: -80%;
-  background: conic-gradient(
-    from 0deg,
-    rgba(66, 133, 244, 0.18) 0%,
-    rgba(66, 133, 244, 0.3)  5%,
-    rgba(234, 67, 53, 0.3)   15%,
-    rgba(234, 67, 53, 0.18)  20%,
-    rgba(251, 188, 5, 0.18)  25%,
-    rgba(251, 188, 5, 0.3)   30%,
-    rgba(52, 168, 83, 0.3)   40%,
-    rgba(52, 168, 83, 0.18)  45%,
-    rgba(66, 133, 244, 0.3)  var(--trail-size),
-    transparent var(--trail-size),
-    transparent 100%
-  );
-  animation:
-    rotate-gradient 6s linear infinite,
-    pulse-trail 5s ease-in-out infinite;
-  z-index: 0;
-  pointer-events: none;
-  will-change: transform;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-}
-
-.glass-card-dark::after {
-  content: "";
-  position: absolute;
-  inset: 2px;
-  background: #0f172a;
-  border-radius: 12px;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.glass-card-dark > * {
-  position: relative;
-  z-index: 2;
-}
-
-/* Móvil: borde gradiente estático (sin animación pesada) */
-@media (max-width: 768px) {
-  .glass-card {
-    border: 2px solid transparent;
-    background-image:
-      linear-gradient(white, white),
-      conic-gradient(
-        rgba(66, 133, 244, 0.35),
-        rgba(234, 67, 53, 0.35),
-        rgba(251, 188, 5, 0.35),
-        rgba(52, 168, 83, 0.35),
-        rgba(66, 133, 244, 0.35)
-      );
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-    overflow: visible;
-  }
-  .glass-card-dark {
-    border: 2px solid transparent;
-    background-image:
-      linear-gradient(#0f172a, #0f172a),
-      conic-gradient(
-        rgba(66, 133, 244, 0.35),
-        rgba(234, 67, 53, 0.35),
-        rgba(251, 188, 5, 0.35),
-        rgba(52, 168, 83, 0.35),
-        rgba(66, 133, 244, 0.35)
-      );
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-    overflow: visible;
-  }
-  .glass-card::before,
-  .glass-card::after,
-  .glass-card-dark::before,
-  .glass-card-dark::after {
-    display: none;
-  }
-}
-
-/* ═══════════════════════════════════════════════
-   Clases reutilizables — Inputs dentro de glass-cards
-   ═══════════════════════════════════════════════ */
-
-.abylu-input {
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-  background: transparent;
-  width: 100%;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-.abylu-input::placeholder {
-  color: #cbd5e1; /* slate-300 */
-}
-
-.abylu-label {
-  @apply block text-sm font-semibold text-gray-600 mb-1.5;
-}
-
-.abylu-label-sm {
-  @apply block text-xs font-semibold text-gray-500 mb-1;
-}
-
-/* ═══════════════════════════════════════════════
    Keyframes
    ═══════════════════════════════════════════════ */
-
-@keyframes rotate-gradient {
-  0%   { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes pulse-trail {
-  0%, 100% { --trail-size: 65%; }
-  50%      { --trail-size: 85%; }
-}
 
 @keyframes abylu-pageIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes abylu-fadeIn {
-  from { opacity: 0; transform: translateY(16px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes abylu-scaleIn {
-  from { opacity: 0; transform: scale(0.92); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-@keyframes abylu-shimmer {
-  0%   { background-position: 200% 50%; }
-  100% { background-position: -200% 50%; }
-}
-
-@keyframes abylu-glow {
-  0%, 100% { box-shadow: 0 8px 32px rgba(0, 78, 232, 0.2); }
-  50%      { box-shadow: 0 8px 48px rgba(0, 78, 232, 0.35); }
-}
-
-@keyframes abylu-float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-8px); }
 }
 
 /* ── Accesibilidad ── */

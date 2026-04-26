@@ -41,6 +41,40 @@ export class CotizacionComponent implements OnInit {
     { id: 'otros',       name: 'Otros',       emoji: '✨' },
   ];
 
+  private readonly emojisPorProducto: Record<string, string> = {
+    'algodón de azúcar en domo': '🍭',
+    'helados': '🍦',
+    'salchipapa': '🍟',
+    'nuggets': '🍗',
+    'café': '☕',
+    'emoliente frutado': '🍵',
+    'pizzetas': '🍕',
+    'bebidas personalizadas': '🥤',
+    'mini churros rellenos': '🥖',
+    'chocolate caliente': '☕',
+    'fresas con chocolate': '🍓',
+    'fuente de chocolate': '🍫',
+    'pan c/ hot dog': '🌭',
+    'salchicono': '🍟',
+    'popcorn salado': '🍿',
+    'manzanas acarameladas': '🍎',
+    'yoguis de hot dog': '🌭',
+    'candy bar': '🍬',
+    'algodón de azúcar': '🍭',
+    'mini donas': '🍩',
+    'brochetas de pollo': '🍢',
+    'mini pancakes': '🥞',
+    'waffles': '🧇',
+    'dispensador de bebidas': '🥤',
+    'fresas con crema': '🍓',
+    'hamburguesa + papitas fritas': '🍔',
+    'hamburguesa de carne': '🍔',
+    'mini hamburguesas': '🍔',
+    'fruti bar': '🥭',
+    'churro relleno': '🥖',
+    'choripan': '🍔',
+  };
+
   cotizacionForm!: FormGroup;
 
   get items(): FormArray {
@@ -121,6 +155,9 @@ export class CotizacionComponent implements OnInit {
   /** Mapa de emojis por palabra clave del nombre del producto. */
   emojiPara(producto: Producto): string {
     const n = producto.nombre.toLowerCase();
+    const emojiExacto = this.emojisPorProducto[n];
+    if (emojiExacto) return emojiExacto;
+
     if (n.includes('hot dog') || n.includes('hotdog')) return '🌭';
     if (n.includes('hamburg')) return '🍔';
     if (n.includes('anticucho')) return '🍢';

@@ -32,12 +32,6 @@
   transform: translateY(0) scale(1);
 }
 
-.logo-icon svg {
-  width: 100px;
-  height: 100px;
-  filter: drop-shadow(0 4px 12px rgba(0, 78, 232, 0.25));
-}
-
 .logo-text {
   font-family: 'Manrope', sans-serif;
   font-size: 2.5rem;
