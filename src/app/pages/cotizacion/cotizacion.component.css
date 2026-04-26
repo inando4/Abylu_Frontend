@@ -3,165 +3,8 @@
    Tipografía Manrope · Paleta crema + terracota
    ════════════════════════════════════════════════ */
 
-:host {
-  --r-sm: 10px;
-  --r-md: 14px;
-  --r-lg: 20px;
-  --shadow-sm: 0 1px 2px rgba(43, 29, 20, 0.05);
-  --shadow-md: 0 4px 12px rgba(43, 29, 20, 0.08);
-  --shadow-lg: 0 16px 36px rgba(43, 29, 20, 0.12);
-
-  display: block;
-  background: var(--color-cream);
-  min-height: 100dvh;
-  color: var(--color-ink);
-  font-family: 'Manrope', sans-serif;
-  letter-spacing: -0.01em;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.app-shell {
-  max-width: 480px;
-  margin: 0 auto;
-  position: relative;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ── Page title ── */
-.page-title {
-  padding: 80px 18px 8px;
-  flex-shrink: 0;
-}
-.page-title .eyebrow {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  color: #E9648A;
-  margin-bottom: 4px;
-}
-.page-title h1 {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  font-size: 26px;
-  line-height: 1.1;
-  margin: 0;
-  color: var(--color-ink);
-}
-.page-title .sub {
-  font-size: 13px;
-  color: var(--color-ink-2);
-  margin-top: 4px;
-}
-
-/* ── Content area ── */
-.content {
-  flex: 1;
-  padding: 8px 18px 140px;
-}
-
-/* ── Section card ── */
-.section {
-  background: #fff;
-  border: 1px solid var(--color-line-2);
-  border-radius: var(--r-lg);
-  padding: 18px;
-  margin-bottom: 14px;
-  box-shadow: var(--shadow-sm);
-}
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  font-size: 16px;
-  color: var(--color-ink);
-  margin-bottom: 14px;
-}
-.section-title .num {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--color-terracotta-soft);
-  color: var(--color-ink);
-  display: grid;
-  place-items: center;
-  font-size: 11px;
-  font-weight: 800;
-}
-.section-title .meta {
-  margin-left: auto;
-  font-size: 11px;
-  color: var(--color-ink-3);
-  font-weight: 600;
-}
-
-/* ── Form fields ── */
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 14px;
-  position: relative;
-}
-.field:last-child { margin-bottom: 0; }
-.field label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-  color: var(--color-ink-2);
-}
-.input {
-  width: 100%;
-  background: var(--color-cream);
-  border: 1.5px solid transparent;
-  border-radius: var(--r-md);
-  padding: 12px 14px;
-  font-size: 15px;
-  font-family: inherit;
-  color: var(--color-ink);
-  outline: none;
-  transition: border-color .15s, background .15s, box-shadow .15s;
-  font-variant-numeric: tabular-nums;
-}
-.input:focus {
-  border-color: var(--color-ink);
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(51, 39, 42, 0.12);
-}
-textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
-
-.field.with-prefix .input {
-  padding-left: 42px;
-  min-height: 48px;
-  line-height: 1.2;
-}
-.field.with-prefix .prefix {
-  position: absolute;
-  left: 14px;
-  bottom: 0;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  color: var(--color-ink-3);
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 1;
-  pointer-events: none;
-}
-
-.row-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-.row-2 .field { margin-bottom: 0; }
+.app-shell { position: relative; }
+.content { padding-bottom: 140px; }
 
 /* ── Event chips ── */
 .chips {
@@ -388,59 +231,6 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
   font-size: 13px;
 }
 
-/* ── Totals card (dark) ── */
-.totals-card {
-  background: linear-gradient(160deg, var(--color-ink) 0%, #1F1618 100%);
-  color: var(--color-cream);
-  border-radius: var(--r-lg);
-  padding: 20px;
-  margin-top: 4px;
-  box-shadow: var(--shadow-md);
-}
-.totals-card .t-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  padding: 5px 0;
-}
-.totals-card .t-row .lbl {
-  color: rgba(251, 245, 236, 0.7);
-  font-weight: 500;
-}
-.totals-card .t-row .val {
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--color-cream);
-}
-.totals-card .t-row.discount .val { color: var(--color-mint); }
-.totals-card hr {
-  border: none;
-  border-top: 1px solid rgba(251, 245, 236, 0.15);
-  margin: 10px 0;
-}
-.totals-card .total {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-top: 4px;
-}
-.totals-card .total .lbl {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  color: rgba(251, 245, 236, 0.6);
-}
-.totals-card .total .val {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  font-size: 28px;
-  color: var(--color-cream);
-  font-variant-numeric: tabular-nums;
-}
-
 /* ── Sticky footer ── */
 .footer {
   position: fixed;
@@ -455,31 +245,6 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
   gap: 8px;
   z-index: 5;
 }
-.btn-primary {
-  flex: 1;
-  height: 50px;
-  background: linear-gradient(180deg, #33272A 0%, #1F1618 100%);
-  color: var(--color-cream);
-  border: none;
-  border-radius: var(--r-md);
-  font-family: inherit;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 6px 16px rgba(51, 39, 42, 0.32);
-  transition: transform .12s, box-shadow .12s, opacity .12s;
-}
-.btn-primary:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(51, 39, 42, 0.42);
-}
-.btn-primary:active:not(:disabled) { transform: translateY(0); }
-.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
 .btn-secondary {
   width: 50px;
   height: 50px;
@@ -493,29 +258,6 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
   flex-shrink: 0;
 }
 .btn-secondary:hover { background: var(--color-cream-2); }
-
-/* ── Error toast ── */
-.error-banner {
-  margin-bottom: 12px;
-  padding: 12px 14px;
-  background: #FDE7E7;
-  border: 1px solid #F5B5B5;
-  color: #8A1F1F;
-  border-radius: var(--r-md);
-  font-size: 13px;
-  font-weight: 500;
-}
-
-/* ── Spinner ── */
-.spinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(250, 238, 231, 0.35);
-  border-top-color: var(--color-cream);
-  border-radius: 50%;
-  animation: spin .7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
 
 /* ════════════════════════════════════════════════
    Bottom sheet picker (grid + category tabs)

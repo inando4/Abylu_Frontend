@@ -3,12 +3,34 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { HeaderComponent } from '../../components/header/header.component';
 import { ProductoService, CotizacionService } from '../../core/services';
-import { Producto, ProductoPrecioEscala, CrearCotizacionRequest } from '../../shared/models';
+import { Producto, ProductoPrecioEscala, CrearCotizacionRequest, ItemCotizacionRequest } from '../../shared/models';
 
 interface TipoEvento {
   id: string;
   name: string;
   emoji: string;
+}
+
+interface CotizacionFormItem {
+  productoId: number | null;
+  cantidad: number | null;
+  esIlimitado: boolean;
+  precioUnitarioManual: number | null;
+  descripcionManual: string | null;
+  esPersonalizado: boolean;
+  nombreProducto: string;
+}
+
+interface CotizacionFormValue {
+  clienteTelefono: string;
+  fechaEvento: string;
+  tipoEvento: string;
+  lugarEvento: string;
+  notas: string;
+  descuento: number;
+  movilidad: number;
+  horasServicio: number | string | null;
+  items: CotizacionFormItem[];
 }
 
 @Component({
@@ -22,6 +44,7 @@ export class CotizacionComponent implements OnInit {
   private fb = inject(FormBuilder);
   private productoService = inject(ProductoService);
   private cotizacionService = inject(CotizacionService);
+  private readonly cantidadDefault = 50;
 
   productos: Producto[] = [];
   escalas: ProductoPrecioEscala[] = [];
@@ -210,8 +233,13 @@ export class CotizacionComponent implements OnInit {
   seleccionarProducto(producto: Producto): void {
     if (this.idsEnCarrito.includes(producto.id)) return;
 
+    this.items.push(this.crearGrupoProducto(producto));
+    this.cerrarPicker();
+  }
+
+  private crearGrupoProducto(producto: Producto): FormGroup {
     if (producto.categoria === 'ilimitado') {
-      this.items.push(this.fb.group({
+      return this.fb.group({
         productoId:           [producto.id, Validators.required],
         cantidad:             [null],
         esIlimitado:          [true],
@@ -221,27 +249,24 @@ export class CotizacionComponent implements OnInit {
         nombreProducto:       [producto.nombre],
         precioUnitarioVista:  [producto.precioUnitario],
         subtotalItem:         [producto.precioUnitario],
-      }));
-    } else {
-      const cantidadDefault = 50;
-      const escala = this.buscarEscala(producto.id, cantidadDefault);
-      const subtotal = escala ? escala.precioTotal : cantidadDefault * producto.precioUnitario;
-      const precioUnit = escala ? escala.precioTotal / cantidadDefault : producto.precioUnitario;
-
-      this.items.push(this.fb.group({
-        productoId:           [producto.id, Validators.required],
-        cantidad:             [cantidadDefault],
-        esIlimitado:          [false],
-        precioUnitarioManual: [precioUnit],
-        descripcionManual:    [null],
-        esPersonalizado:      [false],
-        nombreProducto:       [producto.nombre],
-        precioUnitarioVista:  [precioUnit],
-        subtotalItem:         [subtotal],
-      }));
+      });
     }
 
-    this.cerrarPicker();
+    const escala = this.buscarEscala(producto.id, this.cantidadDefault);
+    const subtotal = escala ? escala.precioTotal : this.cantidadDefault * producto.precioUnitario;
+    const precioUnit = escala ? escala.precioTotal / this.cantidadDefault : producto.precioUnitario;
+
+    return this.fb.group({
+      productoId:           [producto.id, Validators.required],
+      cantidad:             [this.cantidadDefault],
+      esIlimitado:          [false],
+      precioUnitarioManual: [precioUnit],
+      descripcionManual:    [null],
+      esPersonalizado:      [false],
+      nombreProducto:       [producto.nombre],
+      precioUnitarioVista:  [precioUnit],
+      subtotalItem:         [subtotal],
+    });
   }
 
   agregarItemPersonalizado(): void {
@@ -342,7 +367,7 @@ export class CotizacionComponent implements OnInit {
     this.cargando = true;
     this.error = '';
 
-    const formValue = this.cotizacionForm.value;
+    const formValue = this.cotizacionForm.value as CotizacionFormValue;
 
     const request: CrearCotizacionRequest = {
       clienteTelefono: formValue.clienteTelefono,
@@ -353,24 +378,7 @@ export class CotizacionComponent implements OnInit {
       descuento: +formValue.descuento || 0,
       movilidad: +formValue.movilidad || 0,
       horasServicio: formValue.horasServicio?.toString() || '',
-      items: formValue.items.map((item: any) => {
-        if (item.esPersonalizado) {
-          return {
-            productoId: null,
-            cantidad: +item.cantidad,
-            esIlimitado: false,
-            precioUnitarioManual: +item.precioUnitarioManual,
-            descripcionManual: item.descripcionManual,
-          };
-        }
-        return {
-          productoId: +item.productoId,
-          cantidad: item.esIlimitado ? null : +item.cantidad,
-          esIlimitado: item.esIlimitado,
-          precioUnitarioManual: item.precioUnitarioManual != null ? +item.precioUnitarioManual : null,
-          descripcionManual: null,
-        };
-      }),
+      items: formValue.items.map(item => this.crearItemRequest(item)),
     };
 
     this.cotizacionService.crearYDescargarPdf(request).subscribe({
@@ -379,16 +387,7 @@ export class CotizacionComponent implements OnInit {
         const a = document.createElement('a');
         a.href = url;
         const itemsDesc = formValue.items
-          .map((item: any) => {
-            if (item.esPersonalizado) {
-              return `${item.cantidad} ${item.descripcionManual || 'Personalizado'}`;
-            }
-            const nombre = item.nombreProducto || 'Producto';
-            if (item.esIlimitado && nombre.toLowerCase() === 'dispensador de bebidas') {
-              return `16 Lt. ${nombre}`;
-            }
-            return item.esIlimitado ? `Ilimitado ${nombre}` : `${item.cantidad} ${nombre}`;
-          })
+          .map(item => this.descripcionParaArchivo(item))
           .join(', ');
         a.download = `Cotizacion ABYLU - ${itemsDesc}.pdf`;
         a.click();
@@ -401,5 +400,38 @@ export class CotizacionComponent implements OnInit {
         console.error('Error:', err);
       }
     });
+  }
+
+  private descripcionParaArchivo(item: CotizacionFormItem): string {
+    if (item.esPersonalizado) {
+      return `${item.cantidad} ${item.descripcionManual || 'Personalizado'}`;
+    }
+
+    const nombre = item.nombreProducto || 'Producto';
+    if (item.esIlimitado && nombre.toLowerCase() === 'dispensador de bebidas') {
+      return `16 Lt. ${nombre}`;
+    }
+
+    return item.esIlimitado ? `Ilimitado ${nombre}` : `${item.cantidad} ${nombre}`;
+  }
+
+  private crearItemRequest(item: CotizacionFormItem): ItemCotizacionRequest {
+    if (item.esPersonalizado) {
+      return {
+        productoId: null,
+        cantidad: +item.cantidad!,
+        esIlimitado: false,
+        precioUnitarioManual: +item.precioUnitarioManual!,
+        descripcionManual: item.descripcionManual,
+      };
+    }
+
+    return {
+      productoId: +item.productoId!,
+      cantidad: item.esIlimitado ? null : +item.cantidad!,
+      esIlimitado: item.esIlimitado,
+      precioUnitarioManual: item.precioUnitarioManual != null ? +item.precioUnitarioManual : null,
+      descripcionManual: null,
+    };
   }
 }
