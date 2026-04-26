@@ -82,6 +82,8 @@
 .product-remove {
   width: 28px;
   height: 28px;
+  min-height: 28px;
+  padding: 0;
   border-radius: 50%;
   background: #fff;
   color: var(--color-ink-2);
