@@ -18,7 +18,7 @@
         </div>
 
         <div class="field with-prefix">
-          <label>Teléfono del cliente</label>
+          <label>Teléfono del cliente <span class="required-mark">*</span></label>
           <span class="prefix">+51</span>
           <input class="input" type="tel"
                  formControlName="clienteTelefono"
@@ -26,7 +26,7 @@
         </div>
 
         <div class="field">
-          <label>Lugar del evento</label>
+          <label>Lugar del evento <span class="required-mark">*</span></label>
           <input class="input" type="text"
                  formControlName="lugarEvento"
                  placeholder="Av. / Urb. / Distrito" />
@@ -47,7 +47,7 @@
 
         <div class="row-2">
           <div class="field">
-            <label>Fecha del evento</label>
+            <label>Fecha del evento <span class="required-mark">*</span></label>
             <input type="date" class="input" formControlName="fechaEvento" />
           </div>
           <div class="field">
@@ -67,7 +67,7 @@
       <!-- ══════════ SECCIÓN 2 · Productos y servicios ══════════ -->
       <div class="section">
         <div class="section-title">
-          <span class="num">2</span> Productos y servicios
+          <span class="num">2</span> Productos y servicios <span class="required-mark">*</span>
           <span class="meta">{{ items.length }} en carrito</span>
         </div>
 
@@ -183,14 +183,14 @@
         </div>
         <div class="row-2">
           <div class="field with-prefix">
-            <label>Movilidad</label>
+            <label>Movilidad <span class="required-mark">*</span></label>
             <span class="prefix">S/</span>
             <input type="number" class="input"
                    formControlName="movilidad"
                    min="0" step="0.10" />
           </div>
           <div class="field with-prefix">
-            <label>Descuento</label>
+            <label>Descuento <span class="required-mark">*</span></label>
             <span class="prefix">S/</span>
             <input type="number" class="input"
                    formControlName="descuento"
@@ -293,5 +293,93 @@
         }
       </div>
     </div>
+  </div>
+}
+
+<!-- ══════════════ Confirmación de generación ══════════════ -->
+@if (confirmOpen) {
+  <div class="backdrop confirm-backdrop" (click)="cerrarConfirmacion()">
+    <section class="confirm-dialog"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="confirm-title"
+             (click)="$event.stopPropagation()">
+      <div class="grabber confirm-grabber"></div>
+
+      <div class="confirm-head">
+        <div class="confirm-mark">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M5 9.4l2.4 2.4L13 6.2"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="confirm-eyebrow">Confirmación</div>
+          <h3 id="confirm-title">Generar cotización</h3>
+        </div>
+      </div>
+
+      <p class="confirm-copy">
+        Se creará la cotización y se descargará el PDF.
+      </p>
+
+      <div class="confirm-summary">
+        <div class="confirm-row">
+          <span>Cliente</span>
+          <strong>+51 {{ cotizacionForm.get('clienteTelefono')?.value }}</strong>
+        </div>
+        <div class="confirm-row">
+          <span>Fecha</span>
+          <strong>{{ cotizacionForm.get('fechaEvento')?.value }}</strong>
+        </div>
+        <div class="confirm-row">
+          <span>Productos</span>
+          <strong>{{ items.length }}</strong>
+        </div>
+        <div class="confirm-row">
+          <span>Subtotal</span>
+          <strong>S/ {{ subtotal | number:'1.2-2' }}</strong>
+        </div>
+        @if ((+cotizacionForm.get('movilidad')?.value || 0) > 0) {
+          <div class="confirm-row">
+            <span>Movilidad</span>
+            <strong>S/ {{ +cotizacionForm.get('movilidad')?.value || 0 | number:'1.2-2' }}</strong>
+          </div>
+        }
+        @if ((+cotizacionForm.get('descuento')?.value || 0) > 0) {
+          <div class="confirm-row discount">
+            <span>Descuento</span>
+            <strong>− S/ {{ +cotizacionForm.get('descuento')?.value || 0 | number:'1.2-2' }}</strong>
+          </div>
+        }
+      </div>
+
+      <div class="confirm-total">
+        <span>Total</span>
+        <strong>S/ {{ total | number:'1.2-2' }}</strong>
+      </div>
+
+      <div class="confirm-actions">
+        <button type="button"
+                class="confirm-cancel"
+                [disabled]="cargando"
+                (click)="cerrarConfirmacion()">
+          Cancelar
+        </button>
+        <button type="button"
+                class="btn-primary confirm-primary"
+                [disabled]="cargando"
+                (click)="confirmarGeneracion()">
+          @if (cargando) {
+            <span class="spinner"></span> Generando...
+          } @else {
+            Generar PDF
+          }
+        </button>
+      </div>
+    </section>
   </div>
 }

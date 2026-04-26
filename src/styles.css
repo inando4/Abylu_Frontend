@@ -181,6 +181,10 @@ app-detalle-cotizacion {
   text-transform: uppercase;
   color: var(--color-ink-2);
 }
+.required-mark {
+  color: var(--color-terracotta-dark);
+  font-weight: 900;
+}
 .input {
   width: 100%;
   background: var(--color-cream);
@@ -225,6 +229,7 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
   gap: 10px;
 }
 .row-2 .field { margin-bottom: 0; }
+.row-2 + .field { margin-top: 14px; }
 
 .estado-badge {
   font-size: 9px;
@@ -350,6 +355,180 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
 .sk-line.w-72 { width: 72%; }
 .sk-line.w-full { width: 100%; }
 
+.confirm-backdrop {
+  z-index: 120;
+}
+
+.confirm-dialog {
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-cream);
+  border-top-left-radius: 28px;
+  border-top-right-radius: 28px;
+  padding: 14px 18px calc(24px + env(safe-area-inset-bottom));
+  box-shadow: 0 -18px 40px rgba(43, 29, 20, 0.14);
+  animation: confirmSheetUp .25s cubic-bezier(.2, .8, .2, 1);
+}
+
+.confirm-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.confirm-mark {
+  width: 42px;
+  height: 42px;
+  min-height: 42px;
+  border-radius: 50%;
+  background: var(--color-mint);
+  color: #1F4023;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.confirm-eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--color-terracotta-dark);
+  margin-bottom: 2px;
+}
+
+.confirm-dialog h3 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  font-size: 22px;
+  line-height: 1.1;
+  margin: 0;
+  color: var(--color-ink);
+}
+
+.confirm-copy {
+  margin: 0 0 14px;
+  color: var(--color-ink-2);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.confirm-summary {
+  background: #fff;
+  border: 1px solid var(--color-line-2);
+  border-radius: var(--r-lg);
+  padding: 8px 14px;
+}
+
+.confirm-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 9px 0;
+  border-bottom: 1px dashed var(--color-line-2);
+  font-size: 13px;
+}
+
+.confirm-row:last-child {
+  border-bottom: none;
+}
+
+.confirm-row span {
+  color: var(--color-ink-3);
+  font-weight: 600;
+}
+
+.confirm-row strong {
+  color: var(--color-ink);
+  font-weight: 800;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.confirm-row.discount strong {
+  color: #1F4023;
+}
+
+.confirm-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: var(--r-lg);
+  background: linear-gradient(160deg, var(--color-ink) 0%, #1F1618 100%);
+  color: var(--color-cream);
+}
+
+.confirm-total span {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: rgba(251, 245, 236, 0.7);
+}
+
+.confirm-total strong {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+}
+
+.confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.confirm-cancel {
+  height: 50px;
+  background: #fff;
+  border: 1px solid var(--color-line);
+  border-radius: var(--r-md);
+  color: var(--color-ink);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  transition: background .15s, opacity .12s;
+}
+
+.confirm-cancel:hover:not(:disabled) {
+  background: var(--color-cream-2);
+}
+
+.confirm-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.confirm-primary {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .confirm-backdrop {
+    align-items: center;
+    padding: 24px;
+  }
+
+  .confirm-dialog {
+    max-width: 420px;
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 22px 60px rgba(43, 29, 20, 0.22);
+    animation: confirmPop .2s cubic-bezier(.2, .8, .2, 1);
+  }
+
+  .confirm-grabber {
+    display: none;
+  }
+}
+
 /* ═══════════════════════════════════════════════
    Keyframes
    ═══════════════════════════════════════════════ */
@@ -365,6 +544,16 @@ textarea.input { resize: vertical; min-height: 70px; font-family: inherit; }
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes confirmSheetUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes confirmPop {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
 
 /* ── Accesibilidad ── */
 @media (prefers-reduced-motion: reduce) {

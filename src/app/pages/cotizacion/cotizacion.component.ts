@@ -54,6 +54,7 @@ export class CotizacionComponent implements OnInit {
 
   pickerOpen = false;
   pickerTab: string = 'Todos';
+  confirmOpen = false;
 
   readonly tiposEvento: TipoEvento[] = [
     { id: 'cumple',      name: 'Cumpleaños',  emoji: '🎂' },
@@ -230,6 +231,17 @@ export class CotizacionComponent implements OnInit {
   }
   cerrarPicker(): void { this.pickerOpen = false; }
 
+  cerrarConfirmacion(): void {
+    if (this.cargando) return;
+    this.confirmOpen = false;
+  }
+
+  confirmarGeneracion(): void {
+    if (this.cargando) return;
+    this.confirmOpen = false;
+    this.crearYDescargarPdf();
+  }
+
   seleccionarProducto(producto: Producto): void {
     if (this.idsEnCarrito.includes(producto.id)) return;
 
@@ -364,22 +376,16 @@ export class CotizacionComponent implements OnInit {
       return;
     }
 
+    this.error = '';
+    this.confirmOpen = true;
+  }
+
+  private crearYDescargarPdf(): void {
     this.cargando = true;
     this.error = '';
 
     const formValue = this.cotizacionForm.value as CotizacionFormValue;
-
-    const request: CrearCotizacionRequest = {
-      clienteTelefono: formValue.clienteTelefono,
-      fechaEvento: formValue.fechaEvento,
-      tipoEvento: formValue.tipoEvento || '',
-      lugarEvento: formValue.lugarEvento,
-      notas: formValue.notas || '',
-      descuento: +formValue.descuento || 0,
-      movilidad: +formValue.movilidad || 0,
-      horasServicio: formValue.horasServicio?.toString() || '',
-      items: formValue.items.map(item => this.crearItemRequest(item)),
-    };
+    const request = this.crearCotizacionRequest(formValue);
 
     this.cotizacionService.crearYDescargarPdf(request).subscribe({
       next: (pdfBlob) => {
@@ -400,6 +406,20 @@ export class CotizacionComponent implements OnInit {
         console.error('Error:', err);
       }
     });
+  }
+
+  private crearCotizacionRequest(formValue: CotizacionFormValue): CrearCotizacionRequest {
+    return {
+      clienteTelefono: formValue.clienteTelefono,
+      fechaEvento: formValue.fechaEvento,
+      tipoEvento: formValue.tipoEvento || '',
+      lugarEvento: formValue.lugarEvento,
+      notas: formValue.notas || '',
+      descuento: +formValue.descuento || 0,
+      movilidad: +formValue.movilidad || 0,
+      horasServicio: formValue.horasServicio?.toString() || '',
+      items: formValue.items.map(item => this.crearItemRequest(item)),
+    };
   }
 
   private descripcionParaArchivo(item: CotizacionFormItem): string {
