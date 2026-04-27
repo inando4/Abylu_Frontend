@@ -2,14 +2,17 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 /**
- * Splash Screen — pantalla de bienvenida con animación del logo.
+ * Splash Screen — Variación 2 "Cálido cinematográfico".
  *
- * Concepto: Lifecycle Hooks (ciclo de vida)
- * Angular tiene "hooks" que se ejecutan en momentos específicos:
- *   - OnInit    → cuando el componente se inicializa (como @PostConstruct en Spring)
- *   - OnDestroy → cuando se destruye (como @PreDestroy)
- *
- * Aquí usamos OnInit para iniciar el timer de redirección.
+ * Timeline:
+ *   t=0.00s  → barras letterbox se abren
+ *   t=0.55s  → logo zoom-in
+ *   t=0.60s  → sweep de luz
+ *   t=1.00s  → burst de sparkles
+ *   t=1.10s  → tagline aparece
+ *   t=1.25s  → firma "By N4ND0" aparece
+ *   t=3.70s  → fade-out global (1.5s extra para leer la firma)
+ *   t=4.20s  → navegación a /cotizacion
  */
 @Component({
   selector: 'app-splash',
@@ -20,18 +23,17 @@ export class SplashComponent implements OnInit {
 
   private router = inject(Router);
 
-  /** Controla las clases CSS de animación */
-  logoVisible = false;
+  started = false;
   fadeOut = false;
 
   ngOnInit(): void {
-    // Paso 1: Mostrar logo con fade-in (tras breve delay para que se note)
-    setTimeout(() => this.logoVisible = true, 200);
+    // Activar las animaciones (un tick después para garantizar el reflow inicial)
+    setTimeout(() => this.started = true, 50);
 
-    // Paso 2: Iniciar fade-out después de 2 segundos
-    setTimeout(() => this.fadeOut = true, 2200);
+    // Fade-out global antes de navegar (con 1.5s extra para que el usuario lea la firma)
+    setTimeout(() => this.fadeOut = true, 3700);
 
-    // Paso 3: Navegar a cotización después del fade-out (2.5s total)
-    setTimeout(() => this.router.navigate(['/cotizacion']), 2700);
+    // Navegar a la cotización tras el fade-out
+    setTimeout(() => this.router.navigate(['/cotizacion']), 4200);
   }
 }

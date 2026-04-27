@@ -1,10 +1,27 @@
-<div class="splash-container" [class.fade-out]="fadeOut">
+<div class="splash-cinema" [class.run]="started" [class.fade-out]="fadeOut">
 
-  <div class="logo-wrapper" [class.visible]="logoVisible">
-    <img src="Abylu-Logo.webp" alt="Logo de Abylu" class="h-24 object-contain"
+  <div class="bar bar-top"></div>
+  <div class="bar bar-bottom"></div>
+
+  <div class="sweep"></div>
+
+  <div class="logo-wrap">
+    <img src="Abylu-Logo.webp" alt="Logo de Abylu"
          fetchpriority="high" decoding="async">
+  </div>
 
-    <p class="logo-subtitle">By N4nd0 - v2.0.0</p>
+  <span class="sparkle" style="left:48%; top:30%; --tx:-90px;  --ty:-50px;"></span>
+  <span class="sparkle" style="left:52%; top:32%; --tx: 100px; --ty:-40px;"></span>
+  <span class="sparkle" style="left:46%; top:50%; --tx:-110px; --ty: 30px;"></span>
+  <span class="sparkle" style="left:54%; top:48%; --tx: 120px; --ty: 20px;"></span>
+  <span class="sparkle" style="left:50%; top:36%; --tx:   0px; --ty:-90px;"></span>
+  <span class="sparkle" style="left:50%; top:60%; --tx:  20px; --ty: 70px;"></span>
+
+  <div class="bottom-block">
+    <div class="tag">
+      <div class="text">Porque cada evento merece un <em>snack especial</em></div>
+    </div>
+    <div class="by">By N4ND0</div>
   </div>
 
 </div>
