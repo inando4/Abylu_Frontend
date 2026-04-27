@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 import { CotizacionService } from '../../core/services';
-import { CotizacionSummaryResponse, PageResponse, EstadoCotizacion } from '../../shared/models';
+import { CotizacionSummaryResponse, PageResponse } from '../../shared/models';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -79,15 +79,6 @@ export class HistorialComponent implements OnInit, OnDestroy {
 
   verDetalle(id: number): void {
     this.router.navigate(['/historial', id]);
-  }
-
-  badgeClase(estado: EstadoCotizacion): string {
-    switch (estado) {
-      case 'BORRADOR':  return 'bg-slate-100 text-slate-600';
-      case 'ENVIADA':   return 'bg-blue-50 text-primary';
-      case 'ACEPTADA':  return 'bg-emerald-50 text-emerald-600';
-      case 'RECHAZADA': return 'bg-red-50 text-secondary';
-    }
   }
 
   formatearFecha(fechaIso: string): string {

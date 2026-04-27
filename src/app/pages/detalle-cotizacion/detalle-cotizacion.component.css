@@ -1,3 +1,189 @@
-main {
-  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+/* ════════════════════════════════════════════════
+   Detalle de cotización · paleta Happy Hues
+   ════════════════════════════════════════════════ */
+
+/* ── Back bar ── */
+.back-bar {
+  padding: 80px 18px 0;
 }
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--color-ink-2);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: color .15s;
+}
+.back-link:hover { color: var(--color-ink); }
+
+.page-title {
+  padding: 8px 18px 8px;
+}
+
+/* ── Info list (cliente y evento) ── */
+.info-list {
+  display: flex;
+  flex-direction: column;
+}
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--color-line-2);
+}
+.info-row:last-child { border-bottom: none; }
+.info-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+  flex-shrink: 0;
+}
+.info-val {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-align: right;
+  letter-spacing: -0.01em;
+}
+
+/* ── Lista de detalles ── */
+.detalle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.detalle-row {
+  background: var(--color-cream);
+  border: 1px solid var(--color-line-2);
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+}
+.detalle-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.detalle-nombre {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+}
+.ilimitado-pill {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--color-terracotta-soft);
+  color: var(--color-ink);
+}
+.detalle-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px dashed var(--color-line);
+  padding-top: 8px;
+}
+.detalle-calc {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-ink-3);
+  letter-spacing: 0.2px;
+}
+.detalle-sub {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Notas ── */
+.notas {
+  font-size: 14px;
+  color: var(--color-ink-2);
+  white-space: pre-line;
+  line-height: 1.5;
+  margin: 0;
+  padding: 12px 14px;
+  background: var(--color-cream);
+  border: 1px solid var(--color-line-2);
+  border-radius: var(--r-md);
+}
+
+.totals-card { margin-bottom: 14px; }
+
+/* ── Acciones ── */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.btn-outline {
+  height: 46px;
+  background: #fff;
+  color: var(--color-ink);
+  border: 1.5px solid var(--color-ink);
+  border-radius: var(--r-md);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background .15s, transform .12s;
+}
+.btn-outline:hover { background: var(--color-cream-2); }
+.btn-outline:active { transform: translateY(1px); }
+
+.btn-mint {
+  height: 50px;
+  background: var(--color-mint);
+  color: #1F4023;
+  border: 1.5px solid #6BB07A;
+  border-radius: var(--r-md);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .12s, background .15s;
+}
+.btn-mint:hover:not(:disabled) { background: #B0E5B8; transform: translateY(-1px); }
+.btn-mint:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-danger {
+  height: 50px;
+  background: #FBC4C4;
+  color: #6B1818;
+  border: 1.5px solid #E89090;
+  border-radius: var(--r-md);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .12s, background .15s;
+}
+.btn-danger:hover:not(:disabled) { background: #F4A8A8; transform: translateY(-1px); }
+.btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }

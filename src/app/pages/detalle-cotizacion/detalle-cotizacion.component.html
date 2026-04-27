@@ -1,255 +1,197 @@
 <app-header />
 
-<main class="pt-24 px-6 max-w-2xl mx-auto space-y-8">
+<div class="app-shell">
 
-  <!-- Botón volver -->
-  <div class="px-2">
-    <button type="button" (click)="volver()"
-            class="text-[10px] font-extrabold uppercase tracking-[0.12em] text-slate-400
-                   hover:text-primary transition-colors flex items-center gap-1">
-      <span class="material-symbols-outlined text-sm">arrow_back</span>
+  <div class="back-bar">
+    <button type="button" class="back-link" (click)="volver()">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <path d="M10 4l-4 4 4 4" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
       Volver al historial
     </button>
   </div>
 
-  <!-- Estado: Cargando (skeleton) -->
   @if (cargando) {
-    <div class="space-y-6">
-      <div class="glass-card p-6">
-        <div class="animate-pulse space-y-4">
-          <div class="flex justify-between">
-            <div class="h-6 bg-slate-200 rounded w-40"></div>
-            <div class="h-6 bg-slate-100 rounded-full w-24"></div>
-          </div>
-          <div class="h-4 bg-slate-100 rounded w-48"></div>
-          <div class="h-4 bg-slate-100 rounded w-36"></div>
-          <div class="h-4 bg-slate-100 rounded w-56"></div>
-        </div>
+    <div class="content">
+      <div class="section">
+        <div class="sk-line w-40" style="height: 18px; margin-bottom: 12px;"></div>
+        <div class="sk-line w-72" style="margin-bottom: 8px;"></div>
+        <div class="sk-line w-56"></div>
       </div>
-      <div class="glass-card p-6">
-        <div class="animate-pulse space-y-3">
-          <div class="h-4 bg-slate-200 rounded w-32"></div>
-          <div class="h-3 bg-slate-100 rounded w-full"></div>
-          <div class="h-3 bg-slate-100 rounded w-full"></div>
-        </div>
+      <div class="section">
+        <div class="sk-line w-40" style="height: 14px; margin-bottom: 10px;"></div>
+        <div class="sk-line w-full"></div>
       </div>
     </div>
   }
 
-  <!-- Estado: Con datos -->
   @if (!cargando && cotizacion) {
+    <div class="page-title">
+      <div class="eyebrow">{{ cotizacion.numeroCotizacion }}</div>
+      <h1>Detalle de cotización</h1>
+      <div class="sub">Revisa los datos del evento y los productos cotizados.</div>
+    </div>
 
-    <!-- ══════════════════════════════════════
-         SECCIÓN 1 — Encabezado + Datos del evento
-         ══════════════════════════════════════ -->
-    <section class="space-y-4" style="animation: abylu-fadeIn 0.4s ease-out;">
-      <div class="glass-card p-6">
-        <!-- Número + Badge -->
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-black tracking-tighter text-slate-900">
-            {{ cotizacion.numeroCotizacion }}
-          </h2>
-          <span class="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full"
-                [class]="badgeClase(cotizacion.estado)">
+    <div class="content">
+
+      <!-- ══════════ SECCIÓN 1 · Cliente y evento ══════════ -->
+      <div class="section">
+        <div class="section-title">
+          <span class="num">1</span> Cliente y evento
+          <span class="estado-badge"
+                [class]="'estado-' + cotizacion.estado.toLowerCase()"
+                style="margin-left: auto;">
             {{ cotizacion.estado }}
           </span>
         </div>
 
-        <!-- Datos del evento -->
-        <div class="space-y-2.5">
-          <div class="flex items-center gap-2.5">
-            <span class="material-symbols-outlined text-slate-300 text-lg">phone</span>
-            <span class="text-sm font-semibold text-slate-600">{{ cotizacion.clienteTelefono }}</span>
+        <div class="info-list">
+          <div class="info-row">
+            <span class="info-lbl">Teléfono</span>
+            <span class="info-val">{{ cotizacion.clienteTelefono }}</span>
           </div>
-
           @if (cotizacion.fechaEvento) {
-            <div class="flex items-center gap-2.5">
-              <span class="material-symbols-outlined text-slate-300 text-lg">calendar_today</span>
-              <span class="text-sm font-semibold text-slate-600">{{ formatearFecha(cotizacion.fechaEvento) }}</span>
+            <div class="info-row">
+              <span class="info-lbl">Fecha del evento</span>
+              <span class="info-val">{{ formatearFecha(cotizacion.fechaEvento) }}</span>
             </div>
           }
-
           @if (cotizacion.tipoEvento) {
-            <div class="flex items-center gap-2.5">
-              <span class="material-symbols-outlined text-slate-300 text-lg">celebration</span>
-              <span class="text-sm font-semibold text-slate-600">{{ cotizacion.tipoEvento }}</span>
+            <div class="info-row">
+              <span class="info-lbl">Tipo de evento</span>
+              <span class="info-val">{{ cotizacion.tipoEvento }}</span>
             </div>
           }
-
           @if (cotizacion.lugarEvento) {
-            <div class="flex items-center gap-2.5">
-              <span class="material-symbols-outlined text-slate-300 text-lg">location_on</span>
-              <span class="text-sm font-semibold text-slate-600">{{ cotizacion.lugarEvento }}</span>
+            <div class="info-row">
+              <span class="info-lbl">Lugar</span>
+              <span class="info-val">{{ cotizacion.lugarEvento }}</span>
             </div>
           }
-
           @if (cotizacion.horasServicio) {
-            <div class="flex items-center gap-2.5">
-              <span class="material-symbols-outlined text-slate-300 text-lg">schedule</span>
-              <span class="text-sm font-semibold text-slate-600">{{ cotizacion.horasServicio }} horas de servicio</span>
+            <div class="info-row">
+              <span class="info-lbl">Horas de servicio</span>
+              <span class="info-val">{{ cotizacion.horasServicio }} h</span>
             </div>
           }
         </div>
       </div>
-    </section>
 
-    <!-- ══════════════════════════════════════
-         SECCIÓN 2 — Productos y Servicios
-         ══════════════════════════════════════ -->
-    <section class="space-y-4" style="animation: abylu-fadeIn 0.4s ease-out 0.1s both;">
-      <h3 class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400 px-2">
-        Productos y Servicios
-      </h3>
-
-      @for (detalle of cotizacion.detalles; track $index) {
-        <div class="glass-card p-5"
-             [style]="'animation: abylu-scaleIn 0.35s ease-out ' + ($index * 0.08) + 's both'">
-          <div class="flex items-center justify-between mb-1">
-            <span class="text-sm font-extrabold text-slate-900">{{ detalle.productoNombre }}</span>
-            @if (detalle.esIlimitado) {
-              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full
-                           bg-primary/5 text-primary border border-primary/10">
-                Ilimitado
-              </span>
-            }
-          </div>
-
-          <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
-            @if (!detalle.esIlimitado && detalle.cantidad) {
-              <span class="text-xs text-slate-400">
-                {{ detalle.cantidad }} x S/ {{ detalle.precioUnitario | number:'1.2-2' }}
-              </span>
-            } @else {
-              <span class="text-xs text-slate-400">Precio fijo</span>
-            }
-            <span class="text-sm font-extrabold text-slate-700">
-              S/ {{ detalle.subtotal | number:'1.2-2' }}
-            </span>
-          </div>
-        </div>
-      }
-    </section>
-
-    <!-- ══════════════════════════════════════
-         SECCIÓN 3 — Notas
-         ══════════════════════════════════════ -->
-    @if (cotizacion.notas) {
-      <section class="space-y-4" style="animation: abylu-fadeIn 0.4s ease-out 0.2s both;">
-        <h3 class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400 px-2">
-          Notas
-        </h3>
-        <div class="glass-card p-5">
-          <p class="text-sm text-slate-600 font-medium leading-relaxed whitespace-pre-line">
-            {{ cotizacion.notas }}
-          </p>
-        </div>
-      </section>
-    }
-
-    <!-- ══════════════════════════════════════
-         SECCIÓN 4 — Resumen Financiero
-         ══════════════════════════════════════ -->
-    <section class="space-y-4" style="animation: abylu-fadeIn 0.4s ease-out 0.3s both;">
-      <h3 class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400 px-2">
-        Resumen
-      </h3>
-
-      <div class="space-y-3 px-2">
-        <div class="flex justify-between items-center">
-          <span class="text-sm font-semibold text-slate-500">Subtotal</span>
-          <span class="text-sm font-extrabold">S/ {{ cotizacion.subtotal | number:'1.2-2' }}</span>
+      <!-- ══════════ SECCIÓN 2 · Productos y servicios ══════════ -->
+      <div class="section">
+        <div class="section-title">
+          <span class="num">2</span> Productos y servicios
+          <span class="meta">{{ cotizacion.detalles.length }} ítem(s)</span>
         </div>
 
-        @if (cotizacion.movilidad && cotizacion.movilidad > 0) {
-          <div class="flex justify-between items-center">
-            <span class="text-sm font-semibold text-slate-500">Movilidad</span>
-            <span class="text-sm font-extrabold">+ S/ {{ cotizacion.movilidad | number:'1.2-2' }}</span>
-          </div>
-        }
-
-        @if (cotizacion.descuento && cotizacion.descuento > 0) {
-          <div class="flex justify-between items-center text-secondary">
-            <span class="text-sm font-semibold">Descuento</span>
-            <span class="text-sm font-extrabold">- S/ {{ cotizacion.descuento | number:'1.2-2' }}</span>
-          </div>
-        }
-      </div>
-
-      <!-- Total Banner -->
-      <div class="glass-card p-6 flex justify-between items-center">
-        <div class="flex flex-col">
-          <span class="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">Total</span>
-          <span class="text-3xl font-black tracking-tighter text-slate-900">
-            S/ {{ cotizacion.total | number:'1.2-2' }}
-          </span>
-        </div>
-        <div class="w-14 h-14 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10">
-          <span class="material-symbols-outlined text-primary text-3xl">payments</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══════════════════════════════════════
-         SECCIÓN 5 — Acciones
-         ══════════════════════════════════════ -->
-    <section class="space-y-3 pt-4 pb-8" style="animation: abylu-fadeIn 0.4s ease-out 0.4s both;">
-
-      <!-- Cambio de estado contextual -->
-      @if (cotizacion.estado === 'BORRADOR') {
-        <button type="button" (click)="cambiarEstado('ENVIADA')"
-                [disabled]="cambiandoEstado"
-                class="w-full py-4 rounded-2xl bg-primary text-white font-black tracking-widest text-xs
-                       hover:scale-[1.01] active:scale-[0.99] transition-all
-                       disabled:opacity-50 disabled:cursor-not-allowed
-                       flex items-center justify-center gap-3 shadow-xl">
-          @if (cambiandoEstado) {
-            <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-              <path class="opacity-75" fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
-            </svg>
-            ACTUALIZANDO...
-          } @else {
-            <span class="material-symbols-outlined text-lg">send</span>
-            MARCAR COMO ENVIADA
+        <div class="detalle-list">
+          @for (detalle of cotizacion.detalles; track $index) {
+            <div class="detalle-row">
+              <div class="detalle-head">
+                <div class="detalle-nombre">{{ detalle.productoNombre }}</div>
+                @if (detalle.esIlimitado) {
+                  <span class="ilimitado-pill">⚡ Ilimitado</span>
+                }
+              </div>
+              <div class="detalle-foot">
+                @if (!detalle.esIlimitado && detalle.cantidad) {
+                  <span class="detalle-calc">
+                    {{ detalle.cantidad }} × S/ {{ detalle.precioUnitario | number:'1.2-2' }}
+                  </span>
+                } @else {
+                  <span class="detalle-calc">Precio fijo</span>
+                }
+                <span class="detalle-sub">S/ {{ detalle.subtotal | number:'1.2-2' }}</span>
+              </div>
+            </div>
           }
-        </button>
-      }
+        </div>
+      </div>
 
-      @if (cotizacion.estado === 'ENVIADA') {
-        <div class="grid grid-cols-2 gap-3">
-          <button type="button" (click)="cambiarEstado('ACEPTADA')"
-                  [disabled]="cambiandoEstado"
-                  class="py-4 rounded-2xl bg-tertiary text-white font-black tracking-widest text-xs
-                         hover:scale-[1.01] active:scale-[0.99] transition-all
-                         disabled:opacity-50 disabled:cursor-not-allowed
-                         flex items-center justify-center gap-2 shadow-xl">
-            <span class="material-symbols-outlined text-lg">check_circle</span>
-            ACEPTADA
-          </button>
-          <button type="button" (click)="cambiarEstado('RECHAZADA')"
-                  [disabled]="cambiandoEstado"
-                  class="py-4 rounded-2xl bg-secondary text-white font-black tracking-widest text-xs
-                         hover:scale-[1.01] active:scale-[0.99] transition-all
-                         disabled:opacity-50 disabled:cursor-not-allowed
-                         flex items-center justify-center gap-2 shadow-xl">
-            <span class="material-symbols-outlined text-lg">cancel</span>
-            RECHAZADA
-          </button>
+      <!-- ══════════ SECCIÓN 3 · Notas ══════════ -->
+      @if (cotizacion.notas) {
+        <div class="section">
+          <div class="section-title">
+            <span class="num">3</span> Notas
+          </div>
+          <p class="notas">{{ cotizacion.notas }}</p>
         </div>
       }
-  
-    </section>
-  }
 
-  <!-- Error -->
-  @if (error) {
-    <div class="flex items-center gap-2.5 bg-red-50 border border-red-200 text-red-600
-                text-sm rounded-xl px-4 py-3"
-         style="animation: abylu-scaleIn 0.3s ease-out;">
-      <span class="material-symbols-outlined text-red-400 text-xl">warning</span>
-      {{ error }}
+      <!-- ══════════ Tarjeta de totales ══════════ -->
+      <div class="totals-card">
+        <div class="t-row">
+          <span class="lbl">Subtotal</span>
+          <span class="val">S/ {{ cotizacion.subtotal | number:'1.2-2' }}</span>
+        </div>
+        @if (cotizacion.movilidad && cotizacion.movilidad > 0) {
+          <div class="t-row">
+            <span class="lbl">Movilidad</span>
+            <span class="val">S/ {{ cotizacion.movilidad | number:'1.2-2' }}</span>
+          </div>
+        }
+        @if (cotizacion.descuento && cotizacion.descuento > 0) {
+          <div class="t-row discount">
+            <span class="lbl">Descuento</span>
+            <span class="val">− S/ {{ cotizacion.descuento | number:'1.2-2' }}</span>
+          </div>
+        }
+        <hr />
+        <div class="total">
+          <span class="lbl">Total</span>
+          <span class="val">S/ {{ cotizacion.total | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <!-- ══════════ Acciones ══════════ -->
+      <div class="actions">
+        <button type="button" class="btn-outline" (click)="descargarPdf()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 2v8m0 0l-3-3m3 3l3-3M3 13h10"
+                  stroke="currentColor" stroke-width="1.6"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Descargar PDF
+        </button>
+
+        @if (cotizacion.estado === 'BORRADOR') {
+          <button type="button" class="btn-primary"
+                  [disabled]="cambiandoEstado"
+                  (click)="cambiarEstado('ENVIADA')">
+            @if (cambiandoEstado) {
+              <span class="spinner"></span> Actualizando...
+            } @else {
+              Marcar como enviada
+            }
+          </button>
+        }
+
+        @if (cotizacion.estado === 'ENVIADA') {
+          <div class="actions-grid">
+            <button type="button" class="btn-mint"
+                    [disabled]="cambiandoEstado"
+                    (click)="cambiarEstado('ACEPTADA')">
+              ✓ Aceptada
+            </button>
+            <button type="button" class="btn-danger"
+                    [disabled]="cambiandoEstado"
+                    (click)="cambiarEstado('RECHAZADA')">
+              ✕ Rechazada
+            </button>
+          </div>
+        }
+      </div>
+
+      @if (error) {
+        <div class="error-banner">{{ error }}</div>
+      }
     </div>
   }
 
-</main>
+  @if (error && !cotizacion) {
+    <div class="content">
+      <div class="error-banner">{{ error }}</div>
+    </div>
+  }
+</div>

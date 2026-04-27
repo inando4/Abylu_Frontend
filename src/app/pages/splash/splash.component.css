@@ -1,59 +1,207 @@
 /*
-  Estilos del Splash — usamos CSS puro aquí (no Tailwind)
-  porque las animaciones con keyframes son más limpias en CSS directo.
+  Splash — Variación 2 "Cálido cinematográfico"
+  Letterbox bars que se abren, barrido de luz, zoom del logo y burst de sparkles.
 */
 
-.splash-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100dvh;
-  background: linear-gradient(135deg, #fcfdfe 0%, #f3f4f5 50%, #e7e8e9 100%);
+:host {
+  --peach:    #FAEEE7;
+  --peach-2:  #F5E1D6;
+  --peach-3:  #EFD3C4;
+  --pink:     #FFC6C7;
+  --pink-2:   #FFB0B2;
+  --cacao:    #33272A;
+  --cacao-2:  #594A4E;
+}
+
+.splash-cinema {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--peach);
   transition: opacity 0.5s ease;
 }
 
-.splash-container.fade-out {
+.splash-cinema.fade-out {
   opacity: 0;
 }
 
-.logo-wrapper {
+/* ===== Letterbox bars ===== */
+.bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: var(--cacao);
+  z-index: 5;
+}
+.bar-top    { top: 0;    height: 50%; transform: translateY(0); }
+.bar-bottom { bottom: 0; height: 50%; transform: translateY(0); }
+
+.splash-cinema.run .bar-top    { animation: barOutTop 0.8s cubic-bezier(.7,0,.3,1) forwards; }
+.splash-cinema.run .bar-bottom { animation: barOutBot 0.8s cubic-bezier(.7,0,.3,1) forwards; }
+
+@keyframes barOutTop {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
+}
+@keyframes barOutBot {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(100%); }
+}
+
+/* ===== Sweep light ===== */
+.sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg,
+    transparent 30%,
+    rgba(255, 198, 199, 0.55) 45%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 198, 199, 0.55) 55%,
+    transparent 70%);
+  transform: translateX(-100%);
+  z-index: 3;
+  pointer-events: none;
+}
+.splash-cinema.run .sweep {
+  animation: sweep 1.4s cubic-bezier(.4,.1,.3,1) .6s forwards;
+}
+@keyframes sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ===== Logo ===== */
+.logo-wrap {
+  position: relative;
+  width: min(280px, 60vw);
+  z-index: 2;
+  opacity: 0;
+  transform: scale(1.18);
+}
+.splash-cinema.run .logo-wrap {
+  animation: cinemaIn 1.6s cubic-bezier(.2,.8,.2,1) .55s forwards;
+}
+@keyframes cinemaIn {
+  0%   { opacity: 0; transform: scale(1.18); filter: brightness(0.9); }
+  35%  { opacity: 1; }
+  100% { opacity: 1; transform: scale(1);    filter: brightness(1); }
+}
+.logo-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 12px 32px rgba(51, 39, 42, 0.18));
+}
+
+/* ===== Sparkles ===== */
+.sparkle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--pink);
+  border-radius: 50%;
+  z-index: 2;
+  opacity: 0;
+  box-shadow: 0 0 12px var(--pink);
+}
+.splash-cinema.run .sparkle {
+  animation: sparkleBurst 2.5s cubic-bezier(.2,.8,.2,1) 1.0s forwards;
+}
+@keyframes sparkleBurst {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0); }
+  15%  { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1); }
+  80%  { opacity: 1; transform: translate(calc(var(--tx) * 1.25), calc(var(--ty) * 1.25)) scale(0.95); }
+  100% { opacity: 0; transform: translate(calc(var(--tx) * 1.6), calc(var(--ty) * 1.6)) scale(0.5); }
+}
+
+/* ===== Bloque inferior (tagline + firma agrupados) ===== */
+.bottom-block {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 40%;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 8px;
+  padding: 0 16px;
+  pointer-events: none;
+}
+
+/* ===== Tagline ===== */
+.tag {
+  text-align: center;
   opacity: 0;
-  transform: translateY(20px) scale(0.95);
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
 }
-
-/* Cuando logoVisible = true, Angular agrega esta clase */
-.logo-wrapper.visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
+.splash-cinema.run .tag {
+  animation: cinemaTagIn 0.8s cubic-bezier(.2,.8,.2,1) 1.1s forwards;
 }
-
-.logo-icon svg {
-  width: 100px;
-  height: 100px;
-  filter: drop-shadow(0 4px 12px rgba(0, 78, 232, 0.25));
+@keyframes cinemaTagIn {
+  0%   { opacity: 0; transform: translateY(10px); letter-spacing: 0.3em; }
+  100% { opacity: 1; transform: translateY(0);    letter-spacing: 0.04em; }
 }
-
-.logo-text {
+.tag .text {
   font-family: 'Manrope', sans-serif;
-  font-size: 2.5rem;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--cacao);
+  letter-spacing: 0.04em;
+}
+.tag .text em {
+  color: var(--color-terracotta-dark);
+  font-style: normal;
   font-weight: 700;
-  color: #191c1d;
-  letter-spacing: -0.02em;
-  margin: 0;
-  margin-top: -100px;
 }
 
-.logo-subtitle {
-  font-family: 'Manrope', sans-serif;
-  font-size: 1rem;
-  color: #94a3b8;
-  letter-spacing: 0.15em;
+/* ===== Firma "By" (justo debajo del tagline) ===== */
+.by {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.4px;
+  color: var(--color-terracotta-dark);
+  opacity: 0;
   text-transform: uppercase;
-  margin: 0;
-  margin-top: -10px;
+}
+.splash-cinema.run .by {
+  animation: byIn 0.6s ease-out 1.25s forwards;
+}
+@keyframes byIn {
+  0%   { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 0.9; transform: translateY(0); }
+}
+
+/* En móvil el viewport es vertical, así que bajamos el bloque de texto
+   para que no quede tan arriba. Breakpoint alineado con el header (768px). */
+@media (max-width: 768px) {
+  /* padding-bottom desplaza el contenido centrado (logo) hacia arriba,
+     y subimos el bloque de texto en la misma proporción para que el
+     conjunto se vea ópticamente centrado. */
+  .splash-cinema { padding-bottom: 20vh; }
+  .bottom-block  { bottom: 45%; }
+}
+
+/* En pantallas muy angostas (<360px) permitimos wrap para que el tagline
+   no se desborde con el tamaño de letra mayor. */
+@media (max-width: 360px) {
+  .tag { white-space: normal; max-width: 92vw; }
+  .tag .text { font-size: 14px; }
+}
+
+/* Respeto a la preferencia de reducción de movimiento (Android 10+). */
+@media (prefers-reduced-motion: reduce) {
+  .splash-cinema.run .bar-top,
+  .splash-cinema.run .bar-bottom,
+  .splash-cinema.run .sweep,
+  .splash-cinema.run .logo-wrap,
+  .splash-cinema.run .sparkle,
+  .splash-cinema.run .tag,
+  .splash-cinema.run .by {
+    animation-duration: 0.01s;
+    animation-delay: 0s;
+  }
 }

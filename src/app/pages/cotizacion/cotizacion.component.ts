@@ -3,7 +3,35 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { HeaderComponent } from '../../components/header/header.component';
 import { ProductoService, CotizacionService } from '../../core/services';
-import { Producto, ProductoPrecioEscala, CrearCotizacionRequest } from '../../shared/models';
+import { Producto, ProductoPrecioEscala, CrearCotizacionRequest, ItemCotizacionRequest } from '../../shared/models';
+
+interface TipoEvento {
+  id: string;
+  name: string;
+  emoji: string;
+}
+
+interface CotizacionFormItem {
+  productoId: number | null;
+  cantidad: number | null;
+  esIlimitado: boolean;
+  precioUnitarioManual: number | null;
+  descripcionManual: string | null;
+  esPersonalizado: boolean;
+  nombreProducto: string;
+}
+
+interface CotizacionFormValue {
+  clienteTelefono: string;
+  fechaEvento: string;
+  tipoEvento: string;
+  lugarEvento: string;
+  notas: string;
+  descuento: number;
+  movilidad: number;
+  horasServicio: number | string | null;
+  items: CotizacionFormItem[];
+}
 
 @Component({
   selector: 'app-cotizacion',
@@ -16,14 +44,60 @@ export class CotizacionComponent implements OnInit {
   private fb = inject(FormBuilder);
   private productoService = inject(ProductoService);
   private cotizacionService = inject(CotizacionService);
+  private readonly cantidadDefault = 50;
 
   productos: Producto[] = [];
-
-  /** Escalas de precio cargadas del backend (ej: Hamburguesa x50 = S/380) */
   escalas: ProductoPrecioEscala[] = [];
 
   cargando = false;
   error = '';
+
+  pickerOpen = false;
+  pickerTab: string = 'Todos';
+  confirmOpen = false;
+
+  readonly tiposEvento: TipoEvento[] = [
+    { id: 'cumple',      name: 'Cumpleaños',  emoji: '🎂' },
+    { id: 'boda',        name: 'Matrimonio',  emoji: '💍' },
+    { id: 'corporativo', name: 'Corporativo', emoji: '🏢' },
+    { id: 'baby',        name: 'Baby shower', emoji: '🍼' },
+    { id: 'quince',      name: 'Quinceañero', emoji: '👑' },
+    { id: 'otros',       name: 'Otros',       emoji: '✨' },
+  ];
+
+  private readonly emojisPorProducto: Record<string, string> = {
+    'algodón de azúcar en domo': '🍭',
+    'helados': '🍦',
+    'salchipapa': '🍟',
+    'nuggets': '🍗',
+    'café': '☕',
+    'emoliente frutado': '🍵',
+    'pizzetas': '🍕',
+    'bebidas personalizadas': '🥤',
+    'mini churros rellenos': '🥖',
+    'chocolate caliente': '☕',
+    'fresas con chocolate': '🍓',
+    'fuente de chocolate': '🍫',
+    'pan c/ hot dog': '🌭',
+    'salchicono': '🍟',
+    'popcorn salado': '🍿',
+    'manzanas acarameladas': '🍎',
+    'yoguis de hot dog': '🌭',
+    'candy bar': '🍬',
+    'algodón de azúcar': '🍭',
+    'mini donas': '🍩',
+    'brochetas de pollo': '🍢',
+    'mini pancakes': '🥞',
+    'waffles': '🧇',
+    'dispensador de bebidas': '🥤',
+    'fresas con crema': '🍓',
+    'hamburguesa + papitas fritas': '🍔',
+    'hamburguesa de carne': '🍔',
+    'mini hamburguesas': '🍔',
+    'fruti bar': '🥭',
+    'churro relleno': '🥖',
+    'choripan': '🍔',
+  };
 
   cotizacionForm!: FormGroup;
 
@@ -41,11 +115,27 @@ export class CotizacionComponent implements OnInit {
   get total(): number {
     const descuento = +this.cotizacionForm.get('descuento')?.value || 0;
     const movilidad = +this.cotizacionForm.get('movilidad')?.value || 0;
+    const total = this.subtotal + movilidad - descuento;
+    return total > 0 ? total : 0;
+  }
 
-    if (descuento > 0) {
-      return (this.subtotal + movilidad) - descuento;
-    }
-    return this.subtotal + movilidad - descuento;
+  /** IDs de productos del catálogo ya en el carrito (para deshabilitar tiles). */
+  get idsEnCarrito(): number[] {
+    return this.items.controls
+      .map(c => c.get('productoId')?.value)
+      .filter((v): v is number => v != null)
+      .map(v => +v);
+  }
+
+  /** Categorías que aparecen en las tabs del picker. */
+  get categoriasPicker(): string[] {
+    const cats = new Set<string>(this.productos.map(p => this.formatCategoria(p.categoria)));
+    return ['Todos', ...Array.from(cats)];
+  }
+
+  get productosVisibles(): Producto[] {
+    if (this.pickerTab === 'Todos') return this.productos;
+    return this.productos.filter(p => this.formatCategoria(p.categoria) === this.pickerTab);
   }
 
   ngOnInit(): void {
@@ -82,106 +172,150 @@ export class CotizacionComponent implements OnInit {
     });
   }
 
-  /**
-   * Busca si existe una escala de precio para un producto+cantidad dados.
-   * Ej: productoId=3 (Hamburguesa), cantidad=50 → retorna { precioTotal: 380 }
-   */
   private buscarEscala(productoId: number, cantidad: number): ProductoPrecioEscala | undefined {
     return this.escalas.find(e => e.productoId === productoId && e.cantidad === cantidad);
   }
 
-  agregarItem(): void {
-    const itemGroup = this.fb.group({
-      productoId:          [null, Validators.required],
-      cantidad:            [null],
-      esIlimitado:         [false],
-      precioUnitarioManual:[null],
-      descripcionManual:   [null],
-      esPersonalizado:     [false],
-      nombreProducto:      [''],
-      precioUnitarioVista: [0],
-      subtotalItem:        [0],
+  /** Mapa de emojis por palabra clave del nombre del producto. */
+  emojiPara(producto: Producto): string {
+    const n = producto.nombre.toLowerCase();
+    const emojiExacto = this.emojisPorProducto[n];
+    if (emojiExacto) return emojiExacto;
+
+    if (n.includes('hot dog') || n.includes('hotdog')) return '🌭';
+    if (n.includes('hamburg')) return '🍔';
+    if (n.includes('anticucho')) return '🍢';
+    if (n.includes('canchita') || n.includes('popcorn') || n.includes('pop corn')) return '🍿';
+    if (n.includes('algod')) return '🍭';
+    if (n.includes('postre') || n.includes('waffle') || n.includes('helado')) return '🧇';
+    if (n.includes('café') || n.includes('cafe')) return '☕';
+    if (n.includes('cóctel') || n.includes('coctel') || n.includes('barra')) return '🍹';
+    if (n.includes('piqueo') || n.includes('queso')) return '🧀';
+    if (n.includes('bebida') || n.includes('jugo') || n.includes('refresco') || n.includes('dispens')) return '🥤';
+    if (n.includes('pizza')) return '🍕';
+    if (producto.categoria === 'ilimitado') return '⚡';
+    return '🍽️';
+  }
+
+  formatCategoria(categoria: string): string {
+    if (categoria === 'ilimitado') return 'Ilimitado';
+    if (categoria === 'snack') return 'Snack';
+    return categoria.charAt(0).toUpperCase() + categoria.slice(1);
+  }
+
+  /** Nombre limpio para el tile del picker. */
+  nombreCorto(nombre: string): string {
+    return nombre
+      .replace(/^Carrito de /i, '')
+      .replace(/^Estación de /i, '')
+      .replace(/^Barra de /i, '')
+      .replace(/^Dispensador de /i, '');
+  }
+
+  /** Toggle del chip de tipo de evento — re-tocarlo des-selecciona. */
+  seleccionarTipo(tipo: TipoEvento): void {
+    const actual = this.cotizacionForm.get('tipoEvento')?.value;
+    const yaActivo = actual === tipo.name || actual === tipo.id;
+    this.cotizacionForm.patchValue({ tipoEvento: yaActivo ? '' : tipo.name });
+  }
+
+  esTipoActivo(tipo: TipoEvento): boolean {
+    const v = this.cotizacionForm.get('tipoEvento')?.value;
+    return v === tipo.name || v === tipo.id;
+  }
+
+  /* ── Picker ── */
+  abrirPicker(): void {
+    this.pickerTab = 'Todos';
+    this.pickerOpen = true;
+  }
+  cerrarPicker(): void { this.pickerOpen = false; }
+
+  cerrarConfirmacion(): void {
+    if (this.cargando) return;
+    this.confirmOpen = false;
+  }
+
+  confirmarGeneracion(): void {
+    if (this.cargando) return;
+    this.confirmOpen = false;
+    this.crearYDescargarPdf();
+  }
+
+  seleccionarProducto(producto: Producto): void {
+    if (this.idsEnCarrito.includes(producto.id)) return;
+
+    this.items.push(this.crearGrupoProducto(producto));
+    this.cerrarPicker();
+  }
+
+  private crearGrupoProducto(producto: Producto): FormGroup {
+    if (producto.categoria === 'ilimitado') {
+      return this.fb.group({
+        productoId:           [producto.id, Validators.required],
+        cantidad:             [null],
+        esIlimitado:          [true],
+        precioUnitarioManual: [null],
+        descripcionManual:    [null],
+        esPersonalizado:      [false],
+        nombreProducto:       [producto.nombre],
+        precioUnitarioVista:  [producto.precioUnitario],
+        subtotalItem:         [producto.precioUnitario],
+      });
+    }
+
+    const escala = this.buscarEscala(producto.id, this.cantidadDefault);
+    const subtotal = escala ? escala.precioTotal : this.cantidadDefault * producto.precioUnitario;
+    const precioUnit = escala ? escala.precioTotal / this.cantidadDefault : producto.precioUnitario;
+
+    return this.fb.group({
+      productoId:           [producto.id, Validators.required],
+      cantidad:             [this.cantidadDefault],
+      esIlimitado:          [false],
+      precioUnitarioManual: [precioUnit],
+      descripcionManual:    [null],
+      esPersonalizado:      [false],
+      nombreProducto:       [producto.nombre],
+      precioUnitarioVista:  [precioUnit],
+      subtotalItem:         [subtotal],
     });
-    this.items.push(itemGroup);
   }
 
   agregarItemPersonalizado(): void {
-    const itemGroup = this.fb.group({
-      productoId:          [null],
-      cantidad:            [null],
-      esIlimitado:         [false],
-      precioUnitarioManual:[null],
-      descripcionManual:   [''],
-      esPersonalizado:     [true],
-      nombreProducto:      [''],
-      precioUnitarioVista: [0],
-      subtotalItem:        [0],
-    });
-    this.items.push(itemGroup);
-  }
-
-  onPrecioPersonalizadoCambiado(index: number): void {
-    const itemGroup = this.items.at(index) as FormGroup;
-    const cantidad = itemGroup.get('cantidad')?.value;
-    const precio = itemGroup.get('precioUnitarioManual')?.value;
-
-    if (cantidad && cantidad > 0 && precio != null && precio >= 0) {
-      itemGroup.patchValue({
-        precioUnitarioVista: precio,
-        subtotalItem: cantidad * precio,
-      });
-    }
+    this.items.push(this.fb.group({
+      productoId:           [null],
+      cantidad:             [1],
+      esIlimitado:          [false],
+      precioUnitarioManual: [0],
+      descripcionManual:    [''],
+      esPersonalizado:      [true],
+      nombreProducto:       [''],
+      precioUnitarioVista:  [0],
+      subtotalItem:         [0],
+    }));
   }
 
   eliminarItem(index: number): void {
     this.items.removeAt(index);
   }
 
-  onProductoSeleccionado(index: number): void {
-    const itemGroup = this.items.at(index) as FormGroup;
-    const productoId = itemGroup.get('productoId')?.value;
-    const producto = this.productos.find(p => p.id === +productoId);
-
-    if (!producto) return;
-
-    itemGroup.patchValue({ nombreProducto: producto.nombre });
-
-    if (producto.categoria === 'ilimitado') {
-      itemGroup.patchValue({
-        esIlimitado: true,
-        cantidad: null,
-        precioUnitarioManual: null,
-        precioUnitarioVista: producto.precioUnitario,
-        subtotalItem: producto.precioUnitario,
-      });
-    } else {
-      itemGroup.patchValue({
-        esIlimitado: false,
-        cantidad: null,
-        precioUnitarioManual: null,
-        precioUnitarioVista: 0,
-        subtotalItem: 0,
-      });
-    }
+  productoDeItem(index: number): Producto | undefined {
+    const id = this.items.at(index).get('productoId')?.value;
+    if (id == null) return undefined;
+    return this.productos.find(p => p.id === +id);
   }
 
-  /**
-   * Se ejecuta cuando el usuario cambia la CANTIDAD.
-   * Primero busca si hay una escala de precio en la BD (50, 100).
-   * Si la encuentra, auto-llena subtotal y precio unitario.
-   * Si no, recalcula con el subtotal existente.
-   */
+  /** Cuando cambia la cantidad: si hay escala usarla, si no, recalcula subtotal con precio actual. */
   onCantidadCambiada(index: number): void {
     const itemGroup = this.items.at(index) as FormGroup;
     const cantidad = itemGroup.get('cantidad')?.value;
     const productoId = itemGroup.get('productoId')?.value;
 
     if (!cantidad || cantidad <= 0) {
-      itemGroup.patchValue({ precioUnitarioVista: 0, subtotalItem: 0, precioUnitarioManual: null });
+      itemGroup.patchValue({ subtotalItem: 0 });
       return;
     }
 
-    // Buscar escala de precio en la BD (ej: 50 uds → S/380)
     if (productoId) {
       const escala = this.buscarEscala(+productoId, +cantidad);
       if (escala) {
@@ -195,27 +329,19 @@ export class CotizacionComponent implements OnInit {
       }
     }
 
-    // Si no hay escala, recalcular con el subtotal existente
-    const subtotalActual = itemGroup.get('subtotalItem')?.value || 0;
-    if (subtotalActual > 0) {
-      const precioCalculado = subtotalActual / cantidad;
-      itemGroup.patchValue({
-        precioUnitarioVista: precioCalculado,
-        precioUnitarioManual: precioCalculado,
-      });
+    const precio = +itemGroup.get('precioUnitarioManual')?.value || 0;
+    if (precio > 0) {
+      itemGroup.patchValue({ subtotalItem: cantidad * precio });
     }
   }
 
-  /**
-   * Se ejecuta cuando el usuario edita el SUBTOTAL directamente.
-   * Calcula: precioUnitario = subtotal / cantidad.
-   */
+  /** Subtotal editado → recalcular precio unitario. */
   onSubtotalCambiado(index: number): void {
     const itemGroup = this.items.at(index) as FormGroup;
-    const cantidad = itemGroup.get('cantidad')?.value;
-    const subtotal = itemGroup.get('subtotalItem')?.value;
+    const cantidad = +itemGroup.get('cantidad')?.value || 0;
+    const subtotal = +itemGroup.get('subtotalItem')?.value || 0;
 
-    if (cantidad && cantidad > 0 && subtotal != null && subtotal >= 0) {
+    if (cantidad > 0 && subtotal >= 0) {
       const precioCalculado = subtotal / cantidad;
       itemGroup.patchValue({
         precioUnitarioVista: precioCalculado,
@@ -224,19 +350,16 @@ export class CotizacionComponent implements OnInit {
     }
   }
 
-  /**
-   * Se ejecuta cuando el usuario edita el PRECIO UNITARIO.
-   * Calcula: subtotal = cantidad * precioUnitario.
-   */
+  /** Precio unitario editado → recalcular subtotal. */
   onPrecioManualCambiado(index: number): void {
     const itemGroup = this.items.at(index) as FormGroup;
-    const cantidad = itemGroup.get('cantidad')?.value;
-    const precioManual = itemGroup.get('precioUnitarioManual')?.value;
+    const cantidad = +itemGroup.get('cantidad')?.value || 0;
+    const precio = +itemGroup.get('precioUnitarioManual')?.value || 0;
 
-    if (cantidad && cantidad > 0 && precioManual != null && precioManual >= 0) {
+    if (cantidad > 0 && precio >= 0) {
       itemGroup.patchValue({
-        precioUnitarioVista: precioManual,
-        subtotalItem: cantidad * precioManual,
+        precioUnitarioVista: precio,
+        subtotalItem: cantidad * precio,
       });
     }
   }
@@ -249,61 +372,28 @@ export class CotizacionComponent implements OnInit {
     }
 
     if (this.items.length === 0) {
-      this.error = 'Agrega al menos un item';
+      this.error = 'Agrega al menos un producto al carrito';
       return;
     }
 
+    this.error = '';
+    this.confirmOpen = true;
+  }
+
+  private crearYDescargarPdf(): void {
     this.cargando = true;
     this.error = '';
 
-    const formValue = this.cotizacionForm.value;
-
-    const request: CrearCotizacionRequest = {
-      clienteTelefono: formValue.clienteTelefono,
-      fechaEvento: formValue.fechaEvento,
-      tipoEvento: formValue.tipoEvento || '',
-      lugarEvento: formValue.lugarEvento,
-      notas: formValue.notas || '',
-      descuento: formValue.descuento || 0,
-      movilidad: formValue.movilidad || 0,
-      horasServicio: formValue.horasServicio || '',
-      items: formValue.items.map((item: any) => {
-        if (item.esPersonalizado) {
-          return {
-            productoId: null,
-            cantidad: +item.cantidad,
-            esIlimitado: false,
-            precioUnitarioManual: +item.precioUnitarioManual,
-            descripcionManual: item.descripcionManual,
-          };
-        }
-        return {
-          productoId: +item.productoId,
-          cantidad: item.esIlimitado ? null : +item.cantidad,
-          esIlimitado: item.esIlimitado,
-          precioUnitarioManual: item.precioUnitarioManual ? +item.precioUnitarioManual : null,
-          descripcionManual: null,
-        };
-      }),
-    };
+    const formValue = this.cotizacionForm.value as CotizacionFormValue;
+    const request = this.crearCotizacionRequest(formValue);
 
     this.cotizacionService.crearYDescargarPdf(request).subscribe({
       next: (pdfBlob) => {
         const url = window.URL.createObjectURL(pdfBlob);
         const a = document.createElement('a');
         a.href = url;
-        // Armar nombre: "Cotizacion ABYLU - 50 Hamburguesa, Ilimitado Popcorn.pdf"
         const itemsDesc = formValue.items
-          .map((item: any) => {
-            if (item.esPersonalizado) {
-              return `${item.cantidad} ${item.descripcionManual || 'Personalizado'}`;
-            }
-            const nombre = item.nombreProducto || 'Producto';
-            if (item.esIlimitado && nombre.toLowerCase() === 'dispensador de bebidas') {
-              return `16 Lt. ${nombre}`;
-            }
-            return item.esIlimitado ? `Ilimitado ${nombre}` : `${item.cantidad} ${nombre}`;
-          })
+          .map(item => this.descripcionParaArchivo(item))
           .join(', ');
         a.download = `Cotizacion ABYLU - ${itemsDesc}.pdf`;
         a.click();
@@ -316,5 +406,52 @@ export class CotizacionComponent implements OnInit {
         console.error('Error:', err);
       }
     });
+  }
+
+  private crearCotizacionRequest(formValue: CotizacionFormValue): CrearCotizacionRequest {
+    return {
+      clienteTelefono: formValue.clienteTelefono,
+      fechaEvento: formValue.fechaEvento,
+      tipoEvento: formValue.tipoEvento || '',
+      lugarEvento: formValue.lugarEvento,
+      notas: formValue.notas || '',
+      descuento: +formValue.descuento || 0,
+      movilidad: +formValue.movilidad || 0,
+      horasServicio: formValue.horasServicio?.toString() || '',
+      items: formValue.items.map(item => this.crearItemRequest(item)),
+    };
+  }
+
+  private descripcionParaArchivo(item: CotizacionFormItem): string {
+    if (item.esPersonalizado) {
+      return `${item.cantidad} ${item.descripcionManual || 'Personalizado'}`;
+    }
+
+    const nombre = item.nombreProducto || 'Producto';
+    if (item.esIlimitado && nombre.toLowerCase() === 'dispensador de bebidas') {
+      return `16 Lt. ${nombre}`;
+    }
+
+    return item.esIlimitado ? `Ilimitado ${nombre}` : `${item.cantidad} ${nombre}`;
+  }
+
+  private crearItemRequest(item: CotizacionFormItem): ItemCotizacionRequest {
+    if (item.esPersonalizado) {
+      return {
+        productoId: null,
+        cantidad: +item.cantidad!,
+        esIlimitado: false,
+        precioUnitarioManual: +item.precioUnitarioManual!,
+        descripcionManual: item.descripcionManual,
+      };
+    }
+
+    return {
+      productoId: +item.productoId!,
+      cantidad: item.esIlimitado ? null : +item.cantidad!,
+      esIlimitado: item.esIlimitado,
+      precioUnitarioManual: item.precioUnitarioManual != null ? +item.precioUnitarioManual : null,
+      descripcionManual: null,
+    };
   }
 }
