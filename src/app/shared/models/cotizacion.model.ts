@@ -52,11 +52,13 @@ export interface CotizacionResponse {
  * Mapea a DetalleResponse.java.
  */
 export interface DetalleResponse {
+  productoId: number | null;        // null = ítem personalizado (manual)
   productoNombre: string;
   cantidad: number | null;
   esIlimitado: boolean;
   precioUnitario: number;
   subtotal: number;
+  descripcionManual: string | null; // texto del ítem personalizado
 }
 
 /**

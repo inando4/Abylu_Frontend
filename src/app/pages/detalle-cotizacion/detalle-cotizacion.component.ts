@@ -81,6 +81,11 @@ export class DetalleCotizacionComponent implements OnInit {
     });
   }
 
+  editar(): void {
+    if (!this.cotizacion) return;
+    this.router.navigate(['/cotizacion', this.cotizacion.id]);
+  }
+
   volver(): void {
     this.router.navigate(['/historial']);
   }

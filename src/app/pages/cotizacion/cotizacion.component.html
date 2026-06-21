@@ -4,9 +4,13 @@
   <form [formGroup]="cotizacionForm" (ngSubmit)="generarPdf()">
 
     <div class="page-title">
-      <div class="eyebrow">Nueva cotización</div>
-      <h1>Nuevo pedido</h1>
-      <div class="sub">Completa los datos para generar la cotización.</div>
+      <div class="eyebrow">{{ modoEdicion ? 'Editar cotización' : 'Nueva cotización' }}</div>
+      <h1>{{ modoEdicion ? ('Editar ' + numeroCotizacion) : 'Nuevo pedido' }}</h1>
+      <div class="sub">
+        {{ modoEdicion
+            ? 'Modifica los datos y guarda los cambios sobre la misma cotización.'
+            : 'Completa los datos para generar la cotización.' }}
+      </div>
     </div>
 
     <div class="content">
@@ -245,9 +249,9 @@
       </button>
       <button type="submit" class="btn-primary" [disabled]="cargando">
         @if (cargando) {
-          <span class="spinner"></span> Generando PDF...
+          <span class="spinner"></span> {{ modoEdicion ? 'Guardando...' : 'Generando PDF...' }}
         } @else {
-          Generar cotización
+          {{ modoEdicion ? 'Guardar cambios' : 'Generar cotización' }}
         }
       </button>
     </div>
@@ -322,12 +326,14 @@
         </div>
         <div>
           <div class="confirm-eyebrow">Confirmación</div>
-          <h3 id="confirm-title">Generar cotización</h3>
+          <h3 id="confirm-title">{{ modoEdicion ? 'Guardar cambios' : 'Generar cotización' }}</h3>
         </div>
       </div>
 
       <p class="confirm-copy">
-        Se creará la cotización y se descargará el PDF.
+        {{ modoEdicion
+            ? 'Se actualizará la cotización y se descargará el PDF.'
+            : 'Se creará la cotización y se descargará el PDF.' }}
       </p>
 
       <div class="confirm-summary">
@@ -379,9 +385,9 @@
                 [disabled]="cargando"
                 (click)="confirmarGeneracion()">
           @if (cargando) {
-            <span class="spinner"></span> Generando...
+            <span class="spinner"></span> {{ modoEdicion ? 'Guardando...' : 'Generando...' }}
           } @else {
-            Generar PDF
+            {{ modoEdicion ? 'Guardar y descargar' : 'Generar PDF' }}
           }
         </button>
       </div>

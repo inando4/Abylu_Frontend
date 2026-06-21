@@ -16,7 +16,12 @@ export const routes: Routes = [
       .then(m => m.SplashComponent),
   },
   {
-    path: 'cotizacion',          // localhost:4200/cotizacion
+    path: 'cotizacion',          // localhost:4200/cotizacion (modo creación)
+    loadComponent: () => import('./pages/cotizacion/cotizacion.component')
+      .then(m => m.CotizacionComponent),
+  },
+  {
+    path: 'cotizacion/:id',      // localhost:4200/cotizacion/42 (modo edición)
     loadComponent: () => import('./pages/cotizacion/cotizacion.component')
       .then(m => m.CotizacionComponent),
   },

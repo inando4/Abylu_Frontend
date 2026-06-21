@@ -44,6 +44,17 @@ export class CotizacionService {
   }
 
   /**
+   * PUT /api/cotizaciones/{id} — Actualiza una cotización existente.
+   *
+   * Recibe el mismo cuerpo que crear (CrearCotizacionRequest). El backend
+   * conserva id, numeroCotizacion y fechaCreacion, reemplaza evento e ítems
+   * y recalcula totales. Solo permitido en estados BORRADOR y ENVIADA.
+   */
+  actualizar(id: number, request: CrearCotizacionRequest): Observable<CotizacionResponse> {
+    return this.http.put<CotizacionResponse>(`${this.url}/${id}`, request);
+  }
+
+  /**
    * GET /api/cotizaciones/{id} — Obtiene una cotización por ID.
    */
   buscarPorId(id: number): Observable<CotizacionResponse> {
@@ -79,6 +90,18 @@ export class CotizacionService {
    */
   crearYDescargarPdf(request: CrearCotizacionRequest): Observable<Blob> {
     return this.crear(request).pipe(
+      switchMap(cotizacion => this.descargarPdf(cotizacion.id))
+    );
+  }
+
+  /**
+   * Flujo completo de edición: Actualizar cotización → Descargar PDF.
+   *
+   * Mismo patrón que crearYDescargarPdf pero con PUT en vez de POST,
+   * conservando el id de la cotización editada.
+   */
+  actualizarYDescargarPdf(id: number, request: CrearCotizacionRequest): Observable<Blob> {
+    return this.actualizar(id, request).pipe(
       switchMap(cotizacion => this.descargarPdf(cotizacion.id))
     );
   }

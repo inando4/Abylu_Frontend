@@ -155,6 +155,17 @@
           Descargar PDF
         </button>
 
+        @if (cotizacion.estado === 'BORRADOR' || cotizacion.estado === 'ENVIADA') {
+          <button type="button" class="btn-outline" (click)="editar()">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M11 2.5l2.5 2.5M2.5 13.5l1-3.5 7-7 2.5 2.5-7 7-3.5 1z"
+                    stroke="currentColor" stroke-width="1.6"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Editar
+          </button>
+        }
+
         @if (cotizacion.estado === 'BORRADOR') {
           <button type="button" class="btn-primary"
                   [disabled]="cambiandoEstado"

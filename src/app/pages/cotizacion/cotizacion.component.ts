@@ -1,9 +1,10 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { HeaderComponent } from '../../components/header/header.component';
 import { ProductoService, CotizacionService } from '../../core/services';
-import { Producto, ProductoPrecioEscala, CrearCotizacionRequest, ItemCotizacionRequest } from '../../shared/models';
+import { Producto, ProductoPrecioEscala, CrearCotizacionRequest, ItemCotizacionRequest, CotizacionResponse, DetalleResponse } from '../../shared/models';
 
 interface TipoEvento {
   id: string;
@@ -44,13 +45,24 @@ export class CotizacionComponent implements OnInit {
   private fb = inject(FormBuilder);
   private productoService = inject(ProductoService);
   private cotizacionService = inject(CotizacionService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private readonly cantidadDefault = 50;
 
   productos: Producto[] = [];
   escalas: ProductoPrecioEscala[] = [];
 
+  /** ID de la cotización en modo edición. null = modo creación. */
+  cotizacionId: number | null = null;
+  /** Número visible de la cotización editada (para títulos/labels). */
+  numeroCotizacion = '';
+
   cargando = false;
   error = '';
+
+  get modoEdicion(): boolean {
+    return this.cotizacionId != null;
+  }
 
   pickerOpen = false;
   pickerTab: string = 'Todos';
@@ -142,6 +154,82 @@ export class CotizacionComponent implements OnInit {
     this.initForm();
     this.cargarProductos();
     this.cargarEscalas();
+
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      const id = Number(idParam);
+      if (!id || isNaN(id)) {
+        this.router.navigate(['/historial']);
+        return;
+      }
+      this.cargarCotizacionParaEditar(id);
+    }
+  }
+
+  /**
+   * Precarga el formulario con los datos de una cotización existente.
+   * Depende de que DetalleResponse incluya productoId (null = personalizado).
+   */
+  private cargarCotizacionParaEditar(id: number): void {
+    this.cargando = true;
+    this.cotizacionService.buscarPorId(id).subscribe({
+      next: (cotizacion) => {
+        if (cotizacion.estado === 'ACEPTADA' || cotizacion.estado === 'RECHAZADA') {
+          this.router.navigate(['/historial', id]);
+          return;
+        }
+        // Guarda: si el backend aún no expone productoId en DetalleResponse,
+        // precargar y guardar convertiría cada ítem del catálogo en manual
+        // (e ilimitados a cantidad/precio 0). Bloqueamos la edición hasta entonces.
+        if (cotizacion.detalles.some(d => !('productoId' in d))) {
+          this.error = 'No se puede editar todavía: el backend debe exponer productoId en DetalleResponse.';
+          this.cargando = false;
+          return;
+        }
+        this.precargarFormulario(cotizacion);
+        this.cargando = false;
+      },
+      error: () => {
+        this.error = 'No se pudo cargar la cotización para editar.';
+        this.cargando = false;
+      }
+    });
+  }
+
+  private precargarFormulario(cotizacion: CotizacionResponse): void {
+    this.cotizacionId = cotizacion.id;
+    this.numeroCotizacion = cotizacion.numeroCotizacion;
+
+    this.cotizacionForm.patchValue({
+      clienteTelefono: cotizacion.clienteTelefono,
+      lugarEvento:     cotizacion.lugarEvento,
+      tipoEvento:      cotizacion.tipoEvento || '',
+      fechaEvento:     cotizacion.fechaEvento,
+      notas:           cotizacion.notas || '',
+      descuento:       cotizacion.descuento || 0,
+      movilidad:       cotizacion.movilidad || 0,
+      horasServicio:   cotizacion.horasServicio || '',
+    });
+
+    this.items.clear();
+    cotizacion.detalles.forEach(det => this.items.push(this.crearGrupoDesdeDetalle(det)));
+  }
+
+  /** Reconstruye un FormGroup de ítem desde una línea de DetalleResponse. */
+  private crearGrupoDesdeDetalle(det: DetalleResponse): FormGroup {
+    const esPersonalizado = det.productoId == null;
+
+    return this.fb.group({
+      productoId:           [det.productoId],
+      cantidad:             [det.esIlimitado ? null : det.cantidad],
+      esIlimitado:          [det.esIlimitado],
+      precioUnitarioManual: [det.esIlimitado ? null : det.precioUnitario],
+      descripcionManual:    [esPersonalizado ? (det.descripcionManual ?? det.productoNombre) : null],
+      esPersonalizado:      [esPersonalizado],
+      nombreProducto:       [det.productoNombre],
+      precioUnitarioVista:  [det.precioUnitario],
+      subtotalItem:         [det.subtotal],
+    });
   }
 
   private initForm(): void {
@@ -239,7 +327,7 @@ export class CotizacionComponent implements OnInit {
   confirmarGeneracion(): void {
     if (this.cargando) return;
     this.confirmOpen = false;
-    this.crearYDescargarPdf();
+    this.guardarYDescargarPdf();
   }
 
   seleccionarProducto(producto: Producto): void {
@@ -380,14 +468,18 @@ export class CotizacionComponent implements OnInit {
     this.confirmOpen = true;
   }
 
-  private crearYDescargarPdf(): void {
+  private guardarYDescargarPdf(): void {
     this.cargando = true;
     this.error = '';
 
     const formValue = this.cotizacionForm.value as CotizacionFormValue;
     const request = this.crearCotizacionRequest(formValue);
 
-    this.cotizacionService.crearYDescargarPdf(request).subscribe({
+    const peticion$ = this.modoEdicion
+      ? this.cotizacionService.actualizarYDescargarPdf(this.cotizacionId!, request)
+      : this.cotizacionService.crearYDescargarPdf(request);
+
+    peticion$.subscribe({
       next: (pdfBlob) => {
         const url = window.URL.createObjectURL(pdfBlob);
         const a = document.createElement('a');
@@ -399,9 +491,15 @@ export class CotizacionComponent implements OnInit {
         a.click();
         window.URL.revokeObjectURL(url);
         this.cargando = false;
+
+        if (this.modoEdicion) {
+          this.router.navigate(['/historial', this.cotizacionId]);
+        }
       },
       error: (err) => {
-        this.error = 'Error al generar el PDF. Verifica los datos e intenta de nuevo.';
+        this.error = this.modoEdicion
+          ? 'Error al guardar los cambios. Verifica los datos e intenta de nuevo.'
+          : 'Error al generar el PDF. Verifica los datos e intenta de nuevo.';
         this.cargando = false;
         console.error('Error:', err);
       }
