@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Producto, ProductoPrecioEscala } from '../../shared/models';
-import { API_BASE_URL } from '../api.config';
+import { environment } from '../../../environments/environment';
 
 /**
  * Service para productos — se comunica con ProductoController.java del backend.
@@ -19,7 +19,7 @@ import { API_BASE_URL } from '../api.config';
 export class ProductoService {
 
   private http = inject(HttpClient);
-  private url = `${API_BASE_URL}/productos`;
+  private url = `${environment.apiBaseUrl}/productos`;
 
   /**
    * GET /api/productos → Lista de productos activos.

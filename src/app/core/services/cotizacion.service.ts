@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
 import { CrearCotizacionRequest, CotizacionResponse, CotizacionSummaryResponse, PageResponse, EstadoCotizacion } from '../../shared/models';
-import { API_BASE_URL } from '../api.config';
+import { environment } from '../../../environments/environment';
 
 /**
  * Service para cotizaciones — se comunica con CotizacionController.java.
@@ -15,7 +15,7 @@ import { API_BASE_URL } from '../api.config';
 export class CotizacionService {
 
   private http = inject(HttpClient);
-  private url = `${API_BASE_URL}/cotizaciones`;
+  private url = `${environment.apiBaseUrl}/cotizaciones`;
 
   /**
    * GET /api/cotizaciones — Lista cotizaciones paginadas.
