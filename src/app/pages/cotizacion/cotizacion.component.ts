@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { HeaderComponent } from '../../components/header/header.component';
 import { ProductoService, CotizacionService } from '../../core/services';
 import { Producto, ProductoPrecioEscala, CrearCotizacionRequest, ItemCotizacionRequest, CotizacionResponse, DetalleResponse } from '../../shared/models';
@@ -36,7 +36,7 @@ interface CotizacionFormValue {
 
 @Component({
   selector: 'app-cotizacion',
-  imports: [CommonModule, ReactiveFormsModule, HeaderComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, HeaderComponent],
   templateUrl: './cotizacion.component.html',
   styleUrl: './cotizacion.component.css'
 })
@@ -65,7 +65,8 @@ export class CotizacionComponent implements OnInit {
   }
 
   pickerOpen = false;
-  pickerTab: string = 'Todos';
+  /** Texto del buscador del picker. */
+  pickerSearch = '';
   confirmOpen = false;
 
   readonly tiposEvento: TipoEvento[] = [
@@ -139,15 +140,23 @@ export class CotizacionComponent implements OnInit {
       .map(v => +v);
   }
 
-  /** Categorías que aparecen en las tabs del picker. */
-  get categoriasPicker(): string[] {
-    const cats = new Set<string>(this.productos.map(p => this.formatCategoria(p.categoria)));
-    return ['Todos', ...Array.from(cats)];
-  }
-
+  /**
+   * Productos del picker: filtrados por el buscador y ordenados
+   * alfabéticamente para un scroll predecible en una sola columna.
+   */
   get productosVisibles(): Producto[] {
-    if (this.pickerTab === 'Todos') return this.productos;
-    return this.productos.filter(p => this.formatCategoria(p.categoria) === this.pickerTab);
+    let lista = this.productos;
+
+    const term = this.pickerSearch.trim().toLowerCase();
+    if (term) {
+      lista = lista.filter(p => p.nombre.toLowerCase().includes(term));
+    }
+
+    return [...lista].sort((a, b) =>
+      this.nombreCorto(a.nombre).localeCompare(
+        this.nombreCorto(b.nombre), 'es', { sensitivity: 'base' }
+      )
+    );
   }
 
   ngOnInit(): void {
@@ -314,7 +323,7 @@ export class CotizacionComponent implements OnInit {
 
   /* ── Picker ── */
   abrirPicker(): void {
-    this.pickerTab = 'Todos';
+    this.pickerSearch = '';
     this.pickerOpen = true;
   }
   cerrarPicker(): void { this.pickerOpen = false; }

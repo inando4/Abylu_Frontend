@@ -266,37 +266,43 @@
       <div class="grabber"></div>
       <h3>Elige un carrito</h3>
 
-      <div class="b-tabs">
-        @for (cat of categoriasPicker; track cat) {
-          <button type="button" class="b-tab"
-                  [class.active]="pickerTab === cat"
-                  (click)="pickerTab = cat">{{ cat }}</button>
+      <div class="b-search-wrap">
+        <input type="text" class="b-search"
+               data-testid="picker-search"
+               [(ngModel)]="pickerSearch"
+               [ngModelOptions]="{ standalone: true }"
+               placeholder="Buscar producto..."
+               autocomplete="off" />
+        @if (pickerSearch) {
+          <button type="button" class="b-search-clear"
+                  (click)="pickerSearch = ''"
+                  aria-label="Limpiar búsqueda">×</button>
         }
       </div>
 
-      <div class="b-grid">
+      <div class="b-list">
         @for (p of productosVisibles; track p.id) {
-          <button type="button" class="b-tile"
+          <button type="button" class="b-item"
                   data-testid="product-tile"
                   [disabled]="idsEnCarrito.includes(p.id)"
                   (click)="seleccionarProducto(p)">
-            <div class="b-tile-emoji">{{ emojiPara(p) }}</div>
-            <div class="b-tile-name">{{ nombreCorto(p.nombre) }}</div>
-            <div class="b-tile-price">
-              @if (p.categoria === 'ilimitado') {
-                Ilimitado · S/ {{ p.precioUnitario | number:'1.2-2' }}
-              } @else {
-                S/ {{ p.precioUnitario | number:'1.2-2' }}
-              }
-            </div>
+            <span class="b-item-name">{{ nombreCorto(p.nombre) }}</span>
             @if (idsEnCarrito.includes(p.id)) {
-              <div class="b-tile-badge">Ya agregado</div>
+              <span class="b-item-badge">Ya agregado</span>
+            } @else if (p.precioUnitario > 0) {
+              <span class="b-item-price">
+                @if (p.categoria === 'ilimitado') {
+                  Ilimitado · S/ {{ p.precioUnitario | number:'1.2-2' }}
+                } @else {
+                  S/ {{ p.precioUnitario | number:'1.2-2' }}
+                }
+              </span>
             }
           </button>
         }
 
         @if (productosVisibles.length === 0) {
-          <div class="empty-state" style="grid-column: 1 / -1;">No hay productos en esta categoría</div>
+          <div class="empty-state">No se encontraron productos</div>
         }
       </div>
     </div>

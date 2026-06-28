@@ -307,90 +307,110 @@
   margin: 0 0 12px;
   color: var(--color-ink);
 }
-.b-tabs {
-  display: flex;
-  gap: 6px;
-  padding-bottom: 12px;
-  overflow-x: auto;
-  scrollbar-width: none;
+/* ── Buscador del picker ── */
+.b-search-wrap {
+  position: relative;
+  margin-bottom: 10px;
 }
-.b-tabs::-webkit-scrollbar { display: none; }
-.b-tab {
-  flex-shrink: 0;
-  padding: 7px 14px;
-  border: none;
+.b-search {
+  width: 100%;
   background: #fff;
-  border-radius: 999px;
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--r-sm);
+  padding: 11px 40px 11px 14px;
   font-family: inherit;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-ink);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.b-search::placeholder { color: var(--color-ink-3); font-weight: 500; }
+.b-search:focus {
+  border-color: var(--color-ink);
+  box-shadow: 0 0 0 3px rgba(51, 39, 42, 0.12);
+}
+.b-search-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: var(--color-cream-2);
   color: var(--color-ink-2);
+  border-radius: 50%;
+  font-size: 17px;
+  line-height: 1;
   cursor: pointer;
+  display: grid;
+  place-items: center;
   transition: all .15s;
 }
-.b-tab.active {
+.b-search-clear:hover {
   background: var(--color-ink);
   color: var(--color-cream);
 }
-.b-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+
+/* ── Lista de productos (una sola columna, orden alfabético) ── */
+.b-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
-.b-tile {
-  position: relative;
+.b-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   background: #fff;
   border: 1.5px solid var(--color-line-2);
-  border-radius: 16px;
-  padding: 14px 12px;
+  border-radius: var(--r-md);
+  padding: 13px 16px;
   cursor: pointer;
   text-align: left;
   font-family: inherit;
   transition: all .15s;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
 }
-.b-tile:hover:not(:disabled) {
+.b-item:hover:not(:disabled) {
   border-color: var(--color-ink);
   background: var(--color-ink);
-  transform: translateY(-2px);
 }
-.b-tile:hover:not(:disabled) .b-tile-name,
-.b-tile:hover:not(:disabled) .b-tile-price {
+.b-item:hover:not(:disabled) .b-item-name,
+.b-item:hover:not(:disabled) .b-item-price {
   color: #FFFFFF;
 }
-.b-tile:disabled {
-  opacity: 0.35;
+.b-item:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
+  background: var(--color-cream-2);
 }
-.b-tile-emoji {
-  font-size: 28px;
-  margin-bottom: 4px;
-}
-.b-tile-name {
-  font-size: 13px;
+.b-item-name {
+  font-size: 14px;
   font-weight: 700;
   color: var(--color-ink);
-  line-height: 1.2;
+  line-height: 1.25;
 }
-.b-tile-price {
-  font-size: 11px;
+.b-item-price {
+  flex-shrink: 0;
+  font-size: 12px;
   font-weight: 600;
   color: var(--color-ink-3);
   font-variant-numeric: tabular-nums;
-  margin-top: 2px;
+  white-space: nowrap;
 }
-.b-tile-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
+.b-item-badge {
+  flex-shrink: 0;
   background: var(--color-ink);
   color: var(--color-cream);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.4px;
   text-transform: uppercase;
-  padding: 3px 7px;
+  padding: 4px 8px;
   border-radius: 999px;
+  white-space: nowrap;
 }
