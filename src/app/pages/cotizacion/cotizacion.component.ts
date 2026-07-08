@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { HeaderComponent } from '../../components/header/header.component';
 import { ProductoService, CotizacionService } from '../../core/services';
+import { AuthService } from '../../core/services/auth.service';
 import { Producto, ProductoPrecioEscala, CrearCotizacionRequest, ItemCotizacionRequest, CotizacionResponse, DetalleResponse } from '../../shared/models';
 
 interface TipoEvento {
@@ -47,6 +48,7 @@ export class CotizacionComponent implements OnInit {
   private cotizacionService = inject(CotizacionService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private auth = inject(AuthService);
   private readonly cantidadDefault = 50;
 
   productos: Producto[] = [];
@@ -496,7 +498,9 @@ export class CotizacionComponent implements OnInit {
         const itemsDesc = formValue.items
           .map(item => this.descripcionParaArchivo(item))
           .join(', ');
-        a.download = `Cotizacion ABYLU - ${itemsDesc}.pdf`;
+        // En modo invitado el archivo no debe llevar la marca real del negocio.
+        const prefijo = this.auth.esInvitado() ? 'Cotizacion' : 'Cotizacion ABYLU';
+        a.download = `${prefijo} - ${itemsDesc}.pdf`;
         a.click();
         window.URL.revokeObjectURL(url);
         this.cargando = false;

@@ -68,6 +68,46 @@
   color: #FFFFFF;
 }
 
+/* ── Chip de usuario + botón salir ──
+   Mismo diseño cacao que el chip "Modo invitado" (fondo marrón + texto crema),
+   solo cambia el texto (username). Son mutuamente excluyentes en la plantilla. */
+.user-chip {
+  padding: 6px 12px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #FAEEE7;
+  background: #33272A;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.logout-link {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: 'Manrope', sans-serif;
+}
+.user-chip-mobile {
+  align-self: flex-start;
+  margin-top: 6px;
+}
+
+/* Chip "Modo invitado": cacao + crema, para señalar el estado de sesión demo. */
+.guest-chip {
+  padding: 6px 12px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #FAEEE7;
+  background: #33272A;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.guest-chip-mobile {
+  align-self: flex-start;
+  margin-top: 6px;
+}
+
 /* ── Hamburger toggle (mobile only) ── */
 .menu-toggle {
   width: 40px;

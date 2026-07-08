@@ -13,6 +13,14 @@
       <a routerLink="/historial"
          routerLinkActive="active"
          class="nav-link">Historial</a>
+      @if (usuario(); as user) {
+        @if (esInvitado()) {
+          <span class="guest-chip" title="Estás explorando con datos de demostración">Modo invitado</span>
+        } @else {
+          <span class="user-chip" title="Sesión iniciada">{{ user }}</span>
+        }
+        <button type="button" class="nav-link logout-link" (click)="cerrarSesion()">Salir</button>
+      }
     </nav>
 
     <button type="button"
@@ -37,6 +45,14 @@
          routerLinkActive="active"
          class="nav-link"
          (click)="cerrarMenu()">Historial</a>
+      @if (usuario(); as user) {
+        @if (esInvitado()) {
+          <span class="guest-chip guest-chip-mobile">Modo invitado</span>
+        } @else {
+          <span class="user-chip user-chip-mobile">{{ user }}</span>
+        }
+        <button type="button" class="nav-link logout-link" (click)="cerrarSesion()">Cerrar sesión</button>
+      }
     </nav>
   }
 </header>

@@ -79,7 +79,8 @@ router-outlet + * { animation: abylu-pageIn 0.4s ease-out; }
 
 app-cotizacion,
 app-historial,
-app-detalle-cotizacion {
+app-detalle-cotizacion,
+app-login {
   display: block;
   background: var(--color-cream);
   min-height: 100dvh;

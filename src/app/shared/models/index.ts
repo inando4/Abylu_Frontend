@@ -8,3 +8,4 @@
  */
 export * from './producto.model';
 export * from './cotizacion.model';
+export * from './auth.model';

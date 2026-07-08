@@ -1,0 +1,137 @@
+/* Puerta de entrada de la app: sin header fijo, la marca vive aquí.
+   Dos brillos radiales rosa muy tenues sobre el crema dan calidez
+   sin romper el minimalismo del resto de páginas. */
+:host {
+  display: block;
+  background:
+    radial-gradient(420px 320px at 88% -6%, rgba(255, 198, 199, 0.38), transparent 70%),
+    radial-gradient(380px 320px at -12% 104%, rgba(255, 139, 167, 0.16), transparent 70%),
+    var(--color-cream);
+}
+
+/* Centra la composición verticalmente dentro del shell. */
+.login-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 32px;
+}
+
+.login-brand {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+.login-logo {
+  width: 148px;
+  height: auto;
+  animation: logoIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* El login se compone centrado: es la única página sin topbar. */
+.login-head {
+  padding: 0 18px 16px;
+  text-align: center;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 14px;
+  padding: 22px 20px;
+  box-shadow: var(--shadow-md);
+}
+
+.login-btn {
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* Input de contraseña con botón para mostrar/ocultar. */
+.password-wrap {
+  position: relative;
+}
+.password-wrap .input {
+  padding-right: 48px;
+}
+.toggle-password {
+  position: absolute;
+  right: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  min-height: 42px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--r-sm);
+  color: var(--color-ink-3);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+.toggle-password:hover {
+  color: var(--color-ink);
+  background: var(--color-cream-2);
+}
+.toggle-password:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 1px;
+  color: var(--color-ink);
+}
+
+/* Divisor punteado — mismo vocabulario dashed que "Agregar al carrito". */
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 4px;
+  color: var(--color-ink-3);
+  font-size: 11px;
+  font-weight: 700;
+}
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  border-top: 1px dashed var(--color-line);
+}
+
+/* Botón secundario (modo invitado): contorno cacao sobre blanco, no compite con el CTA. */
+.btn-guest {
+  height: 50px;
+  margin-top: 6px;
+  background: transparent;
+  color: var(--color-ink);
+  border: 1.5px solid var(--color-ink);
+  border-radius: var(--r-md);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: background 0.12s, opacity 0.12s;
+}
+.btn-guest:hover:not(:disabled) { background: var(--color-cream-2); }
+.btn-guest:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.hint-error {
+  font-size: 12px;
+  color: var(--color-terracotta-dark);
+  font-weight: 600;
+}
+
+.login-foot {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  color: var(--color-ink-3);
+  margin: 0;
+}
+
+@keyframes logoIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
