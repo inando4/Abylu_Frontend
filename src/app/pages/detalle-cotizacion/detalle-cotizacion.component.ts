@@ -21,6 +21,8 @@ export class DetalleCotizacionComponent implements OnInit {
   cargando = true;
   error = '';
   cambiandoEstado = false;
+  confirmPdfOpen = false;
+  descargandoPdf = false;
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -63,9 +65,22 @@ export class DetalleCotizacionComponent implements OnInit {
     });
   }
 
+  /** Abre el diálogo de confirmación antes de descargar el PDF. */
   descargarPdf(): void {
-    if (!this.cotizacion) return;
+    if (!this.cotizacion || this.descargandoPdf) return;
+    this.error = '';
+    this.confirmPdfOpen = true;
+  }
 
+  cerrarConfirmacionPdf(): void {
+    if (this.descargandoPdf) return;
+    this.confirmPdfOpen = false;
+  }
+
+  confirmarDescargaPdf(): void {
+    if (!this.cotizacion || this.descargandoPdf) return;
+
+    this.descargandoPdf = true;
     this.cotizacionService.descargarPdf(this.cotizacion.id).subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
@@ -74,9 +89,13 @@ export class DetalleCotizacionComponent implements OnInit {
         a.download = `Cotizacion-${this.cotizacion!.numeroCotizacion}.pdf`;
         a.click();
         window.URL.revokeObjectURL(url);
+        this.descargandoPdf = false;
+        this.confirmPdfOpen = false;
       },
       error: () => {
         this.error = 'No se pudo descargar el PDF.';
+        this.descargandoPdf = false;
+        this.confirmPdfOpen = false;
       }
     });
   }

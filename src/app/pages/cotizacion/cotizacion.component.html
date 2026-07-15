@@ -239,19 +239,28 @@
 
     <!-- ══════════ Footer fijo ══════════ -->
     <div class="footer">
-      <button type="button" class="btn-secondary" aria-label="Guardar borrador">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <path d="M4 2h7l3 3v11H4V2z" stroke="#2B1D14"
-                stroke-width="1.6" stroke-linejoin="round"/>
-          <path d="M6 2v4h5V2M6 11h6" stroke="#2B1D14"
-                stroke-width="1.6" stroke-linecap="round"/>
-        </svg>
+      <button type="button" class="btn-secondary"
+              data-testid="guardar-borrador"
+              [attr.aria-label]="modoEdicion ? 'Guardar cambios sin descargar' : 'Guardar borrador'"
+              [title]="modoEdicion ? 'Guardar cambios (sin descargar PDF)' : 'Guardar borrador (sin descargar PDF)'"
+              [disabled]="cargando || guardandoBorrador"
+              (click)="guardarBorrador()">
+        @if (guardandoBorrador) {
+          <span class="spinner spinner--dark"></span>
+        } @else {
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M4 2h7l3 3v11H4V2z" stroke="#2B1D14"
+                  stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M6 2v4h5V2M6 11h6" stroke="#2B1D14"
+                  stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        }
       </button>
-      <button type="submit" class="btn-primary" [disabled]="cargando">
+      <button type="submit" class="btn-primary" [disabled]="cargando || guardandoBorrador">
         @if (cargando) {
           <span class="spinner"></span> {{ modoEdicion ? 'Guardando...' : 'Generando PDF...' }}
         } @else {
-          {{ modoEdicion ? 'Guardar cambios' : 'Generar cotización' }}
+          {{ modoEdicion ? 'Guardar y descargar' : 'Generar cotización' }}
         }
       </button>
     </div>
@@ -332,14 +341,26 @@
         </div>
         <div>
           <div class="confirm-eyebrow">Confirmación</div>
-          <h3 id="confirm-title">{{ modoEdicion ? 'Guardar cambios' : 'Generar cotización' }}</h3>
+          <h3 id="confirm-title">
+            @if (confirmAccion === 'borrador') {
+              {{ modoEdicion ? 'Guardar cambios' : 'Guardar borrador' }}
+            } @else {
+              {{ modoEdicion ? 'Guardar y descargar' : 'Generar cotización' }}
+            }
+          </h3>
         </div>
       </div>
 
       <p class="confirm-copy">
-        {{ modoEdicion
-            ? 'Se actualizará la cotización y se descargará el PDF.'
-            : 'Se creará la cotización y se descargará el PDF.' }}
+        @if (confirmAccion === 'borrador') {
+          {{ modoEdicion
+              ? 'Se guardarán los cambios sin descargar el PDF.'
+              : 'Se guardará la cotización como borrador, sin descargar el PDF.' }}
+        } @else {
+          {{ modoEdicion
+              ? 'Se actualizará la cotización y se descargará el PDF.'
+              : 'Se creará la cotización y se descargará el PDF.' }}
+        }
       </p>
 
       <div class="confirm-summary">
@@ -381,17 +402,19 @@
       <div class="confirm-actions">
         <button type="button"
                 class="confirm-cancel"
-                [disabled]="cargando"
+                [disabled]="cargando || guardandoBorrador"
                 (click)="cerrarConfirmacion()">
           Cancelar
         </button>
         <button type="button"
                 class="btn-primary confirm-primary"
                 data-testid="confirm-generate-pdf"
-                [disabled]="cargando"
+                [disabled]="cargando || guardandoBorrador"
                 (click)="confirmarGeneracion()">
-          @if (cargando) {
-            <span class="spinner"></span> {{ modoEdicion ? 'Guardando...' : 'Generando...' }}
+          @if (cargando || guardandoBorrador) {
+            <span class="spinner"></span> {{ confirmAccion === 'borrador' || modoEdicion ? 'Guardando...' : 'Generando...' }}
+          } @else if (confirmAccion === 'borrador') {
+            {{ modoEdicion ? 'Guardar cambios' : 'Guardar borrador' }}
           } @else {
             {{ modoEdicion ? 'Guardar y descargar' : 'Generar PDF' }}
           }

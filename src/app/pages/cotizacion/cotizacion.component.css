@@ -260,6 +260,16 @@
   flex-shrink: 0;
 }
 .btn-secondary:hover { background: var(--color-cream-2); }
+.btn-secondary:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+/* Variante del spinner global para fondos claros (btn-secondary es blanco). */
+.spinner--dark {
+  border-color: rgba(43, 29, 20, 0.2);
+  border-top-color: #2B1D14;
+}
 
 /* ════════════════════════════════════════════════
    Bottom sheet picker (grid + category tabs)

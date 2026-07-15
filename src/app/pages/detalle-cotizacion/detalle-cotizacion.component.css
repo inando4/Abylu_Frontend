@@ -187,3 +187,29 @@
 }
 .btn-danger:hover:not(:disabled) { background: #F4A8A8; transform: translateY(-1px); }
 .btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ════════════════════════════════════════════════
+   Backdrop del diálogo de confirmación
+   (mismas clases que en cotizacion.component.css — mantener alineadas;
+   los estilos confirm-* son globales en styles.css)
+   ════════════════════════════════════════════════ */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 29, 20, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn .2s;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.grabber {
+  width: 40px;
+  height: 4px;
+  background: var(--color-ink-3);
+  opacity: 0.4;
+  border-radius: 2px;
+  margin: 0 auto 14px;
+}

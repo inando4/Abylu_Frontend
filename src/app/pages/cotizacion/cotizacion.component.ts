@@ -60,6 +60,7 @@ export class CotizacionComponent implements OnInit {
   numeroCotizacion = '';
 
   cargando = false;
+  guardandoBorrador = false;
   error = '';
 
   get modoEdicion(): boolean {
@@ -70,6 +71,8 @@ export class CotizacionComponent implements OnInit {
   /** Texto del buscador del picker. */
   pickerSearch = '';
   confirmOpen = false;
+  /** Qué acción confirma el diálogo: generar/descargar PDF o solo guardar borrador. */
+  confirmAccion: 'pdf' | 'borrador' = 'pdf';
 
   readonly tiposEvento: TipoEvento[] = [
     { id: 'cumple',      name: 'Cumpleaños',  emoji: '🎂' },
@@ -331,14 +334,18 @@ export class CotizacionComponent implements OnInit {
   cerrarPicker(): void { this.pickerOpen = false; }
 
   cerrarConfirmacion(): void {
-    if (this.cargando) return;
+    if (this.cargando || this.guardandoBorrador) return;
     this.confirmOpen = false;
   }
 
   confirmarGeneracion(): void {
-    if (this.cargando) return;
+    if (this.cargando || this.guardandoBorrador) return;
     this.confirmOpen = false;
-    this.guardarYDescargarPdf();
+    if (this.confirmAccion === 'borrador') {
+      this.ejecutarGuardarBorrador();
+    } else {
+      this.guardarYDescargarPdf();
+    }
   }
 
   seleccionarProducto(producto: Producto): void {
@@ -464,19 +471,64 @@ export class CotizacionComponent implements OnInit {
   }
 
   generarPdf(): void {
+    if (!this.validarFormulario()) return;
+
+    this.error = '';
+    this.confirmAccion = 'pdf';
+    this.confirmOpen = true;
+  }
+
+  /** Validación compartida entre "Generar cotización" y "Guardar borrador". */
+  private validarFormulario(): boolean {
     if (this.cotizacionForm.invalid) {
       this.cotizacionForm.markAllAsTouched();
       this.error = 'Completa los campos obligatorios';
-      return;
+      return false;
     }
 
     if (this.items.length === 0) {
       this.error = 'Agrega al menos un producto al carrito';
-      return;
+      return false;
     }
 
+    return true;
+  }
+
+  /** Valida y abre el diálogo de confirmación para guardar como borrador. */
+  guardarBorrador(): void {
+    if (this.cargando || this.guardandoBorrador) return;
+    if (!this.validarFormulario()) return;
+
     this.error = '';
+    this.confirmAccion = 'borrador';
     this.confirmOpen = true;
+  }
+
+  /**
+   * Guarda la cotización sin descargar el PDF. El backend crea siempre en
+   * estado BORRADOR; en modo edición el PUT conserva el estado actual.
+   */
+  private ejecutarGuardarBorrador(): void {
+    this.guardandoBorrador = true;
+
+    const formValue = this.cotizacionForm.value as CotizacionFormValue;
+    const request = this.crearCotizacionRequest(formValue);
+
+    const peticion$ = this.modoEdicion
+      ? this.cotizacionService.actualizar(this.cotizacionId!, request)
+      : this.cotizacionService.crear(request);
+
+    peticion$.subscribe({
+      next: (cotizacion) => {
+        this.guardandoBorrador = false;
+        this.router.navigate(['/historial', cotizacion.id]);
+      },
+      error: (err) => {
+        this.error = 'Error al guardar el borrador. Verifica los datos e intenta de nuevo.';
+        this.guardandoBorrador = false;
+        console.error('Error:', err);
+      }
+    });
   }
 
   private guardarYDescargarPdf(): void {
