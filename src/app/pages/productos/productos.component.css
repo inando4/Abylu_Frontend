@@ -1,0 +1,412 @@
+/* ════════════════════════════════════════════════
+   Gestión de productos — reusa los tokens globales
+   (styles.css). Aquí solo vive lo específico de la
+   página: filas del catálogo, chips de escalas,
+   sheet del formulario y desactivados.
+   ════════════════════════════════════════════════ */
+
+/* ── Buscador del catálogo (mismo lenguaje que el buscador del picker) ── */
+.search-wrap {
+  position: relative;
+  margin-bottom: 14px;
+}
+.search {
+  width: 100%;
+  background: #fff;
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--r-sm);
+  padding: 11px 40px 11px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-ink);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.search::placeholder { color: var(--color-ink-3); font-weight: 500; }
+.search:focus {
+  border-color: var(--color-ink);
+  box-shadow: 0 0 0 3px rgba(51, 39, 42, 0.12);
+}
+.search::-webkit-search-cancel-button { display: none; }
+.search-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
+  padding: 0;
+  border: none;
+  background: var(--color-cream-2);
+  color: var(--color-ink-2);
+  border-radius: 50%;
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all .15s;
+}
+.search-clear:hover {
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+
+/* ── Grupos por categoría ── */
+.grupo { margin-bottom: 16px; }
+.grupo:last-of-type { margin-bottom: 0; }
+
+.grupo-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+  margin: 0 2px 8px;
+}
+.grupo-label .count { font-weight: 700; opacity: 0.75; }
+
+/* ── Filas de producto ── */
+.prod-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.prod-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1.5px solid var(--color-line-2);
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+}
+.prod-main { flex: 1; min-width: 0; }
+.prod-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-ink);
+  line-height: 1.25;
+  overflow-wrap: break-word;
+}
+
+/* Chips de precios: la estructura de precios visible de un vistazo.
+   Rose-soft para escalas (acento suave), crema para el precio fijo. */
+.prod-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+.chip-escala {
+  background: var(--color-terracotta-soft);
+  color: var(--color-ink);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.chip-precio {
+  background: var(--color-cream-2);
+  color: var(--color-ink-2);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.chip-inactivo {
+  background: var(--color-cream-3);
+  color: var(--color-ink-2);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.sin-precio {
+  font-size: 11px;
+  color: var(--color-ink-3);
+  font-weight: 600;
+}
+
+/* ── Acciones por fila ── */
+.prod-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--color-ink-2);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.icon-btn:hover {
+  background: var(--color-ink);
+  border-color: var(--color-ink);
+  color: var(--color-cream);
+}
+.icon-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(51, 39, 42, 0.25);
+}
+
+.btn-nuevo {
+  width: 100%;
+  margin-top: 14px;
+}
+
+.empty {
+  padding: 14px 4px;
+  color: var(--color-ink-3);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* ── Skeleton (mismo lenguaje que historial) ── */
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.skeleton-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid var(--color-line-2);
+  border-radius: var(--r-md);
+}
+
+/* ── Desactivados ── */
+.toggle-desactivados {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-ink-2);
+  text-align: left;
+}
+.toggle-desactivados .count {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-ink-3);
+}
+.toggle-desactivados:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(51, 39, 42, 0.18);
+  border-radius: 8px;
+}
+.caret {
+  transition: transform .15s ease;
+  color: var(--color-ink-3);
+}
+.caret.open { transform: rotate(90deg); }
+
+.desactivados-list { margin-top: 12px; }
+
+.prod-row.inactiva {
+  background: var(--color-cream);
+  opacity: 0.75;
+}
+.prod-row.inactiva .prod-name { color: var(--color-ink-2); }
+
+.btn-reactivar {
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 7px 14px;
+  background: #fff;
+  border: 1px solid var(--color-ink);
+  border-radius: 999px;
+  color: var(--color-ink);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background .15s, color .15s, opacity .12s;
+}
+.btn-reactivar:hover:not(:disabled) {
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+.btn-reactivar:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ════════════════════════════════════════════════
+   Bottom-sheet del formulario (patrón del picker)
+   ════════════════════════════════════════════════ */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 29, 20, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn .2s;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.sheet {
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-cream);
+  border-top-left-radius: 28px;
+  border-top-right-radius: 28px;
+  padding: 14px 18px calc(28px + env(safe-area-inset-bottom));
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: slideUp .25s cubic-bezier(.2, .8, .2, 1);
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+.grabber {
+  width: 40px;
+  height: 4px;
+  background: var(--color-ink-3);
+  opacity: 0.4;
+  border-radius: 2px;
+  margin: 0 auto 14px;
+}
+.sheet h3 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  font-size: 22px;
+  margin: 0 0 14px;
+  color: var(--color-ink);
+}
+
+.hint {
+  font-size: 11px;
+  color: var(--color-ink-3);
+  line-height: 1.4;
+  margin: 8px 0 14px;
+}
+
+/* El select debe leerse como desplegable: chevron propio (appearance: none
+   quita el nativo, que además el reset de @tailwindcss/forms deja inconsistente). */
+select.input {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 16 16' fill='none'><path d='M4 6l4 4 4-4' stroke='%23594A4E' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  padding-right: 38px;
+  cursor: pointer;
+}
+
+.form-error {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8A1F1F;
+  margin-top: 2px;
+}
+
+/* ── Escalas del formulario ── */
+.escalas-block { margin-bottom: 4px; }
+.escalas-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.escalas-head label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--color-ink-2);
+}
+.escalas-meta {
+  font-size: 10px;
+  color: var(--color-ink-3);
+  font-weight: 600;
+}
+.escala-row {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr auto;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.escala-row .input { background: #fff; }
+.icon-btn.quitar {
+  border-color: var(--color-line-2);
+  color: var(--color-ink-3);
+}
+.icon-btn.quitar:hover {
+  background: #FBC4C4;
+  border-color: #FBC4C4;
+  color: #6B1818;
+}
+
+.btn-add-escala {
+  width: 100%;
+  min-height: 42px;
+  background: none;
+  border: 1.5px dashed var(--color-terracotta);
+  border-radius: var(--r-md);
+  color: var(--color-ink);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.btn-add-escala:hover {
+  background: rgba(255, 139, 167, 0.08);
+  border-color: var(--color-terracotta-dark);
+}
+
+.sheet-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* ── Confirmación de desactivar ──
+   La marca del confirm global es mint (éxito); aquí es una acción de
+   archivo/apagado → crema, sin dramatismo (es reversible). */
+.confirm-mark.warn {
+  background: var(--color-cream-3);
+  color: var(--color-ink);
+}
+
+/* Inputs inválidos tocados: mismo rojo suave del error-banner */
+.input.ng-invalid.ng-touched {
+  border-color: #F5B5B5;
+}

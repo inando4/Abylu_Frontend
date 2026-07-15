@@ -43,6 +43,12 @@ export const routes: Routes = [
       .then(m => m.HistorialComponent),
   },
   {
+    path: 'productos',           // localhost:4200/productos (gestión de catálogo)
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/productos/productos.component')
+      .then(m => m.ProductosComponent),
+  },
+  {
     path: 'historial/:id',       // localhost:4200/historial/42
     canActivate: [authGuard],
     loadComponent: () => import('./pages/detalle-cotizacion/detalle-cotizacion.component')

@@ -13,6 +13,9 @@
       <a routerLink="/historial"
          routerLinkActive="active"
          class="nav-link">Historial</a>
+      <a routerLink="/productos"
+         routerLinkActive="active"
+         class="nav-link">Productos</a>
       @if (usuario(); as user) {
         @if (esInvitado()) {
           <span class="guest-chip" title="Estás explorando con datos de demostración">Modo invitado</span>
@@ -45,6 +48,10 @@
          routerLinkActive="active"
          class="nav-link"
          (click)="cerrarMenu()">Historial</a>
+      <a routerLink="/productos"
+         routerLinkActive="active"
+         class="nav-link"
+         (click)="cerrarMenu()">Productos</a>
       @if (usuario(); as user) {
         @if (esInvitado()) {
           <span class="guest-chip guest-chip-mobile">Modo invitado</span>

@@ -1,0 +1,330 @@
+<app-header />
+
+<div class="app-shell">
+
+  <div class="page-title">
+    <div class="eyebrow">Gestión</div>
+    <h1>Productos</h1>
+    <div class="sub">Crea, edita y organiza tu catálogo.</div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════ SECCIÓN · Catálogo ══════════ -->
+    <div class="section">
+      <div class="section-title">
+        <span class="num">1</span> Catálogo
+        @if (!cargando && activos.length > 0) {
+          <span class="meta">
+            {{ activos.length }} producto{{ activos.length !== 1 ? 's' : '' }}
+          </span>
+        }
+      </div>
+
+      @if (cargando) {
+        <div class="skeleton-list">
+          @for (i of [1, 2, 3]; track i) {
+            <div class="skeleton-row">
+              <div class="sk-line w-56"></div>
+              <div class="sk-line w-40"></div>
+            </div>
+          }
+        </div>
+      }
+
+      @if (error) {
+        <div class="error-banner">{{ error }}</div>
+      }
+
+      @if (!cargando && !error && activos.length === 0) {
+        <div class="empty">
+          Tu catálogo está vacío. Crea tu primer producto para empezar a cotizar con él.
+        </div>
+      }
+
+      @if (!cargando && activos.length > 0) {
+        <div class="search-wrap">
+          <input class="search" type="search"
+                 placeholder="Buscar producto…"
+                 aria-label="Buscar producto por nombre"
+                 data-testid="buscar-producto"
+                 [value]="busqueda"
+                 (input)="onBusquedaCambiada($event)" />
+          @if (busqueda) {
+            <button type="button" class="search-clear"
+                    aria-label="Limpiar búsqueda"
+                    (click)="limpiarBusqueda()">×</button>
+          }
+        </div>
+
+        @if (busqueda && grupos.length === 0) {
+          <div class="empty">
+            No hay productos que coincidan con “{{ busqueda }}”.
+          </div>
+        }
+
+        @for (grupo of grupos; track grupo.categoria) {
+          <div class="grupo">
+            <div class="grupo-label">
+              {{ formatCategoria(grupo.categoria) }}
+              <span class="count">· {{ grupo.productos.length }}</span>
+            </div>
+            <div class="prod-list">
+              @for (p of grupo.productos; track p.id) {
+                <div class="prod-row" [attr.data-testid]="'producto-' + p.id">
+                  <div class="prod-main">
+                    <div class="prod-name">{{ p.nombre }}</div>
+                    <div class="prod-chips">
+                      @if (p.precioUnitario > 0) {
+                        <span class="chip-precio">S/ {{ p.precioUnitario | number:'1.0-2' }}</span>
+                      }
+                      @for (e of p.escalas; track e.id) {
+                        <span class="chip-escala">{{ e.cantidad }} → S/ {{ e.precioTotal | number:'1.0-2' }}</span>
+                      }
+                      @if (p.precioUnitario === 0 && p.escalas.length === 0) {
+                        <span class="sin-precio">Sin precios definidos</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="prod-actions">
+                    <button type="button" class="icon-btn"
+                            [attr.aria-label]="'Editar ' + p.nombre"
+                            (click)="abrirEditar(p)">
+                      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path d="M11.3 2.6a1.7 1.7 0 0 1 2.4 2.4L5.6 13 2.5 13.8l.8-3.1 8-8.1z"
+                              stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                    <button type="button" class="icon-btn"
+                            [attr.aria-label]="'Desactivar ' + p.nombre"
+                            (click)="pedirDesactivar(p)">
+                      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path d="M8 2v5.5 M4.4 4.8a5.1 5.1 0 1 0 7.2 0"
+                              stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      }
+
+      @if (!cargando && !error) {
+        <button type="button" class="btn-primary btn-nuevo"
+                data-testid="btn-nuevo-producto"
+                (click)="abrirNuevo()">
+          + Nuevo producto
+        </button>
+      }
+    </div>
+
+    <!-- ══════════ SECCIÓN · Desactivados ══════════ -->
+    @if (!cargando && desactivados.length > 0) {
+      <div class="section">
+        <button type="button" class="toggle-desactivados"
+                [attr.aria-expanded]="desactivadosOpen"
+                (click)="desactivadosOpen = !desactivadosOpen">
+          <svg class="caret" [class.open]="desactivadosOpen"
+               width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Desactivados
+          <span class="count">({{ desactivados.length }})</span>
+        </button>
+
+        @if (desactivadosOpen) {
+          <div class="prod-list desactivados-list">
+            @for (p of desactivados; track p.id) {
+              <div class="prod-row inactiva">
+                <div class="prod-main">
+                  <div class="prod-name">{{ p.nombre }}</div>
+                  <div class="prod-chips">
+                    <span class="chip-inactivo">{{ formatCategoria(p.categoria) }}</span>
+                    @for (e of p.escalas; track e.id) {
+                      <span class="chip-escala">{{ e.cantidad }} → S/ {{ e.precioTotal | number:'1.0-2' }}</span>
+                    }
+                  </div>
+                </div>
+                <button type="button" class="btn-reactivar"
+                        [disabled]="reactivandoId === p.id"
+                        (click)="reactivar(p)">
+                  {{ reactivandoId === p.id ? 'Reactivando…' : 'Reactivar' }}
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</div>
+
+<!-- ══════════ BOTTOM-SHEET · Formulario crear/editar ══════════ -->
+@if (sheetOpen) {
+  <div class="backdrop" (click)="cerrarSheet()">
+    <section class="sheet" role="dialog" aria-modal="true"
+             aria-labelledby="sheet-title"
+             data-testid="sheet-producto"
+             (click)="$event.stopPropagation()">
+      <div class="grabber"></div>
+      <h3 id="sheet-title">{{ editando ? 'Editar producto' : 'Nuevo producto' }}</h3>
+
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+
+        <div class="field">
+          <label for="prod-nombre">Nombre <span class="required-mark">*</span></label>
+          <input id="prod-nombre" class="input" type="text"
+                 placeholder="Ej. Estación de nachos"
+                 formControlName="nombre" />
+          @if (form.get('nombre')?.touched && form.get('nombre')?.invalid) {
+            <div class="form-error">El nombre es obligatorio.</div>
+          }
+        </div>
+
+        <div [class.row-2]="esIlimitado">
+          <div class="field">
+            <label for="prod-categoria">Categoría <span class="required-mark">*</span></label>
+            <select id="prod-categoria" class="input" formControlName="categoria">
+              @if (!form.get('categoria')?.value) {
+                <option value="" disabled>Selecciona…</option>
+              }
+              @for (c of categorias; track c) {
+                <option [value]="c">{{ formatCategoria(c) }}</option>
+              }
+            </select>
+          </div>
+          @if (esIlimitado) {
+            <div class="field">
+              <label for="prod-precio">Precio fijo (S/) <span class="required-mark">*</span></label>
+              <input id="prod-precio" class="input" type="number"
+                     min="0" step="0.5" inputmode="decimal"
+                     formControlName="precioUnitario" />
+            </div>
+          }
+        </div>
+        @if (esIlimitado && form.get('precioUnitario')?.touched && form.get('precioUnitario')?.invalid) {
+          <div class="form-error">El precio fijo debe ser mayor a 0.</div>
+        }
+        <div class="hint">
+          @if (esIlimitado) {
+            Los ilimitados cobran solo el precio fijo — no llevan escalas.
+          } @else {
+            El precio se define por las escalas, según la cantidad.
+          }
+        </div>
+
+        @if (!esIlimitado) {
+        <div class="escalas-block" formArrayName="escalas">
+          <div class="escalas-head">
+            <label>Escalas de precio</label>
+            @if (escalas.length > 0) {
+              <span class="escalas-meta">cantidad → precio del paquete</span>
+            }
+          </div>
+
+          @for (grupo of escalas.controls; track grupo; let i = $index) {
+            <div class="escala-row" [formGroupName]="i">
+              <input class="input" type="number" min="1" step="1"
+                     inputmode="numeric" placeholder="Cantidad"
+                     [attr.aria-label]="'Cantidad de la escala ' + (i + 1)"
+                     formControlName="cantidad" />
+              <input class="input" type="number" min="0" step="0.5"
+                     inputmode="decimal" placeholder="Precio total S/"
+                     [attr.aria-label]="'Precio total de la escala ' + (i + 1)"
+                     formControlName="precioTotal" />
+              <button type="button" class="icon-btn quitar"
+                      [attr.aria-label]="'Quitar escala ' + (i + 1)"
+                      (click)="quitarEscala(i)">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          }
+
+          @if (escalas.hasError('cantidadesDuplicadas')) {
+            <div class="form-error">Hay dos escalas con la misma cantidad.</div>
+          }
+
+          <button type="button" class="btn-add-escala" (click)="agregarEscala()">
+            + Añadir escala
+          </button>
+        </div>
+        }
+
+        @if (errorGuardar) {
+          <div class="error-banner">{{ errorGuardar }}</div>
+        }
+
+        <div class="sheet-actions">
+          <button type="button" class="confirm-cancel"
+                  [disabled]="guardando"
+                  (click)="cerrarSheet()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-primary"
+                  data-testid="btn-guardar-producto"
+                  [disabled]="guardando">
+            @if (guardando) {
+              <span class="spinner"></span> Guardando…
+            } @else {
+              {{ editando ? 'Guardar cambios' : 'Crear producto' }}
+            }
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+}
+
+<!-- ══════════ CONFIRMACIÓN · Desactivar ══════════ -->
+@if (confirmProducto; as producto) {
+  <div class="backdrop confirm-backdrop" (click)="cancelarDesactivar()">
+    <section class="confirm-dialog" role="alertdialog" aria-modal="true"
+             aria-labelledby="confirm-desactivar-title"
+             data-testid="confirm-desactivar"
+             (click)="$event.stopPropagation()">
+      <div class="grabber confirm-grabber"></div>
+
+      <div class="confirm-head">
+        <div class="confirm-mark warn">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 2v5.5 M4.4 4.8a5.1 5.1 0 1 0 7.2 0"
+                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="confirm-eyebrow">Catálogo</div>
+          <h3 id="confirm-desactivar-title">¿Desactivar “{{ producto.nombre }}”?</h3>
+        </div>
+      </div>
+
+      <p class="confirm-copy">
+        Dejará de aparecer al crear cotizaciones. Las cotizaciones existentes no cambian,
+        y podrás reactivarlo cuando quieras desde la sección Desactivados.
+      </p>
+
+      <div class="confirm-actions">
+        <button type="button" class="confirm-cancel"
+                [disabled]="desactivando"
+                (click)="cancelarDesactivar()">
+          Cancelar
+        </button>
+        <button type="button" class="btn-primary confirm-primary"
+                data-testid="confirm-desactivar-btn"
+                [disabled]="desactivando"
+                (click)="confirmarDesactivar()">
+          @if (desactivando) {
+            <span class="spinner"></span> Desactivando…
+          } @else {
+            Desactivar
+          }
+        </button>
+      </div>
+    </section>
+  </div>
+}
