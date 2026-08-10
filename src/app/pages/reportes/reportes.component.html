@@ -1,0 +1,352 @@
+<app-header />
+
+<div class="app-shell">
+
+  <div class="page-title">
+    <div class="eyebrow">Análisis</div>
+    <h1>Reportes</h1>
+    <div class="sub">Cotizaciones aceptadas, por fecha de evento.</div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════ SECCIÓN · Periodo ══════════ -->
+    <div class="section">
+      <div class="section-title">
+        <span class="num">1</span> Periodo
+      </div>
+
+      <div class="chips">
+        <button type="button" class="chip" data-testid="preset-mes"
+                [class.on]="presetActivo === 'mes'"
+                (click)="aplicarPreset('mes')">Este mes</button>
+        <button type="button" class="chip" data-testid="preset-meses6"
+                [class.on]="presetActivo === 'meses6'"
+                (click)="aplicarPreset('meses6')">Últimos 6 meses</button>
+        <button type="button" class="chip" data-testid="preset-anio"
+                [class.on]="presetActivo === 'anio'"
+                (click)="aplicarPreset('anio')">Este año</button>
+        <button type="button" class="chip" data-testid="preset-todo"
+                [class.on]="presetActivo === 'todo'"
+                (click)="aplicarPreset('todo')">Todo</button>
+      </div>
+
+      <div class="row-2 rango">
+        <div class="field">
+          <label for="rep-desde">Desde</label>
+          <input id="rep-desde" class="input" type="date" data-testid="rango-desde"
+                 [value]="desde" (change)="onFechaCambiada('desde', $event)" />
+        </div>
+        <div class="field">
+          <label for="rep-hasta">Hasta</label>
+          <input id="rep-hasta" class="input" type="date" data-testid="rango-hasta"
+                 [value]="hasta" (change)="onFechaCambiada('hasta', $event)" />
+        </div>
+      </div>
+
+      <div class="comparar-lbl">Comparar con</div>
+      <div class="chips">
+        <button type="button" class="chip" data-testid="comparar-anterior"
+                [class.on]="modoComparacion === 'anterior'"
+                (click)="cambiarComparacion('anterior')">Periodo anterior</button>
+        <button type="button" class="chip" data-testid="comparar-anio"
+                [class.on]="modoComparacion === 'anio'"
+                (click)="cambiarComparacion('anio')">Año pasado</button>
+      </div>
+    </div>
+
+    @if (error) {
+      <div class="error-banner" data-testid="reportes-error">{{ error }}</div>
+    }
+
+    @if (cargando) {
+      <div class="section">
+        <div class="skeleton-row">
+          <div class="sk-line w-40"></div>
+          <div class="sk-line w-full"></div>
+          <div class="sk-line w-72"></div>
+          <div class="sk-line w-56"></div>
+        </div>
+      </div>
+    }
+
+    @if (!cargando && resumen) {
+
+      <!-- ══════════ SECCIÓN · Resumen ══════════ -->
+      <div class="section">
+        <div class="section-title">
+          <span class="num">2</span> Resumen
+          <span class="meta">{{ rangoCorto(resumen.desde, resumen.hasta) }}</span>
+        </div>
+
+        <div class="kpi-hero" data-testid="kpi-ingreso">
+          <div class="lbl">Ingreso aceptado</div>
+          <div class="big">S/ {{ resumen.ingresoAceptado | number:'1.2-2' }}</div>
+          <div class="hero-foot">
+            <span>{{ resumen.cotizacionesAceptadas }}
+              cotización{{ resumen.cotizacionesAceptadas !== 1 ? 'es' : '' }} aceptada{{ resumen.cotizacionesAceptadas !== 1 ? 's' : '' }}</span>
+            @if (comparado) {
+              <span class="delta" [class]="claseDelta(comparado.deltaIngreso)" data-testid="kpi-delta">
+                {{ formatearDelta(comparado.deltaIngreso) }}
+                <small>{{ etiquetaComparacion }}</small>
+              </span>
+            }
+          </div>
+        </div>
+
+        @if (resumen.periodoEnCurso) {
+          <div class="nota-curso">
+            Este periodo aún no termina, así que la comparación va en desventaja.
+          </div>
+        }
+
+        <div class="kpi-grid">
+          <div class="kpi" data-testid="kpi-ticket">
+            <div class="lbl">Ticket promedio</div>
+            <div class="val">
+              @if (resumen.ticketPromedio !== null) {
+                S/ {{ resumen.ticketPromedio | number:'1.0-0' }}
+              } @else { — }
+            </div>
+            @if (comparado) {
+              <div class="hint">
+                <span class="delta-sm" [class]="claseDelta(comparado.deltaTicket)">
+                  {{ formatearDelta(comparado.deltaTicket) }}
+                </span> por evento
+              </div>
+            }
+          </div>
+
+          <div class="kpi" data-testid="kpi-conversion">
+            <div class="lbl">Conversión</div>
+            <div class="val">
+              @if (resumen.conversion.tasaAceptacion !== null) {
+                {{ resumen.conversion.tasaAceptacion * 100 | number:'1.0-0' }}%
+              } @else { — }
+            </div>
+            <div class="hint">
+              {{ resumen.conversion.aceptadas }} de
+              {{ resumen.conversion.aceptadas + resumen.conversion.rechazadas + resumen.conversion.enviadas }}
+              enviadas
+            </div>
+          </div>
+        </div>
+
+        @if (resumen.ingresoPotencial > 0) {
+          <div class="pendientes" data-testid="kpi-pendientes">
+            <span class="dot"></span>
+            S/ {{ resumen.ingresoPotencial | number:'1.0-0' }} esperando respuesta
+            en {{ resumen.conversion.enviadas }}
+            cotización{{ resumen.conversion.enviadas !== 1 ? 'es' : '' }}
+          </div>
+        }
+
+        @if (resumen.antelacion.promedioDias !== null) {
+          <div class="micro">
+            Cotizas con {{ resumen.antelacion.promedioDias | number:'1.0-0' }} días de media
+            antes del evento@if (resumen.antelacion.minimoDias !== null) {, el más ajustado
+            {{ resumen.antelacion.minimoDias }}}.
+            @if (resumen.antelacion.descartadas > 0) {
+              <span class="micro-aviso">
+                {{ resumen.antelacion.descartadas }}
+                @if (resumen.antelacion.descartadas === 1) { cotización quedó fuera }
+                @else { cotizaciones quedaron fuera }
+                del cálculo: se registraron después de su evento.
+              </span>
+            }
+          </div>
+        }
+      </div>
+
+      @if (!hayDatos) {
+        <!-- ══════════ Vacío ══════════ -->
+        <div class="section">
+          <div class="empty-block" data-testid="reportes-empty">
+            <div class="empty-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke="currentColor"
+                      stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="empty-title">Sin cotizaciones aceptadas</div>
+            <div class="empty-sub">
+              No hay eventos aceptados entre {{ formatearFecha(resumen.desde) }}
+              y {{ formatearFecha(resumen.hasta) }}. Prueba con otro periodo.
+            </div>
+          </div>
+        </div>
+      } @else {
+
+        <!-- ══════════ SECCIÓN · Ingresos por mes ══════════ -->
+        <div class="section">
+          <div class="section-title">
+            <span class="num">3</span> Ingresos por {{ porAnio ? 'año' : 'mes' }}
+            @if (porAnio) {
+              <span class="meta">rango largo</span>
+            }
+          </div>
+
+          <div class="chart-wrap" data-testid="chart-ingresos">
+            <svg class="chart" [attr.viewBox]="'0 0 ' + anchoGrafico + ' 118'"
+                 preserveAspectRatio="none" role="img"
+                 [style.min-width.px]="minAnchoGrafico"
+                 [attr.aria-label]="'Ingresos mensuales de cotizaciones aceptadas entre ' +
+                                    formatearFecha(resumen.desde) + ' y ' + formatearFecha(resumen.hasta)">
+              <title>Ingresos por mes</title>
+
+              <line x1="0" [attr.y1]="baseY + 0.5" [attr.x2]="anchoGrafico" [attr.y2]="baseY + 0.5"
+                    stroke="#E8D5CD" stroke-width="1" />
+
+              @for (b of barras; track b.clave) {
+                <rect [attr.x]="b.x" [attr.y]="b.y"
+                      [attr.width]="b.ancho" [attr.height]="b.alto"
+                      rx="2" [attr.class]="'bar bar-' + b.tipo"
+                      [class.sel]="barraSeleccionada?.clave === b.clave"
+                      (click)="seleccionarBarra(b)" />
+              }
+
+              <g class="x-labels">
+                @for (b of barras; track b.clave) {
+                  @if (b.mostrarEtiqueta) {
+                    <text [attr.x]="b.x + b.ancho / 2" y="104"
+                          text-anchor="middle" [attr.class]="'lbl-' + b.tipo">{{ b.etiqueta }}</text>
+                  }
+                }
+              </g>
+            </svg>
+          </div>
+
+          @if (barraSeleccionada) {
+            <div class="chart-tip">
+              <strong>{{ barraSeleccionada.etiqueta }}</strong>
+              · S/ {{ barraSeleccionada.ingreso | number:'1.2-2' }}
+              · {{ barraSeleccionada.cantidad }}
+              evento{{ barraSeleccionada.cantidad !== 1 ? 's' : '' }}
+            </div>
+          } @else {
+            <div class="chart-legend">
+              <span><i class="sw pasado"></i>Realizado</span>
+              <span><i class="sw actual"></i>{{ porAnio ? 'Año' : 'Mes' }} en curso</span>
+              <span><i class="sw futuro"></i>Por venir</span>
+            </div>
+          }
+        </div>
+
+        <!-- ══════════ SECCIÓN · Productos ══════════ -->
+        <div class="section">
+          <div class="section-title">
+            <span class="num">4</span> Productos más vendidos
+            <span class="meta">Top {{ resumen.topProductos.length }}</span>
+          </div>
+
+          @if (resumen.topProductos.length > 0) {
+            <div class="rank" data-testid="top-productos">
+              @for (p of resumen.topProductos; track p.productoId) {
+                <div class="rank-row">
+                  <div class="rank-top">
+                    <span class="rank-name">{{ p.nombre }}</span>
+                    <span class="rank-amt">S/ {{ p.ingreso | number:'1.0-0' }}</span>
+                  </div>
+                  <div class="track"><i [style.width.%]="anchoRanking(p.ingreso)"></i></div>
+                  <div class="rank-sub">
+                    en {{ p.vecesCotizado }} evento{{ p.vecesCotizado !== 1 ? 's' : '' }}
+                    @if (p.cantidadTotal > 0) { · {{ p.cantidadTotal | number }} porciones }
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="vacio-inline">Ningún producto del catálogo se vendió en este periodo.</div>
+          }
+
+          @if (resumen.productosSinSalida.length > 0) {
+            <button type="button" class="toggle" data-testid="sin-salida-toggle"
+                    [attr.aria-expanded]="sinSalidaOpen"
+                    (click)="sinSalidaOpen = !sinSalidaOpen">
+              <svg class="caret" [class.open]="sinSalidaOpen"
+                   width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Sin ventas en este periodo
+              <span class="count">({{ resumen.productosSinSalida.length }})</span>
+            </button>
+
+            @if (sinSalidaOpen) {
+              <div class="sin-salida" data-testid="sin-salida-lista">
+                @for (p of resumen.productosSinSalida; track p.productoId) {
+                  <div class="ss-row">
+                    <span class="ss-name">{{ p.nombre }}</span>
+                    <span class="ss-cat">{{ p.categoria }}</span>
+                  </div>
+                }
+              </div>
+            }
+          }
+
+          @if (resumen.itemsFueraCatalogo.total > 0) {
+            <div class="fuera">
+              <div class="fuera-head">
+                Fuera de catálogo
+                <span class="fuera-amt">S/ {{ resumen.itemsFueraCatalogo.ingreso | number:'1.0-0' }}</span>
+              </div>
+              <div class="fuera-sub">
+                {{ resumen.itemsFueraCatalogo.total }}
+                ítem{{ resumen.itemsFueraCatalogo.total !== 1 ? 's' : '' }} escrito{{ resumen.itemsFueraCatalogo.total !== 1 ? 's' : '' }} a mano.
+                Si alguno se repite, quizá deba estar en el catálogo.
+              </div>
+              @if (resumen.itemsFueraCatalogo.top.length > 0) {
+                <div class="fuera-chips">
+                  @for (i of resumen.itemsFueraCatalogo.top; track i.descripcion) {
+                    <span class="fuera-chip">{{ i.descripcion }} <b>×{{ i.veces }}</b></span>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- ══════════ SECCIÓN · Tipo de evento ══════════ -->
+        @if (resumen.porTipoEvento.length > 0) {
+          <div class="section">
+            <div class="section-title">
+              <span class="num">5</span> Por tipo de evento
+            </div>
+            <div class="tipos" data-testid="por-tipo-evento">
+              @for (t of resumen.porTipoEvento; track t.tipoEvento) {
+                <div class="tipo-row">
+                  <span class="tipo-nm">{{ t.tipoEvento || 'Sin especificar' }}</span>
+                  <span class="tipo-ct">{{ t.cantidad }}</span>
+                  <span class="tipo-mn">S/ {{ t.ingreso | number:'1.0-0' }}</span>
+                  <span class="tipo-pc">{{ porcentaje(t.ingreso) | number:'1.0-0' }}%</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- ══════════ SECCIÓN · Clientes que repiten ══════════ -->
+        @if (resumen.clientesRecurrentes.length > 0) {
+          <div class="section">
+            <div class="section-title">
+              <span class="num">6</span> Clientes que repiten
+            </div>
+            <div class="clientes" data-testid="clientes-recurrentes">
+              @for (c of resumen.clientesRecurrentes; track c.telefono) {
+                <button type="button" class="cli-row" (click)="verCliente(c.telefono)">
+                  <span class="cli-tel">{{ c.telefono }}</span>
+                  <span class="cli-ev">{{ c.eventos }} eventos</span>
+                  <span class="cli-mn">S/ {{ c.ingreso | number:'1.0-0' }}</span>
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              }
+            </div>
+          </div>
+        }
+      }
+    }
+  </div>
+</div>

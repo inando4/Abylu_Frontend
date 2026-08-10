@@ -1,0 +1,224 @@
+/* Reportes — Tarea 4. Tokens de styles.css; nada de hex sueltos salvo
+   los tres del gráfico, que van dentro del SVG. */
+
+/* ── Chips de periodo y comparación ── */
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip {
+  font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px;
+  border: 1px solid var(--color-line); background: var(--color-cream);
+  color: var(--color-ink-2); cursor: pointer; min-height: 0;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.chip:hover { background: var(--color-cream-2); }
+.chip.on {
+  background: var(--color-ink); border-color: var(--color-ink); color: #fff;
+}
+.rango { margin-top: 12px; }
+.comparar-lbl {
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--color-ink-3); margin: 16px 0 8px;
+}
+
+/* ── Tarjeta principal ── */
+.kpi-hero {
+  background: linear-gradient(180deg, #33272A 0%, #1F1618 100%);
+  border-radius: var(--r-md); padding: 17px 18px; color: var(--color-cream);
+}
+.kpi-hero .lbl {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(250, 238, 231, .62);
+}
+.kpi-hero .big {
+  font-size: 32px; font-weight: 800; letter-spacing: -.035em; line-height: 1.1;
+  margin-top: 5px; font-variant-numeric: tabular-nums;
+}
+.hero-foot {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-top: 7px; font-size: 12px; color: rgba(250, 238, 231, .72);
+}
+.delta {
+  margin-left: auto; display: inline-flex; align-items: baseline; gap: 5px;
+  font-size: 13px; font-weight: 800; padding: 3px 9px; border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+.delta small { font-size: 10px; font-weight: 600; opacity: .75; }
+.delta.up { background: var(--color-mint); color: #1F4023; }
+.delta.down { background: var(--color-terracotta-soft); color: var(--color-ink); }
+.delta.flat { background: rgba(250, 238, 231, .16); color: var(--color-cream); }
+
+.nota-curso {
+  margin-top: 9px; padding: 8px 11px; border-radius: var(--r-sm);
+  background: var(--color-cream-2); color: var(--color-ink-2);
+  font-size: 11.5px; line-height: 1.4;
+}
+
+/* ── KPIs secundarios ── */
+.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 9px; }
+.kpi {
+  background: var(--color-cream); border: 1px solid var(--color-line-2);
+  border-radius: var(--r-md); padding: 12px 13px;
+}
+.kpi .lbl {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+.kpi .val {
+  font-size: 21px; font-weight: 800; letter-spacing: -.03em; margin-top: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.kpi .hint { font-size: 11px; color: var(--color-ink-3); margin-top: 3px; }
+.delta-sm { font-weight: 800; font-variant-numeric: tabular-nums; }
+.delta-sm.up { color: #2C6B34; }
+.delta-sm.down { color: var(--color-terracotta-dark); }
+.delta-sm.flat { color: var(--color-ink-3); }
+
+.pendientes {
+  display: flex; align-items: center; gap: 8px; margin-top: 10px;
+  padding: 10px 12px; border-radius: var(--r-md);
+  background: var(--color-terracotta-soft);
+  font-size: 12.5px; font-weight: 600; color: var(--color-ink);
+}
+.pendientes .dot {
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  background: var(--color-terracotta-dark);
+}
+.micro { margin-top: 9px; font-size: 11.5px; color: var(--color-ink-3); line-height: 1.45; }
+.micro-aviso { display: block; margin-top: 3px; color: var(--color-terracotta-dark); }
+
+/* ── Gráfico ── */
+.chart-wrap { overflow-x: auto; }
+.chart { display: block; width: 100%; height: 128px; }
+.bar { cursor: pointer; }
+.bar-pasado { fill: var(--color-ink); }
+.bar-actual { fill: var(--color-terracotta-dark); }
+.bar-futuro {
+  fill: var(--color-terracotta-soft);
+  stroke: var(--color-terracotta-dark); stroke-width: .8; stroke-dasharray: 2 1.6;
+}
+.bar.sel { stroke: var(--color-ink); stroke-width: 1.4; stroke-dasharray: none; }
+.x-labels text { font-size: 7.6px; font-weight: 600; fill: var(--color-ink-3); }
+.x-labels .lbl-actual { fill: var(--color-terracotta-dark); font-weight: 800; }
+
+.chart-legend {
+  display: flex; flex-wrap: wrap; gap: 13px; margin-top: 10px;
+  font-size: 10.5px; font-weight: 600; color: var(--color-ink-3);
+}
+.sw {
+  width: 9px; height: 9px; border-radius: 2px; display: inline-block;
+  margin-right: 5px; vertical-align: -1px;
+}
+.sw.pasado { background: var(--color-ink); }
+.sw.actual { background: var(--color-terracotta-dark); }
+.sw.futuro {
+  background: var(--color-terracotta-soft);
+  border: 1px dashed var(--color-terracotta-dark);
+}
+.chart-tip {
+  margin-top: 10px; padding: 8px 11px; border-radius: var(--r-sm);
+  background: var(--color-cream-2); font-size: 12px; color: var(--color-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Ranking de productos ── */
+.rank { display: flex; flex-direction: column; gap: 11px; }
+.rank-top {
+  display: flex; align-items: baseline; gap: 8px;
+  font-size: 13px; font-weight: 700; letter-spacing: -.015em;
+}
+.rank-amt { margin-left: auto; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+.track {
+  height: 6px; border-radius: 3px; background: var(--color-cream-3);
+  margin-top: 5px; overflow: hidden;
+}
+.track i { display: block; height: 100%; border-radius: 3px; background: var(--color-ink); }
+.rank-sub { font-size: 11px; font-weight: 600; color: var(--color-ink-3); margin-top: 4px; }
+.vacio-inline { font-size: 12.5px; color: var(--color-ink-3); }
+
+/* ── Colapsable "sin ventas" (mismo patrón que Desactivados en /productos) ── */
+.toggle {
+  display: flex; align-items: center; gap: 7px; width: 100%; margin-top: 14px;
+  padding: 9px 0 0; border: 0; border-top: 1px solid var(--color-line-2);
+  background: none; cursor: pointer; min-height: 0;
+  font-size: 12.5px; font-weight: 700; color: var(--color-ink-2);
+}
+.caret { transition: transform .18s ease; flex-shrink: 0; }
+.caret.open { transform: rotate(90deg); }
+.count { color: var(--color-ink-3); font-weight: 600; }
+.sin-salida { display: flex; flex-direction: column; margin-top: 6px; }
+.ss-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 0; border-bottom: 1px solid var(--color-line-2); font-size: 12.5px;
+}
+.ss-row:last-child { border-bottom: 0; }
+.ss-name { color: var(--color-ink-2); }
+.ss-cat {
+  margin-left: auto; font-size: 10.5px; font-weight: 700; color: var(--color-ink-3);
+  background: var(--color-cream-2); border-radius: 999px; padding: 2px 8px;
+}
+
+/* ── Ítems fuera de catálogo ── */
+.fuera {
+  margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--color-line-2);
+}
+.fuera-head {
+  display: flex; align-items: baseline; font-size: 12.5px; font-weight: 700;
+}
+.fuera-amt { margin-left: auto; font-variant-numeric: tabular-nums; }
+.fuera-sub { font-size: 11px; color: var(--color-ink-3); margin-top: 3px; line-height: 1.45; }
+.fuera-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.fuera-chip {
+  font-size: 11px; font-weight: 600; color: var(--color-ink-2);
+  background: var(--color-cream); border: 1px solid var(--color-line);
+  border-radius: 999px; padding: 4px 9px;
+}
+.fuera-chip b { font-weight: 800; }
+
+/* ── Tipo de evento ── */
+.tipos { display: flex; flex-direction: column; }
+.tipo-row {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 0; border-bottom: 1px solid var(--color-line-2); font-size: 13px;
+}
+.tipo-row:last-child { border-bottom: 0; }
+.tipo-nm { font-weight: 600; }
+.tipo-ct {
+  font-size: 10.5px; font-weight: 700; color: var(--color-ink-2);
+  background: var(--color-cream-2); border-radius: 999px; padding: 2px 8px;
+}
+.tipo-mn { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; }
+.tipo-pc {
+  font-size: 11px; color: var(--color-ink-3); width: 34px; text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Clientes recurrentes ── */
+.clientes { display: flex; flex-direction: column; }
+.cli-row {
+  display: flex; align-items: center; gap: 9px; width: 100%;
+  padding: 10px 0; border: 0; border-bottom: 1px solid var(--color-line-2);
+  background: none; cursor: pointer; text-align: left; min-height: 0;
+  font-size: 13px; color: var(--color-ink);
+}
+.cli-row:last-child { border-bottom: 0; }
+.cli-row:hover { color: var(--color-terracotta-dark); }
+.cli-tel { font-weight: 700; font-variant-numeric: tabular-nums; }
+.cli-ev { font-size: 11px; color: var(--color-ink-3); }
+.cli-mn { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* ── Carga y vacío ── */
+.skeleton-row { display: flex; flex-direction: column; gap: 10px; }
+.empty-block { text-align: center; padding: 26px 10px; }
+.empty-icon {
+  width: 54px; height: 54px; margin: 0 auto 12px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--color-cream-2); color: var(--color-ink-3);
+}
+.empty-title { font-size: 15px; font-weight: 800; letter-spacing: -.02em; }
+.empty-sub {
+  font-size: 12.5px; color: var(--color-ink-3); margin-top: 5px;
+  line-height: 1.45; max-width: 30ch; margin-inline: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip, .caret { transition: none; }
+}

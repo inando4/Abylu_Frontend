@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 import { CotizacionService } from '../../core/services';
 import { CotizacionSummaryResponse, PageResponse } from '../../shared/models';
@@ -17,6 +17,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
 
   private cotizacionService = inject(CotizacionService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   pagina: PageResponse<CotizacionSummaryResponse> | null = null;
   telefonoBusqueda = '';
@@ -34,6 +35,13 @@ export class HistorialComponent implements OnInit, OnDestroy {
       this.telefonoBusqueda = telefono;
       this.cargarCotizaciones(0);
     });
+
+    // ?telefono=987654321 → llega desde "Clientes que repiten" en /reportes.
+    // Se siembra la búsqueda antes de la primera carga para no pedir dos veces.
+    const telefono = this.route.snapshot.queryParamMap.get('telefono');
+    if (telefono) {
+      this.telefonoBusqueda = telefono;
+    }
 
     this.cargarCotizaciones(0);
   }
