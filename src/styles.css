@@ -81,6 +81,7 @@ app-cotizacion,
 app-historial,
 app-detalle-cotizacion,
 app-productos,
+app-reportes,
 app-login {
   display: block;
   background: var(--color-cream);

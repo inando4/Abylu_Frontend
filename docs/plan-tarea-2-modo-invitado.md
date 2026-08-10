@@ -221,7 +221,16 @@ Permitir que el dueño (CLIENTE) agregue/edite/elimine productos y precios desde
   - Enlace en el header (visible para CLIENTE; ocultar/rotular para INVITADO — cosmético, el backend ya protege).
 - **Consideración:** el picker de cotización lee `listarActivos()`; al desactivar un producto, deja de aparecer en el picker pero las cotizaciones viejas lo conservan. Correcto.
 
-### Tarea 4 — Analítica / reportes semanales (dificultad: media–alta)
+### Tarea 4 — Analítica / reportes **(HECHA — 2026-08-07)**
+Implementada según `plan-tarea-4-reportes-{backend,frontend}.md`. El diseño final se desvía de
+este esbozo en tres puntos, todos deliberados: se agrega por **`fecha_evento`** y no por
+`fecha_creacion` (no existe fecha de aceptación en el modelo), la serie es **mensual** y no
+semanal (con eventos esporádicos una serie semanal sale casi toda en cero, lo que anula la duda
+"¿lunes o domingo?" de más abajo), y los gráficos son **SVG inline a mano** en vez de Chart.js.
+Ruta `/reportes`; endpoint `GET /api/analitica/resumen`.
+
+El esbozo original se conserva a continuación como referencia histórica.
+
 Reportes/estadísticas sobre las cotizaciones (lo "vistoso" para el reclutador).
 
 - **Backend:**
