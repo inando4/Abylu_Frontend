@@ -505,8 +505,9 @@ export class CotizacionComponent implements OnInit {
   }
 
   /**
-   * Guarda la cotización sin descargar el PDF. El backend crea siempre en
-   * estado BORRADOR; en modo edición el PUT conserva el estado actual.
+   * Guarda la cotización sin descargar el PDF. Al crear se pide explícitamente
+   * BORRADOR (sin el flag el backend la crea ENVIADA); en modo edición el PUT
+   * conserva el estado actual.
    */
   private ejecutarGuardarBorrador(): void {
     this.guardandoBorrador = true;
@@ -516,7 +517,7 @@ export class CotizacionComponent implements OnInit {
 
     const peticion$ = this.modoEdicion
       ? this.cotizacionService.actualizar(this.cotizacionId!, request)
-      : this.cotizacionService.crear(request);
+      : this.cotizacionService.crear({ ...request, borrador: true });
 
     peticion$.subscribe({
       next: (cotizacion) => {

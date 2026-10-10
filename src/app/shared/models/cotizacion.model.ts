@@ -12,6 +12,8 @@ export interface CrearCotizacionRequest {
   movilidad: number;
   horasServicio: string;
   items: ItemCotizacionRequest[];
+  /** Solo en POST: true → nace BORRADOR; omitido/false → nace ENVIADA. El PUT lo ignora. */
+  borrador?: boolean;
 }
 
 /**
