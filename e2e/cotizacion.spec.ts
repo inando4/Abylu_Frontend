@@ -66,3 +66,22 @@ test.describe('Cotizacion - generacion de PDF', () => {
     expect(download.suggestedFilename()).toContain('Cotizacion ABYLU');
   });
 });
+
+test.describe('Cotizacion - estado inicial (modo invitado)', () => {
+  test('CP-004 - "Guardar borrador" crea la cotizacion en estado BORRADOR', async ({ page }) => {
+    // Objetivo: el backend crea ENVIADA por defecto; el boton de borrador debe pedir
+    // BORRADOR explicitamente. Usa el invitado: sus datos demo se restauran en cada login.
+    await page.goto('/login');
+    await page.getByRole('button', { name: 'Entrar como invitado' }).click();
+    await page.waitForURL('**/cotizacion');
+    await llenarDatosObligatorios(page);
+    await agregarPrimerProducto(page);
+
+    await page.getByTestId('guardar-borrador').click();
+    await expect(page.getByTestId('confirm-dialog')).toBeVisible();
+    await page.getByTestId('confirm-generate-pdf').click();
+
+    await page.waitForURL(/\/historial\/\d+$/);
+    await expect(page.locator('.estado-badge')).toHaveText('BORRADOR');
+  });
+});
