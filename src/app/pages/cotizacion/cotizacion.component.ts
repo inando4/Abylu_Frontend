@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { HeaderComponent } from '../../components/header/header.component';
@@ -136,6 +137,43 @@ export class CotizacionComponent implements OnInit {
     const total = this.subtotal + movilidad - descuento;
     return total > 0 ? total : 0;
   }
+
+  /**
+   * Filas de productos que caben en la tabla del PDF sin que salte a una segunda página.
+   * Debe coincidir con PlantillaService.MAX_FILAS_ITEMS del backend.
+   */
+  readonly maxFilasPdf = 8;
+
+  /** Con descuento, la movilidad se imprime como una fila más de la tabla del PDF (igual que el backend). */
+  get movilidadEnTabla(): boolean {
+    const descuento = +this.cotizacionForm.get('descuento')?.value || 0;
+    const movilidad = +this.cotizacionForm.get('movilidad')?.value || 0;
+    return descuento > 0 && movilidad > 0;
+  }
+
+  /**
+   * Explica por qué la cotización no cabe en el PDF y qué quitar; null si cabe.
+   * Mismo texto que CotizacionService.mensajeExcesoFilas, que la rechaza con 400.
+   */
+  get mensajeExcesoFilas(): string | null {
+    const items = this.items.length;
+    const filas = items + (this.movilidadEnTabla ? 1 : 0);
+    const sobran = filas - this.maxFilasPdf;
+    if (sobran <= 0) return null;
+
+    const quitar = `Quita ${sobran} ${sobran === 1 ? 'producto' : 'productos'}`;
+    if (!this.movilidadEnTabla) {
+      return `El PDF admite como máximo ${this.maxFilasPdf} productos y esta cotización tiene ${items}. ${quitar} para continuar.`;
+    }
+    // Quitar el descuento saca la movilidad de la tabla: solo basta si sobra esa fila.
+    const oDescuento = items <= this.maxFilasPdf ? ' o quita el descuento' : '';
+    return `El PDF admite como máximo ${this.maxFilasPdf} filas y esta cotización ocupa ${filas}: `
+      + `${items} productos + la movilidad, que se imprime como una fila más porque hay descuento. `
+      + `${quitar}${oDescuento} para continuar.`;
+  }
+
+  /** Se pidió generar/guardar con demasiadas filas: muestra el aviso junto a los botones mientras siga así. */
+  avisarExcesoFilas = false;
 
   /** IDs de productos del catálogo ya en el carrito (para deshabilitar tiles). */
   get idsEnCarrito(): number[] {
@@ -480,6 +518,7 @@ export class CotizacionComponent implements OnInit {
 
   /** Validación compartida entre "Generar cotización" y "Guardar borrador". */
   private validarFormulario(): boolean {
+    this.avisarExcesoFilas = false;
     if (this.cotizacionForm.invalid) {
       this.cotizacionForm.markAllAsTouched();
       this.error = 'Completa los campos obligatorios';
@@ -491,7 +530,20 @@ export class CotizacionComponent implements OnInit {
       return false;
     }
 
+    if (this.mensajeExcesoFilas) {
+      // El texto lo calcula el getter: el aviso se va solo en cuanto la cotización vuelve a caber.
+      this.error = '';
+      this.avisarExcesoFilas = true;
+      return false;
+    }
+
     return true;
+  }
+
+  /** El backend responde 400 con un `message` pensado para el usuario (p. ej. el tope de filas del PDF). */
+  private mensajeDeError(err: unknown, porDefecto: string): string {
+    const e = err as HttpErrorResponse;
+    return e?.status === 400 && typeof e.error?.message === 'string' ? e.error.message : porDefecto;
   }
 
   /** Valida y abre el diálogo de confirmación para guardar como borrador. */
@@ -525,7 +577,7 @@ export class CotizacionComponent implements OnInit {
         this.router.navigate(['/historial', cotizacion.id]);
       },
       error: (err) => {
-        this.error = 'Error al guardar el borrador. Verifica los datos e intenta de nuevo.';
+        this.error = this.mensajeDeError(err, 'Error al guardar el borrador. Verifica los datos e intenta de nuevo.');
         this.guardandoBorrador = false;
         console.error('Error:', err);
       }
@@ -563,9 +615,9 @@ export class CotizacionComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.error = this.modoEdicion
+        this.error = this.mensajeDeError(err, this.modoEdicion
           ? 'Error al guardar los cambios. Verifica los datos e intenta de nuevo.'
-          : 'Error al generar el PDF. Verifica los datos e intenta de nuevo.';
+          : 'Error al generar el PDF. Verifica los datos e intenta de nuevo.');
         this.cargando = false;
         console.error('Error:', err);
       }

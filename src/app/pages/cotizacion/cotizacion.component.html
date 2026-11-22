@@ -180,6 +180,10 @@
             </svg>
           </button>
         </div>
+
+        @if (mensajeExcesoFilas; as aviso) {
+          <div class="error-banner" data-testid="aviso-filas-pdf" role="alert">{{ aviso }}</div>
+        }
       </div>
 
       <!-- ══════════ SECCIÓN 3 · Ajustes de costo ══════════ -->
@@ -234,6 +238,8 @@
 
       @if (error) {
         <div class="error-banner" data-testid="error-banner">{{ error }}</div>
+      } @else if (avisarExcesoFilas && mensajeExcesoFilas) {
+        <div class="error-banner" data-testid="error-banner">{{ mensajeExcesoFilas }}</div>
       }
     </div>
 
